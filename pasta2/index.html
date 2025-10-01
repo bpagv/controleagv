@@ -1,11 +1,511 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Página 2</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Implantações AGV</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .status-em-andamento { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .status-concluido { background: linear-gradient(135deg, #10b981, #059669); }
+        .status-cancelado { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
-<body>
-  <h1>Essa é a Página 2</h1>
+<body class="bg-gradient-to-br from-green-50 to-emerald-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-lg border-b-4 border-green-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-green-500 p-3 rounded-lg">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">Controle de Implantações AGV</h1>
+                        <p class="text-gray-600">Gerencie todas as implantações de AGV em um só lugar</p>
+                    </div>
+                </div>
+                <button onclick="abrirModalNova()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    <span>Nova Implantação</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dashboard Stats -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">Total de Implantações</p>
+                        <p class="text-3xl font-bold text-green-600" id="totalImplantacoes">0</p>
+                    </div>
+                    <div class="bg-green-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">Em Andamento</p>
+                        <p class="text-3xl font-bold text-orange-600" id="totalAndamento">0</p>
+                    </div>
+                    <div class="bg-orange-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">Concluídas</p>
+                        <p class="text-3xl font-bold text-blue-600" id="totalConcluidas">0</p>
+                    </div>
+                    <div class="bg-blue-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">Tempo Médio (dias)</p>
+                        <p class="text-3xl font-bold text-purple-600" id="tempoMedio">0</p>
+                    </div>
+                    <div class="bg-purple-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="flex flex-wrap gap-4 items-center">
+                <div class="flex-1 min-w-64">
+                    <input type="text" id="filtroChamado" placeholder="Buscar por chamado..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                </div>
+                <select id="filtroStatus" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    <option value="">Todos os Status</option>
+                    <option value="Em Andamento">Em Andamento</option>
+                    <option value="Concluído">Concluído</option>
+                    <option value="Cancelado">Cancelado</option>
+                </select>
+                <select id="filtroFornecedor" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    <option value="">Todos os Fornecedores</option>
+                    <option value="Aspect">Aspect</option>
+                    <option value="Paneas">Paneas</option>
+                    <option value="Pontal">Pontal</option>
+                    <option value="Robbu">Robbu</option>
+                    <option value="Sinergytech">Sinergytech</option>
+                    <option value="TechIA">TechIA</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Lista de Implantações -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-xl font-semibold text-gray-900">Suas Implantações AGV</h2>
+            </div>
+            <div id="listaImplantacoes" class="divide-y divide-gray-200">
+                <!-- Implantações serão inseridas aqui -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nova Implantação -->
+    <div id="modalNova" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-screen overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-semibold text-gray-900">Nova Implantação AGV</h3>
+                    <button onclick="fecharModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <form id="formNova" onsubmit="adicionarImplantacao(event)">
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                                <select id="status" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                    <option value="">Selecione o status</option>
+                                    <option value="Em Andamento">Em Andamento</option>
+                                    <option value="Concluído">Concluído</option>
+                                    <option value="Cancelado">Cancelado</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Chamado</label>
+                                <input type="text" id="chamado" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Data Solicitação</label>
+                                <input type="date" id="dataSolicitacao" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Fornecedor</label>
+                                <input type="text" id="fornecedor" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Carteira</label>
+                                <input type="text" id="carteira" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Tipo AGV</label>
+                                <select id="tipoAgv" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                    <option value="">Selecione o tipo</option>
+                                    <option value="Localizador">Localizador</option>
+                                    <option value="Localizador SmartPlay">Localizador SmartPlay</option>
+                                    <option value="Negociador">Negociador</option>
+                                    <option value="Negociador SmartPlay">Negociador SmartPlay</option>
+                                    <option value="Recado">Recado</option>
+                                    <option value="Preventivo">Preventivo</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Licenças</label>
+                                <input type="text" id="licencas" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Data Entrega</label>
+                                <input type="date" id="dataEntrega" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-3 mt-6">
+                        <button type="button" onclick="fecharModal()" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+                            Adicionar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let implantacoes = JSON.parse(localStorage.getItem('implantacoes')) || [];
+        
+        // Dados de exemplo se não houver implantações
+        if (implantacoes.length === 0) {
+            implantacoes = [
+                {
+                    id: 1,
+                    status: "Em Andamento",
+                    chamado: "AGV001",
+                    dataSolicitacao: "2024-01-15",
+                    fornecedor: "TechSolutions",
+                    carteira: "Cobrança",
+                    tipoAgv: "Localizador",
+                    licencas: "LIC001, LIC002",
+                    dataEntrega: "2024-02-15"
+                },
+                {
+                    id: 2,
+                    status: "Concluído",
+                    chamado: "AGV002",
+                    dataSolicitacao: "2024-01-10",
+                    fornecedor: "AutoSystems",
+                    carteira: "Vendas",
+                    tipoAgv: "Negociador SmartPlay",
+                    licencas: "LIC003",
+                    dataEntrega: "2024-01-25"
+                },
+                {
+                    id: 3,
+                    status: "Em Andamento",
+                    chamado: "AGV003",
+                    dataSolicitacao: "2024-01-20",
+                    fornecedor: "SmartTech",
+                    carteira: "Suporte",
+                    tipoAgv: "Preventivo",
+                    licencas: "LIC004, LIC005, LIC006",
+                    dataEntrega: "2024-03-01"
+                }
+            ];
+            salvarImplantacoes();
+        }
+        
+        function salvarImplantacoes() {
+            localStorage.setItem('implantacoes', JSON.stringify(implantacoes));
+        }
+        
+        function calcularDiasProducao(dataSolicitacao, dataEntrega) {
+            if (!dataSolicitacao || !dataEntrega) return 0;
+            
+            const inicio = new Date(dataSolicitacao);
+            const fim = new Date(dataEntrega);
+            const diffTime = Math.abs(fim - inicio);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            return diffDays;
+        }
+        
+        function formatarData(data) {
+            if (!data) return '-';
+            return new Date(data).toLocaleDateString('pt-BR');
+        }
+        
+        function getStatusClass(status) {
+            const classes = {
+                'Em Andamento': 'bg-orange-100 text-orange-800',
+                'Concluído': 'bg-green-100 text-green-800',
+                'Cancelado': 'bg-red-100 text-red-800'
+            };
+            return classes[status] || 'bg-gray-100 text-gray-800';
+        }
+        
+        function renderizarImplantacoes() {
+            const container = document.getElementById('listaImplantacoes');
+            const filtroChamado = document.getElementById('filtroChamado').value.toLowerCase();
+            const filtroStatus = document.getElementById('filtroStatus').value;
+            const filtroFornecedor = document.getElementById('filtroFornecedor').value;
+            
+            let implantacoesFiltradas = implantacoes.filter(implantacao => {
+                const matchChamado = implantacao.chamado.toLowerCase().includes(filtroChamado);
+                const matchStatus = !filtroStatus || implantacao.status === filtroStatus;
+                const matchFornecedor = !filtroFornecedor || implantacao.fornecedor === filtroFornecedor;
+                
+                return matchChamado && matchStatus && matchFornecedor;
+            });
+            
+            if (implantacoesFiltradas.length === 0) {
+                container.innerHTML = `
+                    <div class="p-8 text-center text-gray-500">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                        </svg>
+                        <p class="text-lg font-medium">Nenhuma implantação encontrada</p>
+                        <p class="text-sm">Adicione uma nova implantação ou ajuste os filtros</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = implantacoesFiltradas.map(implantacao => {
+                const diasProducao = calcularDiasProducao(implantacao.dataSolicitacao, implantacao.dataEntrega);
+                
+                return `
+                    <div class="p-6 hover:bg-gray-50 transition-colors fade-in">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4 flex-1">
+                                <div class="flex-shrink-0">
+                                    <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center space-x-3 mb-3">
+                                        <h3 class="text-lg font-semibold text-gray-900 truncate">${implantacao.chamado}</h3>
+                                        <span class="${getStatusClass(implantacao.status)} px-3 py-1 rounded-full text-sm font-medium">${implantacao.status}</span>
+                                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">${implantacao.tipoAgv}</span>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600 mb-3">
+                                        <div><span class="font-medium">Fornecedor:</span> ${implantacao.fornecedor}</div>
+                                        <div><span class="font-medium">Carteira:</span> ${implantacao.carteira}</div>
+                                        <div><span class="font-medium">Licenças:</span> ${implantacao.licencas}</div>
+                                        <div><span class="font-medium">Dias Produção:</span> <span class="font-bold text-purple-600">${diasProducao} dias</span></div>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-2 md:grid-cols-2 gap-4 text-sm text-gray-600">
+                                        <div><span class="font-medium">Data Solicitação:</span> ${formatarData(implantacao.dataSolicitacao)}</div>
+                                        <div><span class="font-medium">Data Entrega:</span> ${formatarData(implantacao.dataEntrega)}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 ml-4">
+                                <button onclick="editarImplantacao(${implantacao.id})" class="text-blue-600 hover:text-blue-800 p-2 rounded-lg hover:bg-blue-50 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                </button>
+                                <button onclick="excluirImplantacao(${implantacao.id})" class="text-red-600 hover:text-red-800 p-2 rounded-lg hover:bg-red-50 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function atualizarEstatisticas() {
+            const totalImplantacoes = implantacoes.length;
+            const totalAndamento = implantacoes.filter(i => i.status === 'Em Andamento').length;
+            const totalConcluidas = implantacoes.filter(i => i.status === 'Concluído').length;
+            
+            // Calcular tempo médio das implantações concluídas
+            const concluidas = implantacoes.filter(i => i.status === 'Concluído' && i.dataSolicitacao && i.dataEntrega);
+            const tempoMedio = concluidas.length > 0 
+                ? Math.round(concluidas.reduce((acc, i) => acc + calcularDiasProducao(i.dataSolicitacao, i.dataEntrega), 0) / concluidas.length)
+                : 0;
+            
+            document.getElementById('totalImplantacoes').textContent = totalImplantacoes;
+            document.getElementById('totalAndamento').textContent = totalAndamento;
+            document.getElementById('totalConcluidas').textContent = totalConcluidas;
+            document.getElementById('tempoMedio').textContent = tempoMedio;
+        }
+        
+        function abrirModalNova() {
+            document.getElementById('modalNova').classList.remove('hidden');
+            document.getElementById('formNova').reset();
+            // Definir data atual como padrão para data de solicitação
+            document.getElementById('dataSolicitacao').value = new Date().toISOString().split('T')[0];
+        }
+        
+        function fecharModal() {
+            document.getElementById('modalNova').classList.add('hidden');
+        }
+        
+        function adicionarImplantacao(event) {
+            event.preventDefault();
+            
+            const novaImplantacao = {
+                id: Date.now(),
+                status: document.getElementById('status').value,
+                chamado: document.getElementById('chamado').value,
+                dataSolicitacao: document.getElementById('dataSolicitacao').value,
+                fornecedor: document.getElementById('fornecedor').value,
+                carteira: document.getElementById('carteira').value,
+                tipoAgv: document.getElementById('tipoAgv').value,
+                licencas: document.getElementById('licencas').value,
+                dataEntrega: document.getElementById('dataEntrega').value
+            };
+            
+            implantacoes.push(novaImplantacao);
+            salvarImplantacoes();
+            renderizarImplantacoes();
+            atualizarEstatisticas();
+            fecharModal();
+        }
+        
+        function excluirImplantacao(id) {
+            if (confirm('Tem certeza que deseja excluir esta implantação?')) {
+                implantacoes = implantacoes.filter(implantacao => implantacao.id !== id);
+                salvarImplantacoes();
+                renderizarImplantacoes();
+                atualizarEstatisticas();
+            }
+        }
+        
+        function editarImplantacao(id) {
+            const implantacao = implantacoes.find(i => i.id === id);
+            if (implantacao) {
+                document.getElementById('status').value = implantacao.status || '';
+                document.getElementById('chamado').value = implantacao.chamado || '';
+                document.getElementById('dataSolicitacao').value = implantacao.dataSolicitacao || '';
+                document.getElementById('fornecedor').value = implantacao.fornecedor || '';
+                document.getElementById('carteira').value = implantacao.carteira || '';
+                document.getElementById('tipoAgv').value = implantacao.tipoAgv || '';
+                document.getElementById('licencas').value = implantacao.licencas || '';
+                document.getElementById('dataEntrega').value = implantacao.dataEntrega || '';
+                
+                // Modificar o formulário para edição
+                const form = document.getElementById('formNova');
+                form.onsubmit = function(event) {
+                    event.preventDefault();
+                    
+                    implantacao.status = document.getElementById('status').value;
+                    implantacao.chamado = document.getElementById('chamado').value;
+                    implantacao.dataSolicitacao = document.getElementById('dataSolicitacao').value;
+                    implantacao.fornecedor = document.getElementById('fornecedor').value;
+                    implantacao.carteira = document.getElementById('carteira').value;
+                    implantacao.tipoAgv = document.getElementById('tipoAgv').value;
+                    implantacao.licencas = document.getElementById('licencas').value;
+                    implantacao.dataEntrega = document.getElementById('dataEntrega').value;
+                    
+                    salvarImplantacoes();
+                    renderizarImplantacoes();
+                    atualizarEstatisticas();
+                    fecharModal();
+                    
+                    // Restaurar para modo de adição
+                    form.onsubmit = adicionarImplantacao;
+                };
+                
+                abrirModalNova();
+            }
+        }
+        
+        // Event listeners para filtros
+        document.getElementById('filtroChamado').addEventListener('input', renderizarImplantacoes);
+        document.getElementById('filtroStatus').addEventListener('change', renderizarImplantacoes);
+        document.getElementById('filtroFornecedor').addEventListener('change', renderizarImplantacoes);
+        
+        // Fechar modal ao clicar fora
+        document.getElementById('modalNova').addEventListener('click', function(event) {
+            if (event.target === this) {
+                fecharModal();
+            }
+        });
+        
+        // Inicializar
+        renderizarImplantacoes();
+        atualizarEstatisticas();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'987bad96822ff1dd',t:'MTc1OTMxODc1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
   <a href="../">Voltar</a>
 </body>
 </html>
