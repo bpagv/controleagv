@@ -234,19 +234,6 @@
                 </div>
             </div>
         </div>
-      // Aplicar ordenação
-            if (ordenacaoFilter) {
-                switch (ordenacaoFilter) {
-                    case 'fornecedor-az':
-                        implantacoesFiltradas.sort((a, b) => (a.fornecedor || '').localeCompare(b.fornecedor || ''));
-                        break;
-                    case 'fornecedor-za':
-                        implantacoesFiltradas.sort((a, b) => (b.fornecedor || '').localeCompare(a.fornecedor || ''));
-                        break;
-      }
-
-            renderizarTabela(implantacoesFiltradas);
-        }
 
         <!-- Licenses Table -->
         <div class="bg-black/30 backdrop-blur-md rounded-xl border border-white/20 overflow-hidden">
