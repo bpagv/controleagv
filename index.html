@@ -260,9 +260,9 @@
             document.getElementById('currentTime').textContent = `${data} - ${horario}`;
         }
         
-        // Função para acessar sistemas externos
+    // Função para acessar sistemas externos
         function acessarSistema(url) {
-            window.open(url, '_blank', 'noopener,noreferrer');
+            window.location.href = url;
         }
         
         // Inicializar
