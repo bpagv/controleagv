@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Controle de Licenças</title>
+    <title>Controle de Licenças</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -45,8 +45,8 @@
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-3xl font-bold text-gray-900">Controle de Licenças URA</h1>
-                        <p class="text-gray-600">Gerencie todas as suas licenças de URA em um só lugar</p>
+                        <h1 class="text-3xl font-bold text-gray-900">Controle de Licenças AGV</h1>
+                        <p class="text-gray-600">Gerencie todas as suas licenças de AGV em um só lugar</p>
                     </div>
                 </div>
                 <button onclick="abrirModalNova()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 flex items-center space-x-2">
@@ -112,7 +112,7 @@
                     <input type="text" id="filtroNome" placeholder="Buscar por plataforma..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
                 <select id="filtroTipo" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <option value="">Todos os Tipos</option>
+                    <option value="">Tipo</option>
                     <option value="Localizador">Localizador</option>
                     <option value="Localizador SmartPlay">Localizador SmartPlay</option>
                     <option value="Negociador">Negociador</option>
@@ -121,7 +121,7 @@
                     <option value="Preventivo">Preventivo</option>
                 </select>
                 <select id="filtroFornecedor" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <option value="">Todas as Plataformas</option>
+                    <option value="">Plataformas</option>
                     <option value="Aspect">Aspect</option>
                     <option value="Paneas">Paneas</option>
                     <option value="Pontal">Pontal</option>
@@ -135,7 +135,7 @@
         <!-- Lista de Licenças -->
         <div class="bg-white rounded-xl shadow-md overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-200">
-                <h2 class="text-xl font-semibold text-gray-900">Suas Licenças URA</h2>
+                <h2 class="text-xl font-semibold text-gray-900">Suas Licenças</h2>
             </div>
             <div id="listaLicencas" class="divide-y divide-gray-200">
                 <!-- Licenças serão inseridas aqui -->
@@ -148,7 +148,7 @@
         <div class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-screen overflow-y-auto">
             <div class="p-6">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-semibold text-gray-900">Nova Licença URA</h3>
+                    <h3 class="text-xl font-semibold text-gray-900">Nova Licença AGV</h3>
                     <button onclick="fecharModal()" class="text-gray-400 hover:text-gray-600">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
