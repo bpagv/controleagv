@@ -5,7 +5,6 @@
     window.location.href = "../index.html"; // volta um nível para cima
   }
 </script>
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -144,7 +143,7 @@
                 </button>
                 
                 <div id="authError" class="text-red-400 text-sm text-center hidden">
-                    CPF não autorizado para edição
+                    Digite um CPF válido para acessar
                 </div>
             </form>
         </div>
@@ -233,6 +232,7 @@
                             <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Canais</th>
                             <th class="px-6 py-4 text-left text-sm font-medium text-white/80">AV</th>
                             <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Ambiente</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Última Alteração</th>
                             <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Ações</th>
                         </tr>
                     </thead>
@@ -330,10 +330,15 @@
 
     <script>
         // CPFs autorizados para edição (apenas números)
+        // ADICIONE NOVOS CPFs AQUI - SOMENTE OS NÚMEROS, SEM PONTOS OU TRAÇOS
         const cpfsAutorizados = [
-            '06660278974',
-            '08788382958',
-            '39540020867'
+            '06660278974',  // CPF: 066.602.789-74
+            '08788382958',  // CPF: 087.883.829-58
+            '23100855884'   // CPF: 231.008.558-84
+            '08843197924'   // CPF: 088.431.979-24
+            '39540020867'   // CPF: 395.400.208-67
+            // Para adicionar um novo CPF, adicione uma linha como:
+            // '00011122233'   // CPF: 000.111.222-33
         ];
         
         // Variável para controlar se o usuário tem permissão de edição
@@ -355,7 +360,11 @@
                 dnis: "4000-1234",
                 tech: "João Silva",
                 kmg: "KMG001",
-                ambiente: "Produção"
+                ambiente: "Produção",
+                ultimaAlteracao: {
+                    cpf: "123.456.789-01",
+                    dataHora: "2024-01-15 14:30:25"
+                }
             },
             {
                 id: 2,
@@ -370,7 +379,11 @@
                 dnis: "",
                 tech: "",
                 kmg: "",
-                ambiente: "Homologação"
+                ambiente: "Homologação",
+                ultimaAlteracao: {
+                    cpf: "987.654.321-00",
+                    dataHora: "2024-01-10 09:15:42"
+                }
             }
         ];
 
@@ -437,6 +450,14 @@
                     <td class="px-6 py-4 text-white">${licenca.canais || '-'}</td>
                     <td class="px-6 py-4 text-white">${licenca.av || '-'}</td>
                     <td class="px-6 py-4 text-white">${licenca.ambiente || '-'}</td>
+                    <td class="px-6 py-4 text-white text-xs">
+                        ${licenca.ultimaAlteracao ? `
+                            <div class="text-gray-300">
+                                <div class="font-medium">${licenca.ultimaAlteracao.cpf}</div>
+                                <div class="text-gray-400">${licenca.ultimaAlteracao.dataHora}</div>
+                            </div>
+                        ` : '-'}
+                    </td>
                     <td class="px-6 py-4">
                         <div class="flex space-x-2">
                             ${podeEditar ? `
@@ -512,7 +533,11 @@
                 dnis: formData.get('dnis') || '',
                 tech: formData.get('tech') || '',
                 kmg: formData.get('kmg') || '',
-                ambiente: formData.get('ambiente') || ''
+                ambiente: formData.get('ambiente') || '',
+                ultimaAlteracao: {
+                    cpf: usuarioLogado,
+                    dataHora: obterDataHoraAtual()
+                }
             };
 
             licencas.push(novaLicenca);
@@ -563,7 +588,11 @@
                         dnis: formData.get('dnis') || '',
                         tech: formData.get('tech') || '',
                         kmg: formData.get('kmg') || '',
-                        ambiente: formData.get('ambiente') || ''
+                        ambiente: formData.get('ambiente') || '',
+                        ultimaAlteracao: {
+                            cpf: usuarioLogado,
+                            dataHora: obterDataHoraAtual()
+                        }
                     };
                     
                     renderizarTabela();
@@ -608,6 +637,14 @@
         // Função para limpar CPF (apenas números)
         function limparCPF(cpf) {
             return cpf.replace(/\D/g, '');
+        }
+
+        // Função para obter data e hora atual formatada
+        function obterDataHoraAtual() {
+            const agora = new Date();
+            const data = agora.toLocaleDateString('pt-BR');
+            const hora = agora.toLocaleTimeString('pt-BR');
+            return `${data} ${hora}`;
         }
 
         // Função para autenticar usuário
@@ -673,11 +710,21 @@
             if (fazerLogin(cpf)) {
                 authError.classList.add('hidden');
             } else {
-                authError.classList.remove('hidden');
-                // Limpar campo após erro
-                setTimeout(() => {
-                    document.getElementById('cpfInput').value = '';
-                }, 2000);
+                // Permitir acesso de visualização para CPFs não autorizados
+                podeEditar = false;
+                usuarioLogado = formatarCPF(cpf);
+                
+                // Ocultar modal de autenticação
+                document.getElementById('modalAuth').classList.remove('show');
+                
+                // Mostrar informações do usuário (sem botão de nova licença)
+                document.getElementById('userInfo').classList.remove('hidden');
+                document.getElementById('userCpf').textContent = usuarioLogado + ' (Somente Visualização)';
+                
+                // Atualizar tabela sem botões de ação
+                renderizarTabela();
+                
+                authError.classList.add('hidden');
             }
         });
 
@@ -727,7 +774,5 @@
             logoutOriginal();
         };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'987c416a56c8add3',t:'MTc1OTMyNDgwNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'987c51926135f1dd',t:'MTc1OTMyNTQ2OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
-
-
