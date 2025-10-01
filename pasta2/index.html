@@ -15,12 +15,12 @@
   </button>
 </div>
 
-      <!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CoControle de Implantações AGV</title>
+    <title>Controle de Implantações AGV</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -50,489 +50,786 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
-        .status-em-andamento { background: linear-gradient(135deg, #f59e0b, #d97706); }
-        .status-concluido { background: linear-gradient(135deg, #10b981, #059669); }
-        .status-cancelado { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .status-planejada { background-color: #3b82f6; }
+        .status-em-andamento { background-color: #f59e0b; }
+        .status-concluida { background-color: #10b981; }
+        .status-cancelada { background-color: #ef4444; }
+        .status-pausada { background-color: #6b7280; }
         
-        .card-hover {
-            transition: all 0.3s ease;
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
         }
         
-        .card-hover:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: #1f2937;
+            border-radius: 1rem;
+            padding: 2rem;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid #374151;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-green-50 to-emerald-100 min-h-screen">
+<body class="hero-bg">
     <!-- Header -->
-    <header class="bg-white shadow-lg border-b-4 border-green-500">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <header class="bg-black/20 backdrop-blur-md border-b border-white/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-3">
-                    <div class="bg-green-500 p-3 rounded-lg">
+                    <button onclick="voltarMenu()" class="bg-white/20 p-2 rounded-lg backdrop-blur-sm hover:bg-white/30 transition-colors">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                    </button>
+                    <div class="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
                         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-3xl font-bold text-gray-900">Controle de Implantações AGV</h1>
-                        <p class="text-gray-600">Gerencie todas as implantações de AGV em um só lugar</p>
+                        <h1 class="text-2xl font-bold text-white">Controle de Implantações AGV</h1>
+                        <p class="text-white/80 text-sm">Gestão de Implantações dos Agentes Virtuais</p>
                     </div>
                 </div>
-                <button onclick="abrirModalNova()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 flex items-center space-x-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                    </svg>
-                    <span>Nova Implantação</span>
-                </button>
+                <div class="flex items-center space-x-4">
+                    <button id="btnNovaImplantacao" onclick="abrirModalCadastro()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2 hidden">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        <span>Nova Implantação</span>
+                    </button>
+                    <div id="userInfo" class="text-white text-sm hidden">
+                        <span class="bg-white/20 px-3 py-1 rounded-lg backdrop-blur-sm">
+                            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            <span id="userCpf"></span>
+                        </span>
+                        <button onclick="logout()" class="ml-2 bg-red-500/20 hover:bg-red-500/30 px-3 py-1 rounded-lg backdrop-blur-sm transition-colors">
+                            Sair
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- Dashboard Stats -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Modal de Autenticação -->
+    <div id="modalAuth" class="modal show">
+        <div class="modal-content fade-in" style="max-width: 400px;">
+            <div class="text-center mb-6">
+                <div class="bg-blue-500/20 p-4 rounded-full w-16 h-16 mx-auto mb-4">
+                    <svg class="w-8 h-8 text-blue-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-white mb-2">Acesso Restrito</h2>
+                <p class="text-gray-300">Digite seu CPF para acessar o sistema</p>
+            </div>
+            
+            <form id="formAuth" class="space-y-4">
+                <div>
+                    <label for="cpfInput" class="block text-sm font-medium text-gray-300 mb-2">CPF</label>
+                    <input type="text" id="cpfInput" name="cpf" maxlength="14" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="000.000.000-00">
+                </div>
+                
+                <button type="submit" class="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+                    Acessar Sistema
+                </button>
+                
+                <div id="authError" class="text-red-400 text-sm text-center hidden">
+                    Digite um CPF válido para acessar
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+            <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 card-hover">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-600 text-sm font-medium">Total de Implantações</p>
-                        <p class="text-3xl font-bold text-green-600" id="totalImplantacoes">0</p>
+                        <p class="text-white/70 text-sm">Total de Implantações</p>
+                        <p class="text-3xl font-bold text-white" id="totalImplantacoes">0</p>
                     </div>
-                    <div class="bg-green-100 p-3 rounded-lg">
-                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                    <div class="bg-blue-500/20 p-3 rounded-lg">
+                        <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
                         </svg>
                     </div>
                 </div>
             </div>
             
-            <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+            <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 card-hover">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-600 text-sm font-medium">Em Andamento</p>
-                        <p class="text-3xl font-bold text-orange-600" id="totalAndamento">0</p>
+                        <p class="text-white/70 text-sm">Em Andamento</p>
+                        <p class="text-3xl font-bold text-yellow-400" id="totalEmAndamento">0</p>
                     </div>
-                    <div class="bg-orange-100 p-3 rounded-lg">
-                        <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="bg-yellow-500/20 p-3 rounded-lg">
+                        <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
                 </div>
             </div>
             
-            <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+            <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 card-hover">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-600 text-sm font-medium">Concluídas</p>
-                        <p class="text-3xl font-bold text-blue-600" id="totalConcluidas">0</p>
+                        <p class="text-white/70 text-sm">Concluídas</p>
+                        <p class="text-3xl font-bold text-green-400" id="totalConcluidas">0</p>
                     </div>
-                    <div class="bg-blue-100 p-3 rounded-lg">
-                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="bg-green-500/20 p-3 rounded-lg">
+                        <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
                 </div>
             </div>
             
-            <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+            <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 card-hover">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-600 text-sm font-medium">Tempo Médio (dias)</p>
-                        <p class="text-3xl font-bold text-purple-600" id="tempoMedio">0</p>
+                        <p class="text-white/70 text-sm">Planejadas</p>
+                        <p class="text-3xl font-bold text-purple-400" id="totalPlanejadas">0</p>
                     </div>
-                    <div class="bg-purple-100 p-3 rounded-lg">
-                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    <div class="bg-purple-500/20 p-3 rounded-lg">
+                        <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h2m0-8V5a2 2 0 012-2h2a2 2 0 012 2v2m0 0V9a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2m0 0V5a2 2 0 00-2-2H9z"></path>
                         </svg>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Filtros -->
-        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
-            <div class="flex flex-wrap gap-4 items-center">
-                <div class="flex-1 min-w-64">
-                    <input type="text" id="filtroChamado" placeholder="Buscar por chamado..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+        <!-- Search and Filter -->
+        <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 mb-8">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1">
+                    <input type="text" id="searchInput" placeholder="Buscar por cliente, projeto, responsável ou status..." class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
-                <select id="filtroStatus" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                    <option value="">Todos os Status</option>
-                    <option value="Em Andamento">Em Andamento</option>
-                    <option value="Concluído">Concluído</option>
-                    <option value="Cancelado">Cancelado</option>
-                </select>
-                <select id="filtroFornecedor" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                    <option value="">Todos os Fornecedores</option>
-                    <option value="Aspect">Aspect</option>
-                    <option value="Paneas">Paneas</option>
-                    <option value="Pontal">Pontal</option>
-                    <option value="Robbu">Robbu</option>
-                    <option value="Sinergytech">Sinergytech</option>
-                    <option value="TechIA">TechIA</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Lista de Implantações -->
-        <div class="bg-white rounded-xl shadow-md overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h2 class="text-xl font-semibold text-gray-900">Suas Implantações AGV</h2>
-            </div>
-            <div id="listaImplantacoes" class="divide-y divide-gray-200">
-                <!-- Implantações serão inseridas aqui -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Nova Implantação -->
-    <div id="modalNova" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-screen overflow-y-auto">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-semibold text-gray-900">Nova Implantação AGV</h3>
-                    <button onclick="fecharModal()" class="text-gray-400 hover:text-gray-600">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
+                <div class="flex gap-2">
+                    <select id="statusFilter" class="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Status</option>
+                        <option value="Planejada">Planejada</option>
+                        <option value="Em Andamento">Em Andamento</option>
+                        <option value="Concluída">Concluída</option>
+                        <option value="Cancelada">Cancelada</option>
+                        <option value="Pausada">Pausada</option>
+                    </select>
+                    <select id="clienteFilter" class="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Cliente</option>
+                        <option value="Empresa A">Empresa A</option>
+                        <option value="Empresa B">Empresa B</option>
+                        <option value="Empresa C">Empresa C</option>
+                        <option value="Empresa D">Empresa D</option>
+                    </select>
+                    <button onclick="filtrarImplantacoes()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                        Filtrar
                     </button>
                 </div>
-                
-                <form id="formNova" onsubmit="adicionarImplantacao(event)">
-                    <div class="space-y-4">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                                <select id="status" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                                    <option value="">Selecione o status</option>
-                                    <option value="Em Andamento">Em Andamento</option>
-                                    <option value="Concluído">Concluído</option>
-                                    <option value="Cancelado">Cancelado</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Chamado</label>
-                                <input type="text" id="chamado" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                            </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Data Solicitação</label>
-                                <input type="date" id="dataSolicitacao" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Fornecedor</label>
-                                <input type="text" id="fornecedor" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                            </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Carteira</label>
-                                <input type="text" id="carteira" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Tipo AGV</label>
-                                <select id="tipoAgv" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                                    <option value="">Selecione o tipo</option>
-                                    <option value="Localizador">Localizador</option>
-                                    <option value="Localizador SmartPlay">Localizador SmartPlay</option>
-                                    <option value="Negociador">Negociador</option>
-                                    <option value="Negociador SmartPlay">Negociador SmartPlay</option>
-                                    <option value="Recado">Recado</option>
-                                    <option value="Preventivo">Preventivo</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Licenças</label>
-                                <input type="text" id="licencas" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Data Entrega</label>
-                                <input type="date" id="dataEntrega" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex space-x-3 mt-6">
-                        <button type="button" onclick="fecharModal()" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                            Cancelar
-                        </button>
-                        <button type="submit" class="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
-                            Adicionar
-                        </button>
-                    </div>
-                </form>
             </div>
+        </div>
+
+        <!-- Implementations Table -->
+        <div class="bg-black/30 backdrop-blur-md rounded-xl border border-white/20 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-black/50">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Cliente</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Projeto</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Status</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Responsável</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Data Início</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Previsão</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Progresso</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Última Alteração</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="implantacoesTableBody" class="divide-y divide-gray-700">
+                        <!-- Implantações serão inseridas aqui via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Cadastro -->
+    <div id="modalCadastro" class="modal">
+        <div class="modal-content fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-white">Nova Implantação</h2>
+                <button onclick="fecharModalCadastro()" class="text-gray-400 hover:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="formCadastro" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="cliente" class="block text-sm font-medium text-gray-300 mb-2">Cliente</label>
+                        <select id="cliente" name="cliente" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Selecione o cliente</option>
+                            <option value="Empresa A">Empresa A</option>
+                            <option value="Empresa B">Empresa B</option>
+                            <option value="Empresa C">Empresa C</option>
+                            <option value="Empresa D">Empresa D</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="projeto" class="block text-sm font-medium text-gray-300 mb-2">Projeto</label>
+                        <input type="text" id="projeto" name="projeto" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nome do projeto">
+                    </div>
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-gray-300 mb-2">Status</label>
+                        <select id="status" name="status" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Selecione o status</option>
+                            <option value="Planejada">Planejada</option>
+                            <option value="Em Andamento">Em Andamento</option>
+                            <option value="Concluída">Concluída</option>
+                            <option value="Cancelada">Cancelada</option>
+                            <option value="Pausada">Pausada</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="responsavel" class="block text-sm font-medium text-gray-300 mb-2">Responsável</label>
+                        <input type="text" id="responsavel" name="responsavel" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nome do responsável">
+                    </div>
+                    <div>
+                        <label for="dataInicio" class="block text-sm font-medium text-gray-300 mb-2">Data de Início</label>
+                        <input type="date" id="dataInicio" name="dataInicio" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label for="previsao" class="block text-sm font-medium text-gray-300 mb-2">Previsão de Conclusão</label>
+                        <input type="date" id="previsao" name="previsao" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label for="progresso" class="block text-sm font-medium text-gray-300 mb-2">Progresso (%)</label>
+                        <input type="number" id="progresso" name="progresso" min="0" max="100" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0">
+                    </div>
+                    <div>
+                        <label for="prioridade" class="block text-sm font-medium text-gray-300 mb-2">Prioridade</label>
+                        <select id="prioridade" name="prioridade" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Selecione a prioridade</option>
+                            <option value="Baixa">Baixa</option>
+                            <option value="Média">Média</option>
+                            <option value="Alta">Alta</option>
+                            <option value="Crítica">Crítica</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="descricao" class="block text-sm font-medium text-gray-300 mb-2">Descrição</label>
+                    <textarea id="descricao" name="descricao" rows="3" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Descrição detalhada do projeto..."></textarea>
+                </div>
+                
+                <div class="flex justify-end space-x-4 pt-4">
+                    <button type="button" onclick="fecharModalCadastro()" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+                        Salvar Implantação
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
-        let implantacoes = JSON.parse(localStorage.getItem('implantacoes')) || [];
+        // CPFs autorizados para edição (apenas números)
+        // ADICIONE NOVOS CPFs AQUI - SOMENTE OS NÚMEROS, SEM PONTOS OU TRAÇOS
+        const cpfsAutorizados = [
+            '06660278974',  // CPF: 066.602.789-74
+            '08788382958',  // CPF: 087.883.829-58
+            '23100855884'   // CPF: 231.008.558-84
+            '08843197924'   // CPF: 088.431.979-24
+            '39540020867'   // CPF: 395.400.208-67
+            // Para adicionar um novo CPF, adicione uma linha como:
+            // '00011122233'   // CPF: 000.111.222-33
+        ];
         
-        // Dados de exemplo se não houver implantações
-        if (implantacoes.length === 0) {
-            implantacoes = [
-                {
-                    id: 1,
-                    status: "Em Andamento",
-                    chamado: "AGV001",
-                    dataSolicitacao: "2024-01-15",
-                    fornecedor: "TechSolutions",
-                    carteira: "Cobrança",
-                    tipoAgv: "Localizador",
-                    licencas: "LIC001, LIC002",
-                    dataEntrega: "2024-02-15"
-                },
-                {
-                    id: 2,
-                    status: "Concluído",
-                    chamado: "AGV002",
-                    dataSolicitacao: "2024-01-10",
-                    fornecedor: "AutoSystems",
-                    carteira: "Vendas",
-                    tipoAgv: "Negociador SmartPlay",
-                    licencas: "LIC003",
-                    dataEntrega: "2024-01-25"
-                },
-                {
-                    id: 3,
-                    status: "Em Andamento",
-                    chamado: "AGV003",
-                    dataSolicitacao: "2024-01-20",
-                    fornecedor: "SmartTech",
-                    carteira: "Suporte",
-                    tipoAgv: "Preventivo",
-                    licencas: "LIC004, LIC005, LIC006",
-                    dataEntrega: "2024-03-01"
+        // Variável para controlar se o usuário tem permissão de edição
+        let podeEditar = false;
+        let usuarioLogado = '';
+
+        // Array para armazenar as implantações
+        let implantacoes = [
+            {
+                id: 1,
+                cliente: "Empresa A",
+                projeto: "Implementação AGV Call Center",
+                status: "Em Andamento",
+                responsavel: "João Silva",
+                dataInicio: "2024-01-15",
+                previsao: "2024-03-15",
+                progresso: 65,
+                prioridade: "Alta",
+                descricao: "Implementação completa do sistema AGV para atendimento ao cliente",
+                ultimaAlteracao: {
+                    cpf: "123.456.789-01",
+                    dataHora: "2024-01-20 14:30:25"
                 }
-            ];
-            salvarImplantacoes();
+            },
+            {
+                id: 2,
+                cliente: "Empresa B",
+                projeto: "Migração Sistema Legacy",
+                status: "Planejada",
+                responsavel: "Maria Santos",
+                dataInicio: "2024-02-01",
+                previsao: "2024-04-30",
+                progresso: 10,
+                prioridade: "Média",
+                descricao: "Migração do sistema legacy para nova plataforma AGV",
+                ultimaAlteracao: {
+                    cpf: "987.654.321-00",
+                    dataHora: "2024-01-18 09:15:42"
+                }
+            },
+            {
+                id: 3,
+                cliente: "Empresa C",
+                projeto: "Expansão Canais Digitais",
+                status: "Concluída",
+                responsavel: "Pedro Costa",
+                dataInicio: "2023-11-01",
+                previsao: "2024-01-15",
+                progresso: 100,
+                prioridade: "Baixa",
+                descricao: "Expansão dos canais digitais com integração AGV",
+                ultimaAlteracao: {
+                    cpf: "111.222.333-44",
+                    dataHora: "2024-01-15 16:45:12"
+                }
+            }
+        ];
+
+        // Função para voltar ao menu principal
+        function voltarMenu() {
+            window.location.href = '../index.html';
         }
-        
-        function salvarImplantacoes() {
-            localStorage.setItem('implantacoes', JSON.stringify(implantacoes));
+
+        // Função para abrir modal de cadastro
+        function abrirModalCadastro() {
+            document.getElementById('modalCadastro').classList.add('show');
         }
-        
-        function calcularDiasProducao(dataSolicitacao, dataEntrega) {
-            if (!dataSolicitacao || !dataEntrega) return 0;
-            
-            const inicio = new Date(dataSolicitacao);
-            const fim = new Date(dataEntrega);
-            const diffTime = Math.abs(fim - inicio);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            return diffDays;
+
+        // Função para fechar modal de cadastro
+        function fecharModalCadastro() {
+            document.getElementById('modalCadastro').classList.remove('show');
+            document.getElementById('formCadastro').reset();
         }
-        
+
+        // Função para formatar data
         function formatarData(data) {
             if (!data) return '-';
-            return new Date(data).toLocaleDateString('pt-BR');
+            return new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
         }
-        
-        function getStatusClass(status) {
+
+        // Função para obter classe do status
+        function obterClasseStatus(status) {
             const classes = {
-                'Em Andamento': 'bg-orange-100 text-orange-800',
-                'Concluído': 'bg-green-100 text-green-800',
-                'Cancelado': 'bg-red-100 text-red-800'
+                'Planejada': 'status-planejada',
+                'Em Andamento': 'status-em-andamento',
+                'Concluída': 'status-concluida',
+                'Cancelada': 'status-cancelada',
+                'Pausada': 'status-pausada'
             };
-            return classes[status] || 'bg-gray-100 text-gray-800';
+            return classes[status] || 'bg-gray-500';
         }
-        
-        function renderizarImplantacoes() {
-            const container = document.getElementById('listaImplantacoes');
-            const filtroChamado = document.getElementById('filtroChamado').value.toLowerCase();
-            const filtroStatus = document.getElementById('filtroStatus').value;
-            const filtroFornecedor = document.getElementById('filtroFornecedor').value;
-            
-            let implantacoesFiltradas = implantacoes.filter(implantacao => {
-                const matchChamado = implantacao.chamado.toLowerCase().includes(filtroChamado);
-                const matchStatus = !filtroStatus || implantacao.status === filtroStatus;
-                const matchFornecedor = !filtroFornecedor || implantacao.fornecedor === filtroFornecedor;
-                
-                return matchChamado && matchStatus && matchFornecedor;
-            });
+
+        // Função para renderizar barra de progresso
+        function renderizarProgresso(progresso) {
+            const cor = progresso >= 80 ? 'bg-green-500' : progresso >= 50 ? 'bg-yellow-500' : 'bg-blue-500';
+            return `
+                <div class="w-full bg-gray-700 rounded-full h-2">
+                    <div class="${cor} h-2 rounded-full" style="width: ${progresso}%"></div>
+                </div>
+                <span class="text-xs text-gray-300 mt-1">${progresso}%</span>
+            `;
+        }
+
+        // Função para renderizar tabela
+        function renderizarTabela(implantacoesFiltradas = implantacoes) {
+            const tbody = document.getElementById('implantacoesTableBody');
             
             if (implantacoesFiltradas.length === 0) {
-                container.innerHTML = `
-                    <div class="p-8 text-center text-gray-500">
-                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
-                        </svg>
-                        <p class="text-lg font-medium">Nenhuma implantação encontrada</p>
-                        <p class="text-sm">Adicione uma nova implantação ou ajuste os filtros</p>
-                    </div>
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="px-6 py-8 text-center text-gray-400">
+                            <div class="flex flex-col items-center">
+                                <svg class="w-12 h-12 mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                </svg>
+                                <p class="text-lg font-medium">Nenhuma implantação encontrada</p>
+                                <p class="text-sm">Cadastre uma nova implantação para começar</p>
+                            </div>
+                        </td>
+                    </tr>
                 `;
                 return;
             }
-            
-            container.innerHTML = implantacoesFiltradas.map(implantacao => {
-                const diasProducao = calcularDiasProducao(implantacao.dataSolicitacao, implantacao.dataEntrega);
-                
-                return `
-                    <div class="p-6 hover:bg-gray-50 transition-colors fade-in">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-4 flex-1">
-                                <div class="flex-shrink-0">
-                                    <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
-                                    </svg>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-center space-x-3 mb-3">
-                                        <h3 class="text-lg font-semibold text-gray-900 truncate">${implantacao.chamado}</h3>
-                                        <span class="${getStatusClass(implantacao.status)} px-3 py-1 rounded-full text-sm font-medium">${implantacao.status}</span>
-                                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">${implantacao.tipoAgv}</span>
-                                    </div>
-                                    
-                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600 mb-3">
-                                        <div><span class="font-medium">Fornecedor:</span> ${implantacao.fornecedor}</div>
-                                        <div><span class="font-medium">Carteira:</span> ${implantacao.carteira}</div>
-                                        <div><span class="font-medium">Licenças:</span> ${implantacao.licencas}</div>
-                                        <div><span class="font-medium">Dias Produção:</span> <span class="font-bold text-purple-600">${diasProducao} dias</span></div>
-                                    </div>
-                                    
-                                    <div class="grid grid-cols-2 md:grid-cols-2 gap-4 text-sm text-gray-600">
-                                        <div><span class="font-medium">Data Solicitação:</span> ${formatarData(implantacao.dataSolicitacao)}</div>
-                                        <div><span class="font-medium">Data Entrega:</span> ${formatarData(implantacao.dataEntrega)}</div>
-                                    </div>
-                                </div>
+
+            tbody.innerHTML = implantacoesFiltradas.map(implantacao => `
+                <tr class="hover:bg-white/5 transition-colors">
+                    <td class="px-6 py-4 text-white">${implantacao.cliente || '-'}</td>
+                    <td class="px-6 py-4 text-white">${implantacao.projeto || '-'}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 rounded-full text-xs font-medium text-white ${obterClasseStatus(implantacao.status)}">
+                            ${implantacao.status || '-'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-white">${implantacao.responsavel || '-'}</td>
+                    <td class="px-6 py-4 text-white">${formatarData(implantacao.dataInicio)}</td>
+                    <td class="px-6 py-4 text-white">${formatarData(implantacao.previsao)}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex flex-col items-center space-y-1">
+                            ${renderizarProgresso(implantacao.progresso || 0)}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-white text-xs">
+                        ${implantacao.ultimaAlteracao ? `
+                            <div class="text-gray-300">
+                                <div class="font-medium">${implantacao.ultimaAlteracao.cpf}</div>
+                                <div class="text-gray-400">${implantacao.ultimaAlteracao.dataHora}</div>
                             </div>
-                            <div class="flex items-center space-x-2 ml-4">
-                                <button onclick="editarImplantacao(${implantacao.id})" class="text-blue-600 hover:text-blue-800 p-2 rounded-lg hover:bg-blue-50 transition-colors">
+                        ` : '-'}
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex space-x-2">
+                            ${podeEditar ? `
+                                <button onclick="editarImplantacao(${implantacao.id})" class="text-blue-400 hover:text-blue-300 transition-colors" title="Editar">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                     </svg>
                                 </button>
-                                <button onclick="excluirImplantacao(${implantacao.id})" class="text-red-600 hover:text-red-800 p-2 rounded-lg hover:bg-red-50 transition-colors">
+                                <button onclick="excluirImplantacao(${implantacao.id})" class="text-red-400 hover:text-red-300 transition-colors" title="Excluir">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                     </svg>
                                 </button>
-                            </div>
+                            ` : `
+                                <span class="text-gray-500 text-sm">Somente visualização</span>
+                            `}
                         </div>
-                    </div>
-                `;
-            }).join('');
+                    </td>
+                </tr>
+            `).join('');
         }
-        
+
+        // Função para atualizar estatísticas
         function atualizarEstatisticas() {
             const totalImplantacoes = implantacoes.length;
-            const totalAndamento = implantacoes.filter(i => i.status === 'Em Andamento').length;
-            const totalConcluidas = implantacoes.filter(i => i.status === 'Concluído').length;
-            
-            // Calcular tempo médio das implantações concluídas
-            const concluidas = implantacoes.filter(i => i.status === 'Concluído' && i.dataSolicitacao && i.dataEntrega);
-            const tempoMedio = concluidas.length > 0 
-                ? Math.round(concluidas.reduce((acc, i) => acc + calcularDiasProducao(i.dataSolicitacao, i.dataEntrega), 0) / concluidas.length)
-                : 0;
-            
+            const totalEmAndamento = implantacoes.filter(i => i.status === 'Em Andamento').length;
+            const totalConcluidas = implantacoes.filter(i => i.status === 'Concluída').length;
+            const totalPlanejadas = implantacoes.filter(i => i.status === 'Planejada').length;
+
             document.getElementById('totalImplantacoes').textContent = totalImplantacoes;
-            document.getElementById('totalAndamento').textContent = totalAndamento;
+            document.getElementById('totalEmAndamento').textContent = totalEmAndamento;
             document.getElementById('totalConcluidas').textContent = totalConcluidas;
-            document.getElementById('tempoMedio').textContent = tempoMedio;
+            document.getElementById('totalPlanejadas').textContent = totalPlanejadas;
         }
-        
-        function abrirModalNova() {
-            document.getElementById('modalNova').classList.remove('hidden');
-            document.getElementById('formNova').reset();
-            // Definir data atual como padrão para data de solicitação
-            document.getElementById('dataSolicitacao').value = new Date().toISOString().split('T')[0];
+
+        // Função para filtrar implantações
+        function filtrarImplantacoes() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const clienteFilter = document.getElementById('clienteFilter').value;
+
+            const implantacoesFiltradas = implantacoes.filter(implantacao => {
+                const matchSearch = !searchTerm || 
+                    (implantacao.cliente && implantacao.cliente.toLowerCase().includes(searchTerm)) ||
+                    (implantacao.projeto && implantacao.projeto.toLowerCase().includes(searchTerm)) ||
+                    (implantacao.responsavel && implantacao.responsavel.toLowerCase().includes(searchTerm)) ||
+                    (implantacao.status && implantacao.status.toLowerCase().includes(searchTerm));
+                
+                const matchStatus = !statusFilter || implantacao.status === statusFilter;
+                const matchCliente = !clienteFilter || implantacao.cliente === clienteFilter;
+                
+                return matchSearch && matchStatus && matchCliente;
+            });
+
+            renderizarTabela(implantacoesFiltradas);
         }
-        
-        function fecharModal() {
-            document.getElementById('modalNova').classList.add('hidden');
-        }
-        
-        function adicionarImplantacao(event) {
-            event.preventDefault();
+
+        // Event listeners para filtros em tempo real
+        document.getElementById('searchInput').addEventListener('input', filtrarImplantacoes);
+        document.getElementById('statusFilter').addEventListener('change', filtrarImplantacoes);
+        document.getElementById('clienteFilter').addEventListener('change', filtrarImplantacoes);
+
+        // Função para cadastrar nova implantação
+        document.getElementById('formCadastro').addEventListener('submit', function(e) {
+            e.preventDefault();
             
+            const formData = new FormData(e.target);
             const novaImplantacao = {
                 id: Date.now(),
-                status: document.getElementById('status').value,
-                chamado: document.getElementById('chamado').value,
-                dataSolicitacao: document.getElementById('dataSolicitacao').value,
-                fornecedor: document.getElementById('fornecedor').value,
-                carteira: document.getElementById('carteira').value,
-                tipoAgv: document.getElementById('tipoAgv').value,
-                licencas: document.getElementById('licencas').value,
-                dataEntrega: document.getElementById('dataEntrega').value
+                cliente: formData.get('cliente') || '',
+                projeto: formData.get('projeto') || '',
+                status: formData.get('status') || '',
+                responsavel: formData.get('responsavel') || '',
+                dataInicio: formData.get('dataInicio') || '',
+                previsao: formData.get('previsao') || '',
+                progresso: parseInt(formData.get('progresso')) || 0,
+                prioridade: formData.get('prioridade') || '',
+                descricao: formData.get('descricao') || '',
+                ultimaAlteracao: {
+                    cpf: usuarioLogado,
+                    dataHora: obterDataHoraAtual()
+                }
             };
-            
+
             implantacoes.push(novaImplantacao);
-            salvarImplantacoes();
-            renderizarImplantacoes();
+            renderizarTabela();
             atualizarEstatisticas();
-            fecharModal();
-        }
-        
-        function excluirImplantacao(id) {
-            if (confirm('Tem certeza que deseja excluir esta implantação?')) {
-                implantacoes = implantacoes.filter(implantacao => implantacao.id !== id);
-                salvarImplantacoes();
-                renderizarImplantacoes();
-                atualizarEstatisticas();
-            }
-        }
-        
+            fecharModalCadastro();
+            
+            // Mostrar mensagem de sucesso
+            alert('Implantação cadastrada com sucesso!');
+        });
+
+        // Função para editar implantação
         function editarImplantacao(id) {
             const implantacao = implantacoes.find(i => i.id === id);
             if (implantacao) {
+                // Preencher formulário com dados da implantação
+                document.getElementById('cliente').value = implantacao.cliente || '';
+                document.getElementById('projeto').value = implantacao.projeto || '';
                 document.getElementById('status').value = implantacao.status || '';
-                document.getElementById('chamado').value = implantacao.chamado || '';
-                document.getElementById('dataSolicitacao').value = implantacao.dataSolicitacao || '';
-                document.getElementById('fornecedor').value = implantacao.fornecedor || '';
-                document.getElementById('carteira').value = implantacao.carteira || '';
-                document.getElementById('tipoAgv').value = implantacao.tipoAgv || '';
-                document.getElementById('licencas').value = implantacao.licencas || '';
-                document.getElementById('dataEntrega').value = implantacao.dataEntrega || '';
+                document.getElementById('responsavel').value = implantacao.responsavel || '';
+                document.getElementById('dataInicio').value = implantacao.dataInicio || '';
+                document.getElementById('previsao').value = implantacao.previsao || '';
+                document.getElementById('progresso').value = implantacao.progresso || '';
+                document.getElementById('prioridade').value = implantacao.prioridade || '';
+                document.getElementById('descricao').value = implantacao.descricao || '';
                 
-                // Modificar o formulário para edição
-                const form = document.getElementById('formNova');
-                form.onsubmit = function(event) {
-                    event.preventDefault();
+                // Alterar comportamento do formulário para edição
+                const form = document.getElementById('formCadastro');
+                form.onsubmit = function(e) {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
                     
-                    implantacao.status = document.getElementById('status').value;
-                    implantacao.chamado = document.getElementById('chamado').value;
-                    implantacao.dataSolicitacao = document.getElementById('dataSolicitacao').value;
-                    implantacao.fornecedor = document.getElementById('fornecedor').value;
-                    implantacao.carteira = document.getElementById('carteira').value;
-                    implantacao.tipoAgv = document.getElementById('tipoAgv').value;
-                    implantacao.licencas = document.getElementById('licencas').value;
-                    implantacao.dataEntrega = document.getElementById('dataEntrega').value;
+                    // Atualizar implantação existente
+                    const index = implantacoes.findIndex(i => i.id === id);
+                    implantacoes[index] = {
+                        ...implantacoes[index],
+                        cliente: formData.get('cliente') || '',
+                        projeto: formData.get('projeto') || '',
+                        status: formData.get('status') || '',
+                        responsavel: formData.get('responsavel') || '',
+                        dataInicio: formData.get('dataInicio') || '',
+                        previsao: formData.get('previsao') || '',
+                        progresso: parseInt(formData.get('progresso')) || 0,
+                        prioridade: formData.get('prioridade') || '',
+                        descricao: formData.get('descricao') || '',
+                        ultimaAlteracao: {
+                            cpf: usuarioLogado,
+                            dataHora: obterDataHoraAtual()
+                        }
+                    };
                     
-                    salvarImplantacoes();
-                    renderizarImplantacoes();
+                    renderizarTabela();
                     atualizarEstatisticas();
-                    fecharModal();
+                    fecharModalCadastro();
+                    alert('Implantação atualizada com sucesso!');
                     
-                    // Restaurar para modo de adição
-                    form.onsubmit = adicionarImplantacao;
+                    // Restaurar comportamento original do formulário
+                    form.onsubmit = null;
                 };
                 
-                abrirModalNova();
+                abrirModalCadastro();
             }
         }
-        
-        // Event listeners para filtros
-        document.getElementById('filtroChamado').addEventListener('input', renderizarImplantacoes);
-        document.getElementById('filtroStatus').addEventListener('change', renderizarImplantacoes);
-        document.getElementById('filtroFornecedor').addEventListener('change', renderizarImplantacoes);
-        
+
+        // Função para excluir implantação
+        function excluirImplantacao(id) {
+            if (confirm('Tem certeza que deseja excluir esta implantação?')) {
+                implantacoes = implantacoes.filter(i => i.id !== id);
+                renderizarTabela();
+                atualizarEstatisticas();
+                alert('Implantação excluída com sucesso!');
+            }
+        }
+
         // Fechar modal ao clicar fora
-        document.getElementById('modalNova').addEventListener('click', function(event) {
-            if (event.target === this) {
-                fecharModal();
+        document.getElementById('modalCadastro').addEventListener('click', function(e) {
+            if (e.target === this) {
+                fecharModalCadastro();
             }
         });
-        
-        // Inicializar
-        renderizarImplantacoes();
-        atualizarEstatisticas();
+
+        // Função para formatar CPF
+        function formatarCPF(cpf) {
+            cpf = cpf.replace(/\D/g, '');
+            cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+            cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+            cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            return cpf;
+        }
+
+        // Função para limpar CPF (apenas números)
+        function limparCPF(cpf) {
+            return cpf.replace(/\D/g, '');
+        }
+
+        // Função para obter data e hora atual formatada
+        function obterDataHoraAtual() {
+            const agora = new Date();
+            const data = agora.toLocaleDateString('pt-BR');
+            const hora = agora.toLocaleTimeString('pt-BR');
+            return `${data} ${hora}`;
+        }
+
+        // Função para autenticar usuário
+        function autenticarUsuario(cpf) {
+            const cpfLimpo = limparCPF(cpf);
+            return cpfsAutorizados.includes(cpfLimpo);
+        }
+
+        // Função para fazer login
+        function fazerLogin(cpf) {
+            if (autenticarUsuario(cpf)) {
+                podeEditar = true;
+                usuarioLogado = formatarCPF(cpf);
+                
+                // Ocultar modal de autenticação
+                document.getElementById('modalAuth').classList.remove('show');
+                
+                // Mostrar informações do usuário e botão de nova implantação
+                document.getElementById('userInfo').classList.remove('hidden');
+                document.getElementById('userCpf').textContent = usuarioLogado;
+                document.getElementById('btnNovaImplantacao').classList.remove('hidden');
+                
+                // Atualizar tabela para mostrar botões de ação
+                renderizarTabela();
+                
+                return true;
+            }
+            return false;
+        }
+
+        // Função para fazer logout
+        function logout() {
+            podeEditar = false;
+            usuarioLogado = '';
+            
+            // Mostrar modal de autenticação
+            document.getElementById('modalAuth').classList.add('show');
+            
+            // Ocultar informações do usuário e botão de nova implantação
+            document.getElementById('userInfo').classList.add('hidden');
+            document.getElementById('btnNovaImplantacao').classList.add('hidden');
+            
+            // Limpar campo de CPF
+            document.getElementById('cpfInput').value = '';
+            document.getElementById('authError').classList.add('hidden');
+            
+            // Atualizar tabela para ocultar botões de ação
+            renderizarTabela();
+        }
+
+        // Event listener para formatação do CPF
+        document.getElementById('cpfInput').addEventListener('input', function(e) {
+            e.target.value = formatarCPF(e.target.value);
+        });
+
+        // Event listener para o formulário de autenticação
+        document.getElementById('formAuth').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const cpf = document.getElementById('cpfInput').value;
+            const authError = document.getElementById('authError');
+            
+            if (fazerLogin(cpf)) {
+                authError.classList.add('hidden');
+            } else {
+                // Permitir acesso de visualização para CPFs não autorizados
+                podeEditar = false;
+                usuarioLogado = formatarCPF(cpf);
+                
+                // Ocultar modal de autenticação
+                document.getElementById('modalAuth').classList.remove('show');
+                
+                // Mostrar informações do usuário (sem botão de nova implantação)
+                document.getElementById('userInfo').classList.remove('hidden');
+                document.getElementById('userCpf').textContent = usuarioLogado + ' (Somente Visualização)';
+                
+                // Atualizar tabela sem botões de ação
+                renderizarTabela();
+                
+                authError.classList.add('hidden');
+            }
+        });
+
+        // Inicializar página
+        document.addEventListener('DOMContentLoaded', function() {
+            renderizarTabela();
+            atualizarEstatisticas();
+            
+            // Verificar se há sessão ativa (simulação básica)
+            const sessaoAtiva = sessionStorage.getItem('usuarioAutorizado');
+            if (sessaoAtiva) {
+                const cpfSessao = sessionStorage.getItem('cpfUsuario');
+                if (cpfSessao && autenticarUsuario(cpfSessao)) {
+                    fazerLogin(cpfSessao);
+                }
+            }
+        });
+
+        // Salvar sessão quando usuário faz login com sucesso
+        function salvarSessao() {
+            if (podeEditar && usuarioLogado) {
+                sessionStorage.setItem('usuarioAutorizado', 'true');
+                sessionStorage.setItem('cpfUsuario', limparCPF(usuarioLogado));
+            }
+        }
+
+        // Limpar sessão no logout
+        function limparSessao() {
+            sessionStorage.removeItem('usuarioAutorizado');
+            sessionStorage.removeItem('cpfUsuario');
+        }
+
+        // Modificar função de login para salvar sessão
+        const fazerLoginOriginal = fazerLogin;
+        fazerLogin = function(cpf) {
+            const resultado = fazerLoginOriginal(cpf);
+            if (resultado) {
+                salvarSessao();
+            }
+            return resultado;
+        };
+
+        // Modificar função de logout para limpar sessão
+        const logoutOriginal = logout;
+        logout = function() {
+            limparSessao();
+            logoutOriginal();
+        };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'987bad96822ff1dd',t:'MTc1OTMxODc1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'987c6016965ef1dd',t:'MTc1OTMyNjA2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
