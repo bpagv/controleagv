@@ -44,7 +44,8 @@
         .status-ativa { background-color: #10b981; }
         .status-expirada { background-color: #ef4444; }
         .status-suspensa { background-color: #f59e0b; }
-        .status-pendente { background-color: #6b7280; }
+        .status-cancelada { background-color: #6b7280; }
+        .status-pendente { background-color: #3b82f6; }
         
         .modal {
             display: none;
@@ -153,7 +154,7 @@
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
             <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 card-hover">
                 <div class="flex items-center justify-between">
                     <div>
@@ -209,13 +210,27 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white/70 text-sm">Pendentes</p>
+                        <p class="text-3xl font-bold text-purple-400" id="totalPendentes">0</p>
+                    </div>
+                    <div class="bg-purple-500/20 p-3 rounded-lg">
+                        <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Search and Filter -->
         <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 mb-8">
             <div class="flex flex-col md:flex-row gap-4">
                 <div class="flex-1">
-                    <input type="text" id="searchInput" placeholder="Buscar por cliente, licença ou status..." class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="text" id="searchInput" placeholder="Buscar por cliente, licença, responsável ou status..." class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div class="flex gap-2">
                     <select id="statusFilter" class="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -223,6 +238,7 @@
                         <option value="Ativa">Ativa</option>
                         <option value="Expirada">Expirada</option>
                         <option value="Suspensa">Suspensa</option>
+                        <option value="Cancelada">Cancelada</option>
                         <option value="Pendente">Pendente</option>
                     </select>
                     <select id="clienteFilter" class="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -248,9 +264,10 @@
                             <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Cliente</th>
                             <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Licença</th>
                             <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Status</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Responsável</th>
                             <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Data Início</th>
-                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Data Fim</th>
-                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Usuários</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Data Expiração</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Dias Restantes</th>
                             <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Última Alteração</th>
                             <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Ações</th>
                         </tr>
@@ -288,8 +305,8 @@
                         </select>
                     </div>
                     <div>
-                        <label for="licenca" class="block text-sm font-medium text-gray-300 mb-2">Código da Licença</label>
-                        <input type="text" id="licenca" name="licenca" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="AGV-2024-001">
+                        <label for="licenca" class="block text-sm font-medium text-gray-300 mb-2">Nome da Licença</label>
+                        <input type="text" id="licenca" name="licenca" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nome da licença">
                     </div>
                     <div>
                         <label for="status" class="block text-sm font-medium text-gray-300 mb-2">Status</label>
@@ -298,20 +315,35 @@
                             <option value="Ativa">Ativa</option>
                             <option value="Expirada">Expirada</option>
                             <option value="Suspensa">Suspensa</option>
+                            <option value="Cancelada">Cancelada</option>
                             <option value="Pendente">Pendente</option>
                         </select>
                     </div>
                     <div>
-                        <label for="usuarios" class="block text-sm font-medium text-gray-300 mb-2">Número de Usuários</label>
-                        <input type="number" id="usuarios" name="usuarios" min="1" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="10">
+                        <label for="responsavel" class="block text-sm font-medium text-gray-300 mb-2">Responsável</label>
+                        <input type="text" id="responsavel" name="responsavel" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nome do responsável">
                     </div>
                     <div>
                         <label for="dataInicio" class="block text-sm font-medium text-gray-300 mb-2">Data de Início</label>
                         <input type="date" id="dataInicio" name="dataInicio" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                     </div>
                     <div>
-                        <label for="dataFim" class="block text-sm font-medium text-gray-300 mb-2">Data de Fim</label>
-                        <input type="date" id="dataFim" name="dataFim" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <label for="dataExpiracao" class="block text-sm font-medium text-gray-300 mb-2">Data de Expiração</label>
+                        <input type="date" id="dataExpiracao" name="dataExpiracao" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label for="tipoLicenca" class="block text-sm font-medium text-gray-300 mb-2">Tipo de Licença</label>
+                        <select id="tipoLicenca" name="tipoLicenca" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Selecione o tipo</option>
+                            <option value="Básica">Básica</option>
+                            <option value="Profissional">Profissional</option>
+                            <option value="Enterprise">Enterprise</option>
+                            <option value="Premium">Premium</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="numeroUsuarios" class="block text-sm font-medium text-gray-300 mb-2">Número de Usuários</label>
+                        <input type="number" id="numeroUsuarios" name="numeroUsuarios" min="1" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="1">
                     </div>
                 </div>
                 
@@ -333,14 +365,14 @@
     </div>
 
     <script>
-// CPFs autorizados para edição (apenas números) - SEUS CPFs REAIS
-const cpfsAutorizados = [
-    '06660278974',  // CPF: 066.602.789-74
-    '08788382958',  // CPF: 087.883.829-58
-    '23100855884',  // CPF: 231.008.558-84
-    '08843197924',  // CPF: 088.431.979-24
-    '39540020867'   // CPF: 395.400.208-67
-];
+        // CPFs autorizados para edição (apenas números) - SEUS CPFs REAIS
+        const cpfsAutorizados = [
+            '06660278974',  // CPF: 066.602.789-74
+            '08788382958',  // CPF: 087.883.829-58
+            '23100855884',  // CPF: 231.008.558-84
+            '08843197924',  // CPF: 088.431.979-24
+            '39540020867'   // CPF: 395.400.208-67
+        ];
         
         // Variável para controlar se o usuário tem permissão de edição
         let podeEditar = false;
@@ -351,43 +383,49 @@ const cpfsAutorizados = [
             {
                 id: 1,
                 cliente: "Empresa A",
-                licenca: "AGV-2024-001",
+                licenca: "AGV Professional",
                 status: "Ativa",
+                responsavel: "João Silva",
                 dataInicio: "2024-01-01",
-                dataFim: "2024-12-31",
-                usuarios: 50,
-                observacoes: "Licença principal para call center",
+                dataExpiracao: "2024-12-31",
+                tipoLicenca: "Profissional",
+                numeroUsuarios: 50,
+                observacoes: "Licença principal para operações",
                 ultimaAlteracao: {
-                    cpf: "123.456.789-01",
-                    dataHora: "2024-01-15 10:30:25"
+                    cpf: "066.602.789-74",
+                    dataHora: "2024-01-20 14:30:25"
                 }
             },
             {
                 id: 2,
                 cliente: "Empresa B",
-                licenca: "AGV-2024-002",
-                status: "Suspensa",
-                dataInicio: "2024-02-01",
-                dataFim: "2024-11-30",
-                usuarios: 25,
-                observacoes: "Suspensa por falta de pagamento",
+                licenca: "AGV Basic",
+                status: "Expirada",
+                responsavel: "Maria Santos",
+                dataInicio: "2023-06-01",
+                dataExpiracao: "2024-01-15",
+                tipoLicenca: "Básica",
+                numeroUsuarios: 10,
+                observacoes: "Licença expirada - renovação pendente",
                 ultimaAlteracao: {
-                    cpf: "987.654.321-00",
-                    dataHora: "2024-01-20 14:15:42"
+                    cpf: "087.883.829-58",
+                    dataHora: "2024-01-18 09:15:42"
                 }
             },
             {
                 id: 3,
                 cliente: "Empresa C",
-                licenca: "AGV-2023-015",
-                status: "Expirada",
-                dataInicio: "2023-06-01",
-                dataFim: "2023-12-31",
-                usuarios: 100,
-                observacoes: "Licença expirada - renovação pendente",
+                licenca: "AGV Enterprise",
+                status: "Suspensa",
+                responsavel: "Pedro Costa",
+                dataInicio: "2023-09-01",
+                dataExpiracao: "2024-08-31",
+                tipoLicenca: "Enterprise",
+                numeroUsuarios: 200,
+                observacoes: "Suspensa por falta de pagamento",
                 ultimaAlteracao: {
-                    cpf: "111.222.333-44",
-                    dataHora: "2024-01-01 08:00:12"
+                    cpf: "231.008.558-84",
+                    dataHora: "2024-01-15 16:45:12"
                 }
             }
         ];
@@ -414,12 +452,33 @@ const cpfsAutorizados = [
             return new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
         }
 
+        // Função para calcular dias restantes
+        function calcularDiasRestantes(dataExpiracao) {
+            if (!dataExpiracao) return '-';
+            
+            const hoje = new Date();
+            const expiracao = new Date(dataExpiracao + 'T00:00:00');
+            const diffTime = expiracao - hoje;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays < 0) {
+                return `<span class="text-red-400">Expirada há ${Math.abs(diffDays)} dias</span>`;
+            } else if (diffDays === 0) {
+                return `<span class="text-yellow-400">Expira hoje</span>`;
+            } else if (diffDays <= 30) {
+                return `<span class="text-yellow-400">${diffDays} dias</span>`;
+            } else {
+                return `<span class="text-green-400">${diffDays} dias</span>`;
+            }
+        }
+
         // Função para obter classe do status
         function obterClasseStatus(status) {
             const classes = {
                 'Ativa': 'status-ativa',
                 'Expirada': 'status-expirada',
                 'Suspensa': 'status-suspensa',
+                'Cancelada': 'status-cancelada',
                 'Pendente': 'status-pendente'
             };
             return classes[status] || 'bg-gray-500';
@@ -432,7 +491,7 @@ const cpfsAutorizados = [
             if (licencasFiltradas.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="8" class="px-6 py-8 text-center text-gray-400">
+                        <td colspan="9" class="px-6 py-8 text-center text-gray-400">
                             <div class="flex flex-col items-center">
                                 <svg class="w-12 h-12 mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
@@ -449,15 +508,16 @@ const cpfsAutorizados = [
             tbody.innerHTML = licencasFiltradas.map(licenca => `
                 <tr class="hover:bg-white/5 transition-colors">
                     <td class="px-6 py-4 text-white">${licenca.cliente || '-'}</td>
-                    <td class="px-6 py-4 text-white font-mono">${licenca.licenca || '-'}</td>
+                    <td class="px-6 py-4 text-white">${licenca.licenca || '-'}</td>
                     <td class="px-6 py-4">
                         <span class="px-2 py-1 rounded-full text-xs font-medium text-white ${obterClasseStatus(licenca.status)}">
                             ${licenca.status || '-'}
                         </span>
                     </td>
+                    <td class="px-6 py-4 text-white">${licenca.responsavel || '-'}</td>
                     <td class="px-6 py-4 text-white">${formatarData(licenca.dataInicio)}</td>
-                    <td class="px-6 py-4 text-white">${formatarData(licenca.dataFim)}</td>
-                    <td class="px-6 py-4 text-white">${licenca.usuarios || '-'}</td>
+                    <td class="px-6 py-4 text-white">${formatarData(licenca.dataExpiracao)}</td>
+                    <td class="px-6 py-4">${calcularDiasRestantes(licenca.dataExpiracao)}</td>
                     <td class="px-6 py-4 text-white text-xs">
                         ${licenca.ultimaAlteracao ? `
                             <div class="text-gray-300">
@@ -494,11 +554,13 @@ const cpfsAutorizados = [
             const totalAtivas = licencas.filter(l => l.status === 'Ativa').length;
             const totalExpiradas = licencas.filter(l => l.status === 'Expirada').length;
             const totalSuspensas = licencas.filter(l => l.status === 'Suspensa').length;
+            const totalPendentes = licencas.filter(l => l.status === 'Pendente').length;
 
             document.getElementById('totalLicencas').textContent = totalLicencas;
             document.getElementById('totalAtivas').textContent = totalAtivas;
             document.getElementById('totalExpiradas').textContent = totalExpiradas;
             document.getElementById('totalSuspensas').textContent = totalSuspensas;
+            document.getElementById('totalPendentes').textContent = totalPendentes;
         }
 
         // Função para filtrar licenças
@@ -511,6 +573,7 @@ const cpfsAutorizados = [
                 const matchSearch = !searchTerm || 
                     (licenca.cliente && licenca.cliente.toLowerCase().includes(searchTerm)) ||
                     (licenca.licenca && licenca.licenca.toLowerCase().includes(searchTerm)) ||
+                    (licenca.responsavel && licenca.responsavel.toLowerCase().includes(searchTerm)) ||
                     (licenca.status && licenca.status.toLowerCase().includes(searchTerm));
                 
                 const matchStatus = !statusFilter || licenca.status === statusFilter;
@@ -537,9 +600,11 @@ const cpfsAutorizados = [
                 cliente: formData.get('cliente') || '',
                 licenca: formData.get('licenca') || '',
                 status: formData.get('status') || '',
+                responsavel: formData.get('responsavel') || '',
                 dataInicio: formData.get('dataInicio') || '',
-                dataFim: formData.get('dataFim') || '',
-                usuarios: parseInt(formData.get('usuarios')) || 0,
+                dataExpiracao: formData.get('dataExpiracao') || '',
+                tipoLicenca: formData.get('tipoLicenca') || '',
+                numeroUsuarios: parseInt(formData.get('numeroUsuarios')) || 1,
                 observacoes: formData.get('observacoes') || '',
                 ultimaAlteracao: {
                     cpf: usuarioLogado,
@@ -564,9 +629,11 @@ const cpfsAutorizados = [
                 document.getElementById('cliente').value = licenca.cliente || '';
                 document.getElementById('licenca').value = licenca.licenca || '';
                 document.getElementById('status').value = licenca.status || '';
+                document.getElementById('responsavel').value = licenca.responsavel || '';
                 document.getElementById('dataInicio').value = licenca.dataInicio || '';
-                document.getElementById('dataFim').value = licenca.dataFim || '';
-                document.getElementById('usuarios').value = licenca.usuarios || '';
+                document.getElementById('dataExpiracao').value = licenca.dataExpiracao || '';
+                document.getElementById('tipoLicenca').value = licenca.tipoLicenca || '';
+                document.getElementById('numeroUsuarios').value = licenca.numeroUsuarios || '';
                 document.getElementById('observacoes').value = licenca.observacoes || '';
                 
                 // Alterar comportamento do formulário para edição
@@ -582,9 +649,11 @@ const cpfsAutorizados = [
                         cliente: formData.get('cliente') || '',
                         licenca: formData.get('licenca') || '',
                         status: formData.get('status') || '',
+                        responsavel: formData.get('responsavel') || '',
                         dataInicio: formData.get('dataInicio') || '',
-                        dataFim: formData.get('dataFim') || '',
-                        usuarios: parseInt(formData.get('usuarios')) || 0,
+                        dataExpiracao: formData.get('dataExpiracao') || '',
+                        tipoLicenca: formData.get('tipoLicenca') || '',
+                        numeroUsuarios: parseInt(formData.get('numeroUsuarios')) || 1,
                         observacoes: formData.get('observacoes') || '',
                         ultimaAlteracao: {
                             cpf: usuarioLogado,
@@ -644,34 +713,6 @@ const cpfsAutorizados = [
             return `${data} ${hora}`;
         }
 
-        // Função para autenticar usuário
-        function autenticarUsuario(cpf) {
-            const cpfLimpo = limparCPF(cpf);
-            return cpfsAutorizados.includes(cpfLimpo);
-        }
-
-        // Função para fazer login
-        function fazerLogin(cpf) {
-            if (autenticarUsuario(cpf)) {
-                podeEditar = true;
-                usuarioLogado = formatarCPF(cpf);
-                
-                // Ocultar modal de autenticação
-                document.getElementById('modalAuth').classList.remove('show');
-                
-                // Mostrar informações do usuário e botão de nova licença
-                document.getElementById('userInfo').classList.remove('hidden');
-                document.getElementById('userCpf').textContent = usuarioLogado;
-                document.getElementById('btnNovaLicenca').classList.remove('hidden');
-                
-                // Atualizar tabela para mostrar botões de ação
-                renderizarTabela();
-                
-                return true;
-            }
-            return false;
-        }
-
         // Função para fazer logout
         function logout() {
             podeEditar = false;
@@ -682,64 +723,20 @@ const cpfsAutorizados = [
             sessionStorage.removeItem('usuarioVisualizacao');
             sessionStorage.removeItem('cpfUsuario');
             
-            // Event listener para o formulário de autenticação
-document.getElementById('formAuth').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const cpf = document.getElementById('cpfInput').value;
-    const authError = document.getElementById('authError');
-    const cpfLimpo = limparCPF(cpf);
-    
-    // Verificar se o CPF tem pelo menos 11 dígitos
-    if (cpfLimpo.length !== 11) {
-        authError.textContent = 'Digite um CPF válido com 11 dígitos';
-        authError.classList.remove('hidden');
-        return;
-    }
-    
-    // Verificar se é um CPF autorizado
-    if (cpfsAutorizados.includes(cpfLimpo)) {
-        // CPF autorizado - acesso completo
-        podeEditar = true;
-        usuarioLogado = formatarCPF(cpf);
-        
-        // Ocultar modal de autenticação
-        document.getElementById('modalAuth').classList.remove('show');
-        
-        // Mostrar informações do usuário e botão de nova implantação/licença
-        document.getElementById('userInfo').classList.remove('hidden');
-        document.getElementById('userCpf').textContent = usuarioLogado;
-        document.getElementById('btnNovaImplantacao').classList.remove('hidden'); // Para implantações
-        // OU
-        document.getElementById('btnNovaLicenca').classList.remove('hidden'); // Para licenças
-        
-        // Salvar sessão
-        sessionStorage.setItem('usuarioAutorizado', 'true');
-        sessionStorage.setItem('cpfUsuario', cpfLimpo);
-        
-        authError.classList.add('hidden');
-    } else {
-        // CPF não autorizado - apenas visualização
-        podeEditar = false;
-        usuarioLogado = formatarCPF(cpf);
-        
-        // Ocultar modal de autenticação
-        document.getElementById('modalAuth').classList.remove('show');
-        
-        // Mostrar informações do usuário (sem botão de nova implantação/licença)
-        document.getElementById('userInfo').classList.remove('hidden');
-        document.getElementById('userCpf').textContent = usuarioLogado + ' (Somente Visualização)';
-        
-        // Salvar sessão como visualização
-        sessionStorage.setItem('usuarioVisualizacao', 'true');
-        sessionStorage.setItem('cpfUsuario', cpfLimpo);
-        
-        authError.classList.add('hidden');
-    }
-    
-    // Atualizar tabela com as permissões corretas
-    renderizarTabela();
-    });
+            // Mostrar modal de autenticação
+            document.getElementById('modalAuth').classList.add('show');
+            
+            // Ocultar informações do usuário e botão de nova licença
+            document.getElementById('userInfo').classList.add('hidden');
+            document.getElementById('btnNovaLicenca').classList.add('hidden');
+            
+            // Limpar campo de CPF
+            document.getElementById('cpfInput').value = '';
+            document.getElementById('authError').classList.add('hidden');
+            
+            // Atualizar tabela para ocultar botões de ação
+            renderizarTabela();
+        }
 
         // Event listener para formatação do CPF
         document.getElementById('cpfInput').addEventListener('input', function(e) {
@@ -752,15 +749,17 @@ document.getElementById('formAuth').addEventListener('submit', function(e) {
             
             const cpf = document.getElementById('cpfInput').value;
             const authError = document.getElementById('authError');
+            const cpfLimpo = limparCPF(cpf);
             
             // Verificar se o CPF tem pelo menos 11 dígitos
-            if (limparCPF(cpf).length < 11) {
-                authError.textContent = 'Digite um CPF válido';
+            if (cpfLimpo.length !== 11) {
+                authError.textContent = 'Digite um CPF válido com 11 dígitos';
                 authError.classList.remove('hidden');
                 return;
             }
             
-            if (autenticarUsuario(cpf)) {
+            // Verificar se é um CPF autorizado
+            if (cpfsAutorizados.includes(cpfLimpo)) {
                 // CPF autorizado - acesso completo
                 podeEditar = true;
                 usuarioLogado = formatarCPF(cpf);
@@ -775,7 +774,7 @@ document.getElementById('formAuth').addEventListener('submit', function(e) {
                 
                 // Salvar sessão
                 sessionStorage.setItem('usuarioAutorizado', 'true');
-                sessionStorage.setItem('cpfUsuario', limparCPF(cpf));
+                sessionStorage.setItem('cpfUsuario', cpfLimpo);
                 
                 authError.classList.add('hidden');
             } else {
@@ -792,7 +791,7 @@ document.getElementById('formAuth').addEventListener('submit', function(e) {
                 
                 // Salvar sessão como visualização
                 sessionStorage.setItem('usuarioVisualizacao', 'true');
-                sessionStorage.setItem('cpfUsuario', limparCPF(cpf));
+                sessionStorage.setItem('cpfUsuario', cpfLimpo);
                 
                 authError.classList.add('hidden');
             }
@@ -802,43 +801,41 @@ document.getElementById('formAuth').addEventListener('submit', function(e) {
         });
 
         // Inicializar página
-document.addEventListener('DOMContentLoaded', function() {
-    renderizarTabela();
-    atualizarEstatisticas();
-    
-    // Verificar se há sessão ativa
-    const sessaoAutorizada = sessionStorage.getItem('usuarioAutorizado');
-    const sessaoVisualizacao = sessionStorage.getItem('usuarioVisualizacao');
-    const cpfSessao = sessionStorage.getItem('cpfUsuario');
-    
-    if (cpfSessao && (sessaoAutorizada || sessaoVisualizacao)) {
-        const cpfFormatado = formatarCPF(cpfSessao);
-        
-        if (sessaoAutorizada && cpfsAutorizados.includes(cpfSessao)) {
-            // Usuário autorizado
-            podeEditar = true;
-            usuarioLogado = cpfFormatado;
+        document.addEventListener('DOMContentLoaded', function() {
+            renderizarTabela();
+            atualizarEstatisticas();
             
-            document.getElementById('modalAuth').classList.remove('show');
-            document.getElementById('userInfo').classList.remove('hidden');
-            document.getElementById('userCpf').textContent = usuarioLogado;
-            document.getElementById('btnbtnNovaLicenca').classList.remove('hidden'); // Para implantações
-            // OU
-            document.getElementById('btnNovaLicenca').classList.remove('hidden'); // Para licenças
-        } else if (sessaoVisualizacao) {
-            // Usuário apenas visualização
-            podeEditar = false;
-            usuarioLogado = cpfFormatado;
+            // Verificar se há sessão ativa
+            const sessaoAutorizada = sessionStorage.getItem('usuarioAutorizado');
+            const sessaoVisualizacao = sessionStorage.getItem('usuarioVisualizacao');
+            const cpfSessao = sessionStorage.getItem('cpfUsuario');
             
-            document.getElementById('modalAuth').classList.remove('show');
-            document.getElementById('userInfo').classList.remove('hidden');
-            document.getElementById('userCpf').textContent = usuarioLogado + ' (Somente Visualização)';
-        }
-        
-        renderizarTabela();
-    }
-});
+            if (cpfSessao && (sessaoAutorizada || sessaoVisualizacao)) {
+                const cpfFormatado = formatarCPF(cpfSessao);
+                
+                if (sessaoAutorizada && cpfsAutorizados.includes(cpfSessao)) {
+                    // Usuário autorizado
+                    podeEditar = true;
+                    usuarioLogado = cpfFormatado;
+                    
+                    document.getElementById('modalAuth').classList.remove('show');
+                    document.getElementById('userInfo').classList.remove('hidden');
+                    document.getElementById('userCpf').textContent = usuarioLogado;
+                    document.getElementById('btnNovaLicenca').classList.remove('hidden');
+                } else if (sessaoVisualizacao) {
+                    // Usuário apenas visualização
+                    podeEditar = false;
+                    usuarioLogado = cpfFormatado;
+                    
+                    document.getElementById('modalAuth').classList.remove('show');
+                    document.getElementById('userInfo').classList.remove('hidden');
+                    document.getElementById('userCpf').textContent = usuarioLogado + ' (Somente Visualização)';
+                }
+                
+                renderizarTabela();
+            }
+        });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'987c708137e5f1dd',t:'MTc1OTMyNjczNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'987cb3a19403f1dd',t:'MTc1OTMyOTQ4NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
 
