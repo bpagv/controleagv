@@ -5,7 +5,6 @@
     window.location.href = "../index.html"; // volta um nível para cima
   }
 </script>
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -70,7 +69,7 @@
             border-radius: 1rem;
             padding: 2rem;
             width: 90%;
-            max-width: 700px;
+            max-width: 900px;
             max-height: 90vh;
             overflow-y: auto;
             border: 1px solid #374151;
@@ -154,15 +153,15 @@
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 card-hover">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-white/70 text-sm">Total de Licenças</p>
-                        <p class="text-3xl font-bold text-white" id="totalLicencas">0</p>
+                        <p class="text-3xl font-bold text-purple-400" id="totalLicencas">0</p>
                     </div>
-                    <div class="bg-blue-500/20 p-3 rounded-lg">
-                        <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="bg-purple-500/20 p-3 rounded-lg">
+                        <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                         </svg>
                     </div>
@@ -172,12 +171,12 @@
             <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 card-hover">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-white/70 text-sm">Ativas</p>
-                        <p class="text-3xl font-bold text-green-400" id="totalAtivas">0</p>
+                        <p class="text-white/70 text-sm">Total de Canais</p>
+                        <p class="text-3xl font-bold text-blue-400" id="totalCanais">0</p>
                     </div>
-                    <div class="bg-green-500/20 p-3 rounded-lg">
-                        <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    <div class="bg-blue-500/20 p-3 rounded-lg">
+                        <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                         </svg>
                     </div>
                 </div>
@@ -186,26 +185,12 @@
             <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 card-hover">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-white/70 text-sm">Expiradas</p>
-                        <p class="text-3xl font-bold text-red-400" id="totalExpiradas">0</p>
-                    </div>
-                    <div class="bg-red-500/20 p-3 rounded-lg">
-                        <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 card-hover">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-white/70 text-sm">Suspensas</p>
-                        <p class="text-3xl font-bold text-yellow-400" id="totalSuspensas">0</p>
+                        <p class="text-white/70 text-sm">Total Valor Licença</p>
+                        <p class="text-3xl font-bold text-yellow-400" id="totalValorLicenca">R$ 0,00</p>
                     </div>
                     <div class="bg-yellow-500/20 p-3 rounded-lg">
                         <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
                         </svg>
                     </div>
                 </div>
@@ -214,12 +199,13 @@
             <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 card-hover">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-white/70 text-sm">Pendentes</p>
-                        <p class="text-3xl font-bold text-purple-400" id="totalPendentes">0</p>
+                        <p class="text-white/70 text-sm">Total de Campanhas</p>
+                        <p class="text-3xl font-bold text-green-400" id="totalCampanhas">0</p>
                     </div>
-                    <div class="bg-purple-500/20 p-3 rounded-lg">
-                        <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    <div class="bg-green-500/20 p-3 rounded-lg">
+                        <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
                         </svg>
                     </div>
                 </div>
@@ -233,20 +219,14 @@
                     <input type="text" id="searchInput" placeholder="Buscar por cliente, licença, responsável ou status..." class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div class="flex gap-2">
-                    <select id="statusFilter" class="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">Status</option>
-                        <option value="Ativa">Ativa</option>
-                        <option value="Expirada">Expirada</option>
-                        <option value="Suspensa">Suspensa</option>
-                        <option value="Cancelada">Cancelada</option>
-                        <option value="Pendente">Pendente</option>
-                    </select>
-                    <select id="clienteFilter" class="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">Cliente</option>
-                        <option value="Empresa A">Empresa A</option>
-                        <option value="Empresa B">Empresa B</option>
-                        <option value="Empresa C">Empresa C</option>
-                        <option value="Empresa D">Empresa D</option>
+                    <select id="fornecedorFilter" class="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Fornecedor</option>
+                        <option value="Aspect">Aspect</option>
+                        <option value="Paneas">Paneas</option>
+                        <option value="Pontal">Pontal</option>
+                        <option value="Robbu">Robbu</option>
+                        <option value="Sinergytech">Sinergytech</option>
+                        <option value="TechIA">TechIA</option>
                     </select>
                     <button onclick="filtrarLicencas()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
                         Filtrar
@@ -261,13 +241,20 @@
                 <table class="w-full">
                     <thead class="bg-black/50">
                         <tr>
-                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Cliente</th>
-                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Licença</th>
-                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Status</th>
-                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Responsável</th>
-                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Data Início</th>
-                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Data Expiração</th>
-                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Dias Restantes</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Fornecedor</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Código</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Carteira</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Campanha</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Tipo</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Canais</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">AV</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Transbordo</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">DNIS</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Tech</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">KMG</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Ambiente</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Valor da Licença</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Valor Total Licença</th>
                             <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Última Alteração</th>
                             <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Ações</th>
                         </tr>
@@ -295,61 +282,77 @@
             <form id="formCadastro" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label for="cliente" class="block text-sm font-medium text-gray-300 mb-2">Cliente</label>
-                        <select id="cliente" name="cliente" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <option value="">Selecione o cliente</option>
-                            <option value="Empresa A">Empresa A</option>
-                            <option value="Empresa B">Empresa B</option>
-                            <option value="Empresa C">Empresa C</option>
-                            <option value="Empresa D">Empresa D</option>
+                        <label for="fornecedor" class="block text-sm font-medium text-gray-300 mb-2">Fornecedor</label>
+                        <select id="fornecedor" name="fornecedor" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Selecione o fornecedor</option>
+                            <option value="Aspect">Aspect</option>
+                            <option value="Paneas">Paneas</option>
+                            <option value="Pontal">Pontal</option>
+                            <option value="Robbu">Robbu</option>
+                            <option value="Sinergytech">Sinergytech</option>
+                            <option value="TechIA">TechIA</option>
                         </select>
                     </div>
                     <div>
-                        <label for="licenca" class="block text-sm font-medium text-gray-300 mb-2">Nome da Licença</label>
-                        <input type="text" id="licenca" name="licenca" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nome da licença">
+                        <label for="codigo" class="block text-sm font-medium text-gray-300 mb-2">Código <span class="text-gray-500">(opcional)</span></label>
+                        <input type="text" id="codigo" name="codigo" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Código da licença">
                     </div>
                     <div>
-                        <label for="status" class="block text-sm font-medium text-gray-300 mb-2">Status</label>
-                        <select id="status" name="status" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <option value="">Selecione o status</option>
-                            <option value="Ativa">Ativa</option>
-                            <option value="Expirada">Expirada</option>
-                            <option value="Suspensa">Suspensa</option>
-                            <option value="Cancelada">Cancelada</option>
-                            <option value="Pendente">Pendente</option>
-                        </select>
+                        <label for="carteira" class="block text-sm font-medium text-gray-300 mb-2">Carteira</label>
+                        <input type="text" id="carteira" name="carteira" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nome da carteira">
                     </div>
                     <div>
-                        <label for="responsavel" class="block text-sm font-medium text-gray-300 mb-2">Responsável</label>
-                        <input type="text" id="responsavel" name="responsavel" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nome do responsável">
+                        <label for="campanha" class="block text-sm font-medium text-gray-300 mb-2">Campanha</label>
+                        <input type="text" id="campanha" name="campanha" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nome da campanha">
                     </div>
                     <div>
-                        <label for="dataInicio" class="block text-sm font-medium text-gray-300 mb-2">Data de Início</label>
-                        <input type="date" id="dataInicio" name="dataInicio" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    </div>
-                    <div>
-                        <label for="dataExpiracao" class="block text-sm font-medium text-gray-300 mb-2">Data de Expiração</label>
-                        <input type="date" id="dataExpiracao" name="dataExpiracao" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    </div>
-                    <div>
-                        <label for="tipoLicenca" class="block text-sm font-medium text-gray-300 mb-2">Tipo de Licença</label>
-                        <select id="tipoLicenca" name="tipoLicenca" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <label for="tipo" class="block text-sm font-medium text-gray-300 mb-2">Tipo</label>
+                        <select id="tipo" name="tipo" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             <option value="">Selecione o tipo</option>
-                            <option value="Básica">Básica</option>
-                            <option value="Profissional">Profissional</option>
-                            <option value="Enterprise">Enterprise</option>
-                            <option value="Premium">Premium</option>
+                            <option value="Localizador">Localizador</option>
+                            <option value="Localizador SmartPlay">Localizador SmartPlay</option>
+                            <option value="Negociador">Negociador</option>
+                            <option value="Negociador SmartPlay">Negociador SmartPlay</option>
+                            <option value="Recado">Recado</option>
+                            <option value="Preventivo">Preventivo</option>
                         </select>
                     </div>
                     <div>
-                        <label for="numeroUsuarios" class="block text-sm font-medium text-gray-300 mb-2">Número de Usuários</label>
-                        <input type="number" id="numeroUsuarios" name="numeroUsuarios" min="1" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="1">
+                        <label for="canais" class="block text-sm font-medium text-gray-300 mb-2">Canais</label>
+                        <input type="number" id="canais" name="canais" min="1" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Número de canais">
                     </div>
-                </div>
-                
-                <div>
-                    <label for="observacoes" class="block text-sm font-medium text-gray-300 mb-2">Observações</label>
-                    <textarea id="observacoes" name="observacoes" rows="3" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Observações sobre a licença..."></textarea>
+                    <div>
+                        <label for="av" class="block text-sm font-medium text-gray-300 mb-2">AV</label>
+                        <input type="number" id="av" name="av" min="1" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Quantidade de AV">
+                    </div>
+                    <div>
+                        <label for="transbordo" class="block text-sm font-medium text-gray-300 mb-2">Transbordo <span class="text-gray-500">(opcional)</span></label>
+                        <input type="text" id="transbordo" name="transbordo" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Transbordo">
+                    </div>
+                    <div>
+                        <label for="dnis" class="block text-sm font-medium text-gray-300 mb-2">DNIS <span class="text-gray-500">(opcional)</span></label>
+                        <input type="text" id="dnis" name="dnis" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="DNIS">
+                    </div>
+                    <div>
+                        <label for="tech" class="block text-sm font-medium text-gray-300 mb-2">Tech <span class="text-gray-500">(opcional)</span></label>
+                        <input type="text" id="tech" name="tech" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Tech">
+                    </div>
+                    <div>
+                        <label for="kmg" class="block text-sm font-medium text-gray-300 mb-2">KMG <span class="text-gray-500">(opcional)</span></label>
+                        <input type="text" id="kmg" name="kmg" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="KMG">
+                    </div>
+                    <div>
+                        <label for="ambiente" class="block text-sm font-medium text-gray-300 mb-2">Ambiente</label>
+                        <input type="text" id="ambiente" name="ambiente" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Ambiente">
+                    </div>
+                    <div>
+                        <label for="valorLicenca" class="block text-sm font-medium text-gray-300 mb-2">Valor da Licença (R$)</label>
+                        <input type="number" id="valorLicenca" name="valorLicenca" min="0" step="0.01" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0,00">
+                    </div>
+                    <div>
+                        <label for="valorTotalLicenca" class="block text-sm font-medium text-gray-300 mb-2">Valor Total Licença (R$)</label>
+                        <input type="number" id="valorTotalLicenca" name="valorTotalLicenca" min="0" step="0.01" readonly class="w-full px-4 py-3 bg-gray-600 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none cursor-not-allowed" placeholder="Calculado automaticamente">
+                    </div>
                 </div>
                 
                 <div class="flex justify-end space-x-4 pt-4">
@@ -382,15 +385,20 @@
         let licencas = [
             {
                 id: 1,
-                cliente: "Empresa A",
-                licenca: "AGV Professional",
-                status: "Ativa",
-                responsavel: "João Silva",
-                dataInicio: "2024-01-01",
-                dataExpiracao: "2024-12-31",
-                tipoLicenca: "Profissional",
-                numeroUsuarios: 50,
-                observacoes: "Licença principal para operações",
+                fornecedor: "Aspect",
+                codigo: "ASP001",
+                carteira: "Cobrança Premium",
+                campanha: "Recuperação 2024",
+                tipo: "Negociador SmartPlay",
+                canais: 50,
+                av: 25,
+                transbordo: "SIP Trunk",
+                dnis: "4000-1234",
+                tech: "VoIP",
+                kmg: "KMG-001",
+                ambiente: "Produção",
+                valorLicenca: 150.00,
+                valorTotalLicenca: 3750.00,
                 ultimaAlteracao: {
                     cpf: "066.602.789-74",
                     dataHora: "2024-01-20 14:30:25"
@@ -398,15 +406,20 @@
             },
             {
                 id: 2,
-                cliente: "Empresa B",
-                licenca: "AGV Basic",
-                status: "Expirada",
-                responsavel: "Maria Santos",
-                dataInicio: "2023-06-01",
-                dataExpiracao: "2024-01-15",
-                tipoLicenca: "Básica",
-                numeroUsuarios: 10,
-                observacoes: "Licença expirada - renovação pendente",
+                fornecedor: "Paneas",
+                codigo: "",
+                carteira: "Vendas Ativas",
+                campanha: "Prospecção Q1",
+                tipo: "Localizador",
+                canais: 30,
+                av: 15,
+                transbordo: "",
+                dnis: "",
+                tech: "",
+                kmg: "",
+                ambiente: "Homologação",
+                valorLicenca: 120.00,
+                valorTotalLicenca: 1800.00,
                 ultimaAlteracao: {
                     cpf: "087.883.829-58",
                     dataHora: "2024-01-18 09:15:42"
@@ -414,15 +427,20 @@
             },
             {
                 id: 3,
-                cliente: "Empresa C",
-                licenca: "AGV Enterprise",
-                status: "Suspensa",
-                responsavel: "Pedro Costa",
-                dataInicio: "2023-09-01",
-                dataExpiracao: "2024-08-31",
-                tipoLicenca: "Enterprise",
-                numeroUsuarios: 200,
-                observacoes: "Suspensa por falta de pagamento",
+                fornecedor: "TechIA",
+                codigo: "TIA-2024-001",
+                carteira: "Preventivo Saúde",
+                campanha: "Lembretes Médicos",
+                tipo: "Preventivo",
+                canais: 20,
+                av: 10,
+                transbordo: "E1",
+                dnis: "0800-555-0123",
+                tech: "TDM",
+                kmg: "KMG-PRV",
+                ambiente: "Produção",
+                valorLicenca: 200.00,
+                valorTotalLicenca: 2000.00,
                 ultimaAlteracao: {
                     cpf: "231.008.558-84",
                     dataHora: "2024-01-15 16:45:12"
@@ -450,6 +468,15 @@
         function formatarData(data) {
             if (!data) return '-';
             return new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
+        }
+
+        // Função para formatar valor monetário
+        function formatarValor(valor) {
+            if (!valor) return 'R$ 0,00';
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(valor);
         }
 
         // Função para calcular dias restantes
@@ -484,6 +511,8 @@
             return classes[status] || 'bg-gray-500';
         }
 
+
+
         // Função para renderizar tabela
         function renderizarTabela(licencasFiltradas = licencas) {
             const tbody = document.getElementById('licencasTableBody');
@@ -491,7 +520,7 @@
             if (licencasFiltradas.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="9" class="px-6 py-8 text-center text-gray-400">
+                        <td colspan="13" class="px-6 py-8 text-center text-gray-400">
                             <div class="flex flex-col items-center">
                                 <svg class="w-12 h-12 mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
@@ -507,17 +536,20 @@
 
             tbody.innerHTML = licencasFiltradas.map(licenca => `
                 <tr class="hover:bg-white/5 transition-colors">
-                    <td class="px-6 py-4 text-white">${licenca.cliente || '-'}</td>
-                    <td class="px-6 py-4 text-white">${licenca.licenca || '-'}</td>
-                    <td class="px-6 py-4">
-                        <span class="px-2 py-1 rounded-full text-xs font-medium text-white ${obterClasseStatus(licenca.status)}">
-                            ${licenca.status || '-'}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-white">${licenca.responsavel || '-'}</td>
-                    <td class="px-6 py-4 text-white">${formatarData(licenca.dataInicio)}</td>
-                    <td class="px-6 py-4 text-white">${formatarData(licenca.dataExpiracao)}</td>
-                    <td class="px-6 py-4">${calcularDiasRestantes(licenca.dataExpiracao)}</td>
+                    <td class="px-6 py-4 text-white">${licenca.fornecedor || '-'}</td>
+                    <td class="px-6 py-4 text-white">${licenca.codigo || '-'}</td>
+                    <td class="px-6 py-4 text-white">${licenca.carteira || '-'}</td>
+                    <td class="px-6 py-4 text-white">${licenca.campanha || '-'}</td>
+                    <td class="px-6 py-4 text-white">${licenca.tipo || '-'}</td>
+                    <td class="px-6 py-4 text-white">${licenca.canais || '-'}</td>
+                    <td class="px-6 py-4 text-white">${licenca.av || '-'}</td>
+                    <td class="px-6 py-4 text-white">${licenca.transbordo || '-'}</td>
+                    <td class="px-6 py-4 text-white">${licenca.dnis || '-'}</td>
+                    <td class="px-6 py-4 text-white">${licenca.tech || '-'}</td>
+                    <td class="px-6 py-4 text-white">${licenca.kmg || '-'}</td>
+                    <td class="px-6 py-4 text-white">${licenca.ambiente || '-'}</td>
+                    <td class="px-6 py-4 text-white">${formatarValor(licenca.valorLicenca)}</td>
+                    <td class="px-6 py-4 text-white">${formatarValor(licenca.valorTotalLicenca)}</td>
                     <td class="px-6 py-4 text-white text-xs">
                         ${licenca.ultimaAlteracao ? `
                             <div class="text-gray-300">
@@ -551,35 +583,33 @@
         // Função para atualizar estatísticas
         function atualizarEstatisticas() {
             const totalLicencas = licencas.length;
-            const totalAtivas = licencas.filter(l => l.status === 'Ativa').length;
-            const totalExpiradas = licencas.filter(l => l.status === 'Expirada').length;
-            const totalSuspensas = licencas.filter(l => l.status === 'Suspensa').length;
-            const totalPendentes = licencas.filter(l => l.status === 'Pendente').length;
+            const totalCanais = licencas.reduce((sum, l) => sum + (l.canais || 0), 0);
+            const totalCampanhas = [...new Set(licencas.map(l => l.campanha).filter(c => c))].length;
+            const totalValorLicenca = licencas.reduce((sum, l) => sum + (l.valorTotalLicenca || 0), 0);
 
             document.getElementById('totalLicencas').textContent = totalLicencas;
-            document.getElementById('totalAtivas').textContent = totalAtivas;
-            document.getElementById('totalExpiradas').textContent = totalExpiradas;
-            document.getElementById('totalSuspensas').textContent = totalSuspensas;
-            document.getElementById('totalPendentes').textContent = totalPendentes;
+            document.getElementById('totalCanais').textContent = totalCanais;
+            document.getElementById('totalCampanhas').textContent = totalCampanhas;
+            document.getElementById('totalValorLicenca').textContent = formatarValor(totalValorLicenca);
         }
 
         // Função para filtrar licenças
         function filtrarLicencas() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const statusFilter = document.getElementById('statusFilter').value;
-            const clienteFilter = document.getElementById('clienteFilter').value;
+            const fornecedorFilter = document.getElementById('fornecedorFilter').value;
 
             const licencasFiltradas = licencas.filter(licenca => {
                 const matchSearch = !searchTerm || 
-                    (licenca.cliente && licenca.cliente.toLowerCase().includes(searchTerm)) ||
-                    (licenca.licenca && licenca.licenca.toLowerCase().includes(searchTerm)) ||
-                    (licenca.responsavel && licenca.responsavel.toLowerCase().includes(searchTerm)) ||
-                    (licenca.status && licenca.status.toLowerCase().includes(searchTerm));
+                    (licenca.fornecedor && licenca.fornecedor.toLowerCase().includes(searchTerm)) ||
+                    (licenca.codigo && licenca.codigo.toLowerCase().includes(searchTerm)) ||
+                    (licenca.carteira && licenca.carteira.toLowerCase().includes(searchTerm)) ||
+                    (licenca.campanha && licenca.campanha.toLowerCase().includes(searchTerm)) ||
+                    (licenca.tipo && licenca.tipo.toLowerCase().includes(searchTerm)) ||
+                    (licenca.ambiente && licenca.ambiente.toLowerCase().includes(searchTerm));
                 
-                const matchStatus = !statusFilter || licenca.status === statusFilter;
-                const matchCliente = !clienteFilter || licenca.cliente === clienteFilter;
+                const matchFornecedor = !fornecedorFilter || licenca.fornecedor === fornecedorFilter;
                 
-                return matchSearch && matchStatus && matchCliente;
+                return matchSearch && matchFornecedor;
             });
 
             renderizarTabela(licencasFiltradas);
@@ -587,8 +617,19 @@
 
         // Event listeners para filtros em tempo real
         document.getElementById('searchInput').addEventListener('input', filtrarLicencas);
-        document.getElementById('statusFilter').addEventListener('change', filtrarLicencas);
-        document.getElementById('clienteFilter').addEventListener('change', filtrarLicencas);
+        document.getElementById('fornecedorFilter').addEventListener('change', filtrarLicencas);
+
+        // Função para calcular valor total automaticamente
+        function calcularValorTotal() {
+            const av = parseFloat(document.getElementById('av').value) || 0;
+            const valorLicenca = parseFloat(document.getElementById('valorLicenca').value) || 0;
+            const valorTotal = av * valorLicenca;
+            document.getElementById('valorTotalLicenca').value = valorTotal.toFixed(2);
+        }
+
+        // Event listeners para cálculo automático
+        document.getElementById('av').addEventListener('input', calcularValorTotal);
+        document.getElementById('valorLicenca').addEventListener('input', calcularValorTotal);
 
         // Função para cadastrar nova licença
         document.getElementById('formCadastro').addEventListener('submit', function(e) {
@@ -597,15 +638,20 @@
             const formData = new FormData(e.target);
             const novaLicenca = {
                 id: Date.now(),
-                cliente: formData.get('cliente') || '',
-                licenca: formData.get('licenca') || '',
-                status: formData.get('status') || '',
-                responsavel: formData.get('responsavel') || '',
-                dataInicio: formData.get('dataInicio') || '',
-                dataExpiracao: formData.get('dataExpiracao') || '',
-                tipoLicenca: formData.get('tipoLicenca') || '',
-                numeroUsuarios: parseInt(formData.get('numeroUsuarios')) || 1,
-                observacoes: formData.get('observacoes') || '',
+                fornecedor: formData.get('fornecedor') || '',
+                codigo: formData.get('codigo') || '',
+                carteira: formData.get('carteira') || '',
+                campanha: formData.get('campanha') || '',
+                tipo: formData.get('tipo') || '',
+                canais: parseInt(formData.get('canais')) || 0,
+                av: parseInt(formData.get('av')) || 0,
+                transbordo: formData.get('transbordo') || '',
+                dnis: formData.get('dnis') || '',
+                tech: formData.get('tech') || '',
+                kmg: formData.get('kmg') || '',
+                ambiente: formData.get('ambiente') || '',
+                valorLicenca: parseFloat(formData.get('valorLicenca')) || 0,
+                valorTotalLicenca: parseFloat(formData.get('valorTotalLicenca')) || 0,
                 ultimaAlteracao: {
                     cpf: usuarioLogado,
                     dataHora: obterDataHoraAtual()
@@ -626,15 +672,20 @@
             const licenca = licencas.find(l => l.id === id);
             if (licenca) {
                 // Preencher formulário com dados da licença
-                document.getElementById('cliente').value = licenca.cliente || '';
-                document.getElementById('licenca').value = licenca.licenca || '';
-                document.getElementById('status').value = licenca.status || '';
-                document.getElementById('responsavel').value = licenca.responsavel || '';
-                document.getElementById('dataInicio').value = licenca.dataInicio || '';
-                document.getElementById('dataExpiracao').value = licenca.dataExpiracao || '';
-                document.getElementById('tipoLicenca').value = licenca.tipoLicenca || '';
-                document.getElementById('numeroUsuarios').value = licenca.numeroUsuarios || '';
-                document.getElementById('observacoes').value = licenca.observacoes || '';
+                document.getElementById('fornecedor').value = licenca.fornecedor || '';
+                document.getElementById('codigo').value = licenca.codigo || '';
+                document.getElementById('carteira').value = licenca.carteira || '';
+                document.getElementById('campanha').value = licenca.campanha || '';
+                document.getElementById('tipo').value = licenca.tipo || '';
+                document.getElementById('canais').value = licenca.canais || '';
+                document.getElementById('av').value = licenca.av || '';
+                document.getElementById('transbordo').value = licenca.transbordo || '';
+                document.getElementById('dnis').value = licenca.dnis || '';
+                document.getElementById('tech').value = licenca.tech || '';
+                document.getElementById('kmg').value = licenca.kmg || '';
+                document.getElementById('ambiente').value = licenca.ambiente || '';
+                document.getElementById('valorLicenca').value = licenca.valorLicenca || '';
+                document.getElementById('valorTotalLicenca').value = licenca.valorTotalLicenca || '';
                 
                 // Alterar comportamento do formulário para edição
                 const form = document.getElementById('formCadastro');
@@ -646,15 +697,20 @@
                     const index = licencas.findIndex(l => l.id === id);
                     licencas[index] = {
                         ...licencas[index],
-                        cliente: formData.get('cliente') || '',
-                        licenca: formData.get('licenca') || '',
-                        status: formData.get('status') || '',
-                        responsavel: formData.get('responsavel') || '',
-                        dataInicio: formData.get('dataInicio') || '',
-                        dataExpiracao: formData.get('dataExpiracao') || '',
-                        tipoLicenca: formData.get('tipoLicenca') || '',
-                        numeroUsuarios: parseInt(formData.get('numeroUsuarios')) || 1,
-                        observacoes: formData.get('observacoes') || '',
+                        fornecedor: formData.get('fornecedor') || '',
+                        codigo: formData.get('codigo') || '',
+                        carteira: formData.get('carteira') || '',
+                        campanha: formData.get('campanha') || '',
+                        tipo: formData.get('tipo') || '',
+                        canais: parseInt(formData.get('canais')) || 0,
+                        av: parseInt(formData.get('av')) || 0,
+                        transbordo: formData.get('transbordo') || '',
+                        dnis: formData.get('dnis') || '',
+                        tech: formData.get('tech') || '',
+                        kmg: formData.get('kmg') || '',
+                        ambiente: formData.get('ambiente') || '',
+                        valorLicenca: parseFloat(formData.get('valorLicenca')) || 0,
+                        valorTotalLicenca: parseFloat(formData.get('valorTotalLicenca')) || 0,
                         ultimaAlteracao: {
                             cpf: usuarioLogado,
                             dataHora: obterDataHoraAtual()
@@ -680,6 +736,7 @@
                 licencas = licencas.filter(l => l.id !== id);
                 renderizarTabela();
                 atualizarEstatisticas();
+                atualizarFiltroClientes();
                 alert('Licença excluída com sucesso!');
             }
         }
@@ -836,6 +893,5 @@
             }
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'987cb3a19403f1dd',t:'MTc1OTMyOTQ4NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'987d0399e3a8f1dd',t:'MTc1OTMzMjc2MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
-
