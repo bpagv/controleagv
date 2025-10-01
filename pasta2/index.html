@@ -615,9 +615,16 @@ let implantacoes = carregarDados();
             const totalProducao = implantacoes.filter(i => i.status === 'Concluído').length;
             const totalDesenvolvimento = implantacoes.filter(i => i.status === 'Em Andamento' || i.status === 'Homologação').length;
 
+// Calcular tempo médio das implantações concluídas
+            const concluidas = implantacoes.filter(i => i.status === 'Concluído' && i.dataSolicitacao && i.dataEntrega);
+            const tempoMedio = concluidas.length > 0 
+                ? Math.round(concluidas.reduce((acc, i) => acc + calcularDiasProducao(i.dataSolicitacao, i.dataEntrega), 0) / concluidas.length)
+                : 0;
+            
             document.getElementById('totalImplantacoes').textContent = totalImplantacoes;
-            document.getElementById('totalProducao').textContent = totalProducao;
-            document.getElementById('totalDesenvolvimento').textContent = totalDesenvolvimento;
+            document.getElementById('totalProducao').textContent = totalAndamento;
+            document.getElementById('totalDesenvolvimento').textContent = totalConcluidas;
+            document.getElementById('tempoMedio').textContent = tempoMedio;
         }
 
         // Função para atualizar filtro de fornecedores
