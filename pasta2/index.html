@@ -365,7 +365,7 @@
         let usuarioLogado = '';
 
         // Array para armazenar as implantações
-        let implantacoes = [
+        const dadosIniciais = [
             {
                 id: 1,
                 chamado: "IMP-2024-001",
@@ -447,6 +447,33 @@
                 }
             }
         ];
+
+
+// Função para carregar dados do localStorage
+function carregarDados() {
+    const dadosSalvos = localStorage.getItem('implantacoesAGV');
+    if (dadosSalvos) {
+        try {
+            return JSON.parse(dadosSalvos);
+        } catch (e) {
+            console.error('Erro ao carregar dados salvos:', e);
+            return dadosIniciais;
+        }
+    }
+    return dadosIniciais;
+}
+
+// Função para salvar dados no localStorage
+function salvarDados() {
+    try {
+        localStorage.setItem('implantacoesAGV', JSON.stringify(implantacoes));
+    } catch (e) {
+        console.error('Erro ao salvar dados:', e);
+        alert('Erro ao salvar dados. Verifique o espaço de armazenamento do navegador.');
+    }
+}
+
+let implantacoes = carregarDados();
 
         // Função para voltar ao menu principal
         function voltarMenu() {
