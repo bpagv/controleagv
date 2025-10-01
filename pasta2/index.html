@@ -702,6 +702,7 @@ let implantacoes = carregarDados();
             };
 
             implantacoes.push(novaImplantacao);
+            salvarDados();
             renderizarTabela();
             atualizarEstatisticas();
             atualizarFiltroFornecedores();
@@ -769,6 +770,7 @@ let implantacoes = carregarDados();
         function excluirImplantacao(id) {
             if (confirm('Tem certeza que deseja excluir esta implantação?')) {
                 implantacoes = implantacoes.filter(i => i.id !== id);
+                salvarDados(); 
                 renderizarTabela();
                 atualizarEstatisticas();
                 atualizarFiltroFornecedores();
