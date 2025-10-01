@@ -12,6 +12,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Licenças AGV</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Biblioteca para ler arquivos Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body {
             box-sizing: border-box;
@@ -94,10 +96,17 @@
                     </div>
                     <div>
                         <h1 class="text-2xl font-bold text-white">Controle de Licenças AGV</h1>
+                     <h1 class="text-2xl font-bold text-white">Controle de Licenças AGV</h1>
                         <p class="text-white/80 text-sm">Gestão de Licenças dos Agentes Virtuais</p>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
+                    <button id="btnImportarExcel" onclick="abrirModalImport()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2 hidden">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                        </svg>
+                        <span>Importar Excel</span>
+                    </button>
                     <button id="btnNovaLicenca" onclick="abrirModalCadastro()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2 hidden">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
