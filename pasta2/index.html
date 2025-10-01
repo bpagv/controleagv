@@ -50,11 +50,11 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
-        .status-planejada { background-color: #3b82f6; }
+        .status-planejamento { background-color: #3b82f6; }
         .status-em-andamento { background-color: #f59e0b; }
         .status-concluida { background-color: #10b981; }
-        .status-cancelada { background-color: #ef4444; }
-        .status-pausada { background-color: #6b7280; }
+        .status-pausada { background-color: #ef4444; }
+        .status-cancelada { background-color: #6b7280; }
         
         .modal {
             display: none;
@@ -99,7 +99,7 @@
                     </button>
                     <div class="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
                         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                         </svg>
                     </div>
                     <div>
@@ -163,7 +163,7 @@
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
             <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 card-hover">
                 <div class="flex items-center justify-between">
                     <div>
@@ -172,7 +172,7 @@
                     </div>
                     <div class="bg-blue-500/20 p-3 rounded-lg">
                         <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                         </svg>
                     </div>
                 </div>
@@ -182,7 +182,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-white/70 text-sm">Em Andamento</p>
-                        <p class="text-3xl font-bold text-yellow-400" id="totalEmAndamento">0</p>
+                        <p class="text-3xl font-bold text-yellow-400" id="totalAndamento">0</p>
                     </div>
                     <div class="bg-yellow-500/20 p-3 rounded-lg">
                         <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -209,12 +209,26 @@
             <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 card-hover">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-white/70 text-sm">Planejadas</p>
-                        <p class="text-3xl font-bold text-purple-400" id="totalPlanejadas">0</p>
+                        <p class="text-white/70 text-sm">Pausadas</p>
+                        <p class="text-3xl font-bold text-red-400" id="totalPausadas">0</p>
+                    </div>
+                    <div class="bg-red-500/20 p-3 rounded-lg">
+                        <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white/70 text-sm">Planejamento</p>
+                        <p class="text-3xl font-bold text-purple-400" id="totalPlanejamento">0</p>
                     </div>
                     <div class="bg-purple-500/20 p-3 rounded-lg">
                         <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h2m0-8V5a2 2 0 012-2h2a2 2 0 012 2v2m0 0V9a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2m0 0V5a2 2 0 00-2-2H9z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                         </svg>
                     </div>
                 </div>
@@ -230,11 +244,11 @@
                 <div class="flex gap-2">
                     <select id="statusFilter" class="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="">Status</option>
-                        <option value="Planejada">Planejada</option>
+                        <option value="Planejamento">Planejamento</option>
                         <option value="Em Andamento">Em Andamento</option>
                         <option value="Concluída">Concluída</option>
-                        <option value="Cancelada">Cancelada</option>
                         <option value="Pausada">Pausada</option>
+                        <option value="Cancelada">Cancelada</option>
                     </select>
                     <select id="clienteFilter" class="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="">Cliente</option>
@@ -250,7 +264,7 @@
             </div>
         </div>
 
-        <!-- Implementations Table -->
+        <!-- Implantações Table -->
         <div class="bg-black/30 backdrop-blur-md rounded-xl border border-white/20 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full">
@@ -261,7 +275,7 @@
                             <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Status</th>
                             <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Responsável</th>
                             <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Data Início</th>
-                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Previsão</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Previsão Fim</th>
                             <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Progresso</th>
                             <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Última Alteração</th>
                             <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Ações</th>
@@ -300,18 +314,18 @@
                         </select>
                     </div>
                     <div>
-                        <label for="projeto" class="block text-sm font-medium text-gray-300 mb-2">Projeto</label>
+                        <label for="projeto" class="block text-sm font-medium text-gray-300 mb-2">Nome do Projeto</label>
                         <input type="text" id="projeto" name="projeto" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nome do projeto">
                     </div>
                     <div>
                         <label for="status" class="block text-sm font-medium text-gray-300 mb-2">Status</label>
                         <select id="status" name="status" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             <option value="">Selecione o status</option>
-                            <option value="Planejada">Planejada</option>
+                            <option value="Planejamento">Planejamento</option>
                             <option value="Em Andamento">Em Andamento</option>
                             <option value="Concluída">Concluída</option>
-                            <option value="Cancelada">Cancelada</option>
                             <option value="Pausada">Pausada</option>
+                            <option value="Cancelada">Cancelada</option>
                         </select>
                     </div>
                     <div>
@@ -323,28 +337,28 @@
                         <input type="date" id="dataInicio" name="dataInicio" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                     </div>
                     <div>
-                        <label for="previsao" class="block text-sm font-medium text-gray-300 mb-2">Previsão de Conclusão</label>
-                        <input type="date" id="previsao" name="previsao" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <label for="previsaoFim" class="block text-sm font-medium text-gray-300 mb-2">Previsão de Fim</label>
+                        <input type="date" id="previsaoFim" name="previsaoFim" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                     </div>
                     <div>
                         <label for="progresso" class="block text-sm font-medium text-gray-300 mb-2">Progresso (%)</label>
                         <input type="number" id="progresso" name="progresso" min="0" max="100" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0">
                     </div>
                     <div>
-                        <label for="prioridade" class="block text-sm font-medium text-gray-300 mb-2">Prioridade</label>
-                        <select id="prioridade" name="prioridade" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <option value="">Selecione a prioridade</option>
-                            <option value="Baixa">Baixa</option>
-                            <option value="Média">Média</option>
-                            <option value="Alta">Alta</option>
-                            <option value="Crítica">Crítica</option>
+                        <label for="tipoImplantacao" class="block text-sm font-medium text-gray-300 mb-2">Tipo de Implantação</label>
+                        <select id="tipoImplantacao" name="tipoImplantacao" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Selecione o tipo</option>
+                            <option value="Básica">Básica</option>
+                            <option value="Completa">Completa</option>
+                            <option value="Customizada">Customizada</option>
+                            <option value="Migração">Migração</option>
                         </select>
                     </div>
                 </div>
                 
                 <div>
-                    <label for="descricao" class="block text-sm font-medium text-gray-300 mb-2">Descrição</label>
-                    <textarea id="descricao" name="descricao" rows="3" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Descrição detalhada do projeto..."></textarea>
+                    <label for="observacoes" class="block text-sm font-medium text-gray-300 mb-2">Observações</label>
+                    <textarea id="observacoes" name="observacoes" rows="3" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Observações sobre a implantação..."></textarea>
                 </div>
                 
                 <div class="flex justify-end space-x-4 pt-4">
@@ -360,16 +374,13 @@
     </div>
 
     <script>
-        // CPFs autorizados para edição (apenas números)
-        // ADICIONE NOVOS CPFs AQUI - SOMENTE OS NÚMEROS, SEM PONTOS OU TRAÇOS
+        // CPFs autorizados para edição (apenas números) - SEUS CPFs REAIS
         const cpfsAutorizados = [
             '06660278974',  // CPF: 066.602.789-74
             '08788382958',  // CPF: 087.883.829-58
-            '23100855884'   // CPF: 231.008.558-84
-            '08843197924'   // CPF: 088.431.979-24
+            '23100855884',  // CPF: 231.008.558-84
+            '08843197924',  // CPF: 088.431.979-24
             '39540020867'   // CPF: 395.400.208-67
-            // Para adicionar um novo CPF, adicione uma linha como:
-            // '00011122233'   // CPF: 000.111.222-33
         ];
         
         // Variável para controlar se o usuário tem permissão de edição
@@ -381,48 +392,48 @@
             {
                 id: 1,
                 cliente: "Empresa A",
-                projeto: "Implementação AGV Call Center",
+                projeto: "Implantação AGV Vendas",
                 status: "Em Andamento",
                 responsavel: "João Silva",
                 dataInicio: "2024-01-15",
-                previsao: "2024-03-15",
+                previsaoFim: "2024-03-15",
                 progresso: 65,
-                prioridade: "Alta",
-                descricao: "Implementação completa do sistema AGV para atendimento ao cliente",
+                tipoImplantacao: "Completa",
+                observacoes: "Projeto em andamento conforme cronograma",
                 ultimaAlteracao: {
-                    cpf: "123.456.789-01",
+                    cpf: "066.602.789-74",
                     dataHora: "2024-01-20 14:30:25"
                 }
             },
             {
                 id: 2,
                 cliente: "Empresa B",
-                projeto: "Migração Sistema Legacy",
-                status: "Planejada",
+                projeto: "AGV Atendimento",
+                status: "Concluída",
                 responsavel: "Maria Santos",
-                dataInicio: "2024-02-01",
-                previsao: "2024-04-30",
-                progresso: 10,
-                prioridade: "Média",
-                descricao: "Migração do sistema legacy para nova plataforma AGV",
+                dataInicio: "2023-11-01",
+                previsaoFim: "2024-01-10",
+                progresso: 100,
+                tipoImplantacao: "Básica",
+                observacoes: "Implantação concluída com sucesso",
                 ultimaAlteracao: {
-                    cpf: "987.654.321-00",
+                    cpf: "087.883.829-58",
                     dataHora: "2024-01-18 09:15:42"
                 }
             },
             {
                 id: 3,
                 cliente: "Empresa C",
-                projeto: "Expansão Canais Digitais",
-                status: "Concluída",
+                projeto: "AGV Suporte Técnico",
+                status: "Pausada",
                 responsavel: "Pedro Costa",
-                dataInicio: "2023-11-01",
-                previsao: "2024-01-15",
-                progresso: 100,
-                prioridade: "Baixa",
-                descricao: "Expansão dos canais digitais com integração AGV",
+                dataInicio: "2024-01-01",
+                previsaoFim: "2024-04-01",
+                progresso: 30,
+                tipoImplantacao: "Customizada",
+                observacoes: "Pausada aguardando definições do cliente",
                 ultimaAlteracao: {
-                    cpf: "111.222.333-44",
+                    cpf: "231.008.558-84",
                     dataHora: "2024-01-15 16:45:12"
                 }
             }
@@ -453,23 +464,30 @@
         // Função para obter classe do status
         function obterClasseStatus(status) {
             const classes = {
-                'Planejada': 'status-planejada',
+                'Planejamento': 'status-planejamento',
                 'Em Andamento': 'status-em-andamento',
                 'Concluída': 'status-concluida',
-                'Cancelada': 'status-cancelada',
-                'Pausada': 'status-pausada'
+                'Pausada': 'status-pausada',
+                'Cancelada': 'status-cancelada'
             };
             return classes[status] || 'bg-gray-500';
         }
 
         // Função para renderizar barra de progresso
         function renderizarProgresso(progresso) {
-            const cor = progresso >= 80 ? 'bg-green-500' : progresso >= 50 ? 'bg-yellow-500' : 'bg-blue-500';
+            const porcentagem = progresso || 0;
+            let corBarra = 'bg-blue-500';
+            
+            if (porcentagem >= 100) corBarra = 'bg-green-500';
+            else if (porcentagem >= 70) corBarra = 'bg-yellow-500';
+            else if (porcentagem >= 40) corBarra = 'bg-orange-500';
+            else corBarra = 'bg-red-500';
+            
             return `
                 <div class="w-full bg-gray-700 rounded-full h-2">
-                    <div class="${cor} h-2 rounded-full" style="width: ${progresso}%"></div>
+                    <div class="${corBarra} h-2 rounded-full transition-all duration-300" style="width: ${porcentagem}%"></div>
                 </div>
-                <span class="text-xs text-gray-300 mt-1">${progresso}%</span>
+                <span class="text-xs text-gray-300 mt-1">${porcentagem}%</span>
             `;
         }
 
@@ -483,7 +501,7 @@
                         <td colspan="9" class="px-6 py-8 text-center text-gray-400">
                             <div class="flex flex-col items-center">
                                 <svg class="w-12 h-12 mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                                 </svg>
                                 <p class="text-lg font-medium">Nenhuma implantação encontrada</p>
                                 <p class="text-sm">Cadastre uma nova implantação para começar</p>
@@ -505,10 +523,10 @@
                     </td>
                     <td class="px-6 py-4 text-white">${implantacao.responsavel || '-'}</td>
                     <td class="px-6 py-4 text-white">${formatarData(implantacao.dataInicio)}</td>
-                    <td class="px-6 py-4 text-white">${formatarData(implantacao.previsao)}</td>
+                    <td class="px-6 py-4 text-white">${formatarData(implantacao.previsaoFim)}</td>
                     <td class="px-6 py-4">
-                        <div class="flex flex-col items-center space-y-1">
-                            ${renderizarProgresso(implantacao.progresso || 0)}
+                        <div class="flex flex-col">
+                            ${renderizarProgresso(implantacao.progresso)}
                         </div>
                     </td>
                     <td class="px-6 py-4 text-white text-xs">
@@ -544,14 +562,16 @@
         // Função para atualizar estatísticas
         function atualizarEstatisticas() {
             const totalImplantacoes = implantacoes.length;
-            const totalEmAndamento = implantacoes.filter(i => i.status === 'Em Andamento').length;
+            const totalAndamento = implantacoes.filter(i => i.status === 'Em Andamento').length;
             const totalConcluidas = implantacoes.filter(i => i.status === 'Concluída').length;
-            const totalPlanejadas = implantacoes.filter(i => i.status === 'Planejada').length;
+            const totalPausadas = implantacoes.filter(i => i.status === 'Pausada').length;
+            const totalPlanejamento = implantacoes.filter(i => i.status === 'Planejamento').length;
 
             document.getElementById('totalImplantacoes').textContent = totalImplantacoes;
-            document.getElementById('totalEmAndamento').textContent = totalEmAndamento;
+            document.getElementById('totalAndamento').textContent = totalAndamento;
             document.getElementById('totalConcluidas').textContent = totalConcluidas;
-            document.getElementById('totalPlanejadas').textContent = totalPlanejadas;
+            document.getElementById('totalPausadas').textContent = totalPausadas;
+            document.getElementById('totalPlanejamento').textContent = totalPlanejamento;
         }
 
         // Função para filtrar implantações
@@ -593,10 +613,10 @@
                 status: formData.get('status') || '',
                 responsavel: formData.get('responsavel') || '',
                 dataInicio: formData.get('dataInicio') || '',
-                previsao: formData.get('previsao') || '',
+                previsaoFim: formData.get('previsaoFim') || '',
                 progresso: parseInt(formData.get('progresso')) || 0,
-                prioridade: formData.get('prioridade') || '',
-                descricao: formData.get('descricao') || '',
+                tipoImplantacao: formData.get('tipoImplantacao') || '',
+                observacoes: formData.get('observacoes') || '',
                 ultimaAlteracao: {
                     cpf: usuarioLogado,
                     dataHora: obterDataHoraAtual()
@@ -622,10 +642,10 @@
                 document.getElementById('status').value = implantacao.status || '';
                 document.getElementById('responsavel').value = implantacao.responsavel || '';
                 document.getElementById('dataInicio').value = implantacao.dataInicio || '';
-                document.getElementById('previsao').value = implantacao.previsao || '';
+                document.getElementById('previsaoFim').value = implantacao.previsaoFim || '';
                 document.getElementById('progresso').value = implantacao.progresso || '';
-                document.getElementById('prioridade').value = implantacao.prioridade || '';
-                document.getElementById('descricao').value = implantacao.descricao || '';
+                document.getElementById('tipoImplantacao').value = implantacao.tipoImplantacao || '';
+                document.getElementById('observacoes').value = implantacao.observacoes || '';
                 
                 // Alterar comportamento do formulário para edição
                 const form = document.getElementById('formCadastro');
@@ -642,10 +662,10 @@
                         status: formData.get('status') || '',
                         responsavel: formData.get('responsavel') || '',
                         dataInicio: formData.get('dataInicio') || '',
-                        previsao: formData.get('previsao') || '',
+                        previsaoFim: formData.get('previsaoFim') || '',
                         progresso: parseInt(formData.get('progresso')) || 0,
-                        prioridade: formData.get('prioridade') || '',
-                        descricao: formData.get('descricao') || '',
+                        tipoImplantacao: formData.get('tipoImplantacao') || '',
+                        observacoes: formData.get('observacoes') || '',
                         ultimaAlteracao: {
                             cpf: usuarioLogado,
                             dataHora: obterDataHoraAtual()
@@ -704,34 +724,6 @@
             return `${data} ${hora}`;
         }
 
-        // Função para autenticar usuário
-        function autenticarUsuario(cpf) {
-            const cpfLimpo = limparCPF(cpf);
-            return cpfsAutorizados.includes(cpfLimpo);
-        }
-
-        // Função para fazer login
-        function fazerLogin(cpf) {
-            if (autenticarUsuario(cpf)) {
-                podeEditar = true;
-                usuarioLogado = formatarCPF(cpf);
-                
-                // Ocultar modal de autenticação
-                document.getElementById('modalAuth').classList.remove('show');
-                
-                // Mostrar informações do usuário e botão de nova implantação
-                document.getElementById('userInfo').classList.remove('hidden');
-                document.getElementById('userCpf').textContent = usuarioLogado;
-                document.getElementById('btnNovaImplantacao').classList.remove('hidden');
-                
-                // Atualizar tabela para mostrar botões de ação
-                renderizarTabela();
-                
-                return true;
-            }
-            return false;
-        }
-
         // Função para fazer logout
         function logout() {
             podeEditar = false;
@@ -768,15 +760,17 @@
             
             const cpf = document.getElementById('cpfInput').value;
             const authError = document.getElementById('authError');
+            const cpfLimpo = limparCPF(cpf);
             
             // Verificar se o CPF tem pelo menos 11 dígitos
-            if (limparCPF(cpf).length < 11) {
-                authError.textContent = 'Digite um CPF válido';
+            if (cpfLimpo.length !== 11) {
+                authError.textContent = 'Digite um CPF válido com 11 dígitos';
                 authError.classList.remove('hidden');
                 return;
             }
             
-            if (autenticarUsuario(cpf)) {
+            // Verificar se é um CPF autorizado
+            if (cpfsAutorizados.includes(cpfLimpo)) {
                 // CPF autorizado - acesso completo
                 podeEditar = true;
                 usuarioLogado = formatarCPF(cpf);
@@ -791,7 +785,7 @@
                 
                 // Salvar sessão
                 sessionStorage.setItem('usuarioAutorizado', 'true');
-                sessionStorage.setItem('cpfUsuario', limparCPF(cpf));
+                sessionStorage.setItem('cpfUsuario', cpfLimpo);
                 
                 authError.classList.add('hidden');
             } else {
@@ -808,7 +802,7 @@
                 
                 // Salvar sessão como visualização
                 sessionStorage.setItem('usuarioVisualizacao', 'true');
-                sessionStorage.setItem('cpfUsuario', limparCPF(cpf));
+                sessionStorage.setItem('cpfUsuario', cpfLimpo);
                 
                 authError.classList.add('hidden');
             }
@@ -830,7 +824,7 @@
             if (cpfSessao && (sessaoAutorizada || sessaoVisualizacao)) {
                 const cpfFormatado = formatarCPF(cpfSessao);
                 
-                if (sessaoAutorizada && autenticarUsuario(cpfSessao)) {
+                if (sessaoAutorizada && cpfsAutorizados.includes(cpfSessao)) {
                     // Usuário autorizado
                     podeEditar = true;
                     usuarioLogado = cpfFormatado;
@@ -852,8 +846,6 @@
                 renderizarTabela();
             }
         });
-
-
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'987c6973f610f1dd',t:'MTc1OTMyNjQ0Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'987cbe07a2e9add3',t:'MTc1OTMyOTkxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
