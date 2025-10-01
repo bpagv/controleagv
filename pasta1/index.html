@@ -12,8 +12,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Licenças AGV</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Biblioteca para ler arquivos Excel -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body {
             box-sizing: border-box;
@@ -104,8 +102,6 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
                         </svg>
-                        <span>Importar Excel</span>
-                    </button>
                     <button id="btnNovaLicenca" onclick="abrirModalCadastro()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2 hidden">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
@@ -274,79 +270,6 @@
             </div>
         </div>
     </main>
-
-<!-- Modal de Importação Excel -->
-    <div id="modalImport" class="modal">
-        <div class="modal-content fade-in" style="max-width: 700px;">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-white">📊 Importar Dados do Excel</h2>
-                <button onclick="fecharModalImport()" class="text-gray-400 hover:text-white">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
-            
-            <div class="space-y-6">
-                <!-- Instruções -->
-                <div class="bg-blue-500/20 border border-blue-500/30 rounded-lg p-4">
-                    <h3 class="text-blue-300 font-medium mb-2">📋 Formato do Excel:</h3>
-                    <p class="text-gray-300 text-sm mb-3">O arquivo deve conter as seguintes colunas na primeira linha (cabeçalho):</p>
-                    <div class="grid grid-cols-2 gap-2 text-xs text-gray-300 bg-gray-800/50 p-3 rounded">
-                        <div>• <strong>Plataforma</strong></div>
-                        <div>• <strong>Cód</strong> (número)</div>
-                        <div>• <strong>Carteira</strong></div>
-                        <div>• <strong>Campanha</strong></div>
-                        <div>• <strong>Tipo</strong></div>
-                        <div>• <strong>Canais</strong> (número)</div>
-                        <div>• <strong>AV</strong> (número)</div>
-                        <div>• <strong>Transbordo</strong></div>
-                        <div>• <strong>DNIS</strong> (número)</div>
-                        <div>• <strong>Tech</strong> (número)</div>
-                         <div>• <strong>KMG</strong> (número)</div>
-                        <div>• <strong>Ambiente</strong></div>
-                    </div>
-                </div>
-                
-                <!-- Upload de arquivo -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Selecionar arquivo Excel (.xlsx, .xls, .csv)</label>
-                    <div id="dropZone" class="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center hover:border-blue-500 transition-colors cursor-pointer">
-                        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" class="hidden" onchange="processarArquivo(event)">
-                        <svg class="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
-                        </svg>
-                        <button onclick="document.getElementById('fileInput').click()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
-                            Selecionar Arquivo
-                        </button>
-                        <p class="text-gray-400 text-sm mt-3">Ou arraste e solte o arquivo aqui</p>
-                        <p class="text-gray-500 text-xs mt-1">Formatos aceitos: .xlsx, .xls, .csv</p>
-                    </div>
-                </div>
-                
-                <!-- Preview dos dados -->
-                <div id="previewContainer" class="hidden">
-                    <h3 class="text-white font-medium mb-3">📊 Preview dos dados (primeiras 5 linhas):</h3>
-                    <div class="bg-gray-800 rounded-lg p-4 max-h-80 overflow-auto">
-                        <div id="previewContent"></div>
-                    </div>
-                    <div class="flex justify-between items-center mt-4 p-4 bg-gray-800/50 rounded-lg">
-                        <div class="text-sm text-gray-300">
-                            <span class="text-green-400 font-medium" id="totalRegistros">0</span> registros encontrados
-                        </div>
-                        <div class="flex space-x-3">
-                            <button onclick="fecharModalImport()" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors">
-                                Cancelar
-                            </button>
-                            <button onclick="confirmarImportacao()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors">
-                                ✅ Importar Dados
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
   
     <!-- Modal de Cadastro -->
     <div id="modalCadastro" class="modal">
