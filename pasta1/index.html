@@ -613,7 +613,7 @@ let licencas = carregarDados();
 
         // Função para atualizar estatísticas
         function atualizarEstatisticas() {
-            const totalLicencas = licencas.length;
+            const totalLicencas = licencas.reduce((soma, item) => soma + item.AV, 0)
             const totalCanais = licencas.reduce((sum, l) => sum + (l.canais || 0), 0);
             const totalCampanhas = [...new Set(licencas.map(l => l.campanha).filter(c => c))].length;
             const totalValorLicenca = licencas.reduce((sum, l) => sum + (l.valorTotalLicenca || 0), 0);
