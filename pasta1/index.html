@@ -435,7 +435,7 @@
         }
         
         function atualizarEstatisticas() {
-            const totalLicencas = licencas.filter(l => l.av === 'Sim').length;
+            const totalLicencas = licencas.reduce((total, licenca) => total + (licenca.AV || 0), 0);
             const totalCanais = licencas.reduce((total, licenca) => total + (licenca.canais || 0), 0);
             const totalCampanhas = [...new Set(licencas.map(l => l.campanha))].length;
             
