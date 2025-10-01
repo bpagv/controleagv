@@ -5,6 +5,7 @@
     window.location.href = "../index.html"; // volta um nível para cima
   }
 </script>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -41,9 +42,9 @@
         }
         
         .status-ativa { background-color: #10b981; }
-        .status-vencida { background-color: #ef4444; }
-        .status-renovada { background-color: #f59e0b; }
-        .status-cancelada { background-color: #6b7280; }
+        .status-expirada { background-color: #ef4444; }
+        .status-suspensa { background-color: #f59e0b; }
+        .status-pendente { background-color: #6b7280; }
         
         .modal {
             display: none;
@@ -68,7 +69,7 @@
             border-radius: 1rem;
             padding: 2rem;
             width: 90%;
-            max-width: 600px;
+            max-width: 700px;
             max-height: 90vh;
             overflow-y: auto;
             border: 1px solid #374151;
@@ -88,7 +89,7 @@
                     </button>
                     <div class="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
                         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                         </svg>
                     </div>
                     <div>
@@ -152,7 +153,7 @@
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 card-hover">
                 <div class="flex items-center justify-between">
                     <div>
@@ -161,7 +162,7 @@
                     </div>
                     <div class="bg-blue-500/20 p-3 rounded-lg">
                         <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                         </svg>
                     </div>
                 </div>
@@ -170,12 +171,12 @@
             <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 card-hover">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-white/70 text-sm">Total de Canais</p>
-                        <p class="text-3xl font-bold text-green-400" id="totalCanais">0</p>
+                        <p class="text-white/70 text-sm">Ativas</p>
+                        <p class="text-3xl font-bold text-green-400" id="totalAtivas">0</p>
                     </div>
                     <div class="bg-green-500/20 p-3 rounded-lg">
                         <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
                 </div>
@@ -184,12 +185,26 @@
             <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 card-hover">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-white/70 text-sm">Total de Campanhas</p>
-                        <p class="text-3xl font-bold text-purple-400" id="totalCampanhas">0</p>
+                        <p class="text-white/70 text-sm">Expiradas</p>
+                        <p class="text-3xl font-bold text-red-400" id="totalExpiradas">0</p>
                     </div>
-                    <div class="bg-purple-500/20 p-3 rounded-lg">
-                        <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
+                    <div class="bg-red-500/20 p-3 rounded-lg">
+                        <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white/70 text-sm">Suspensas</p>
+                        <p class="text-3xl font-bold text-yellow-400" id="totalSuspensas">0</p>
+                    </div>
+                    <div class="bg-yellow-500/20 p-3 rounded-lg">
+                        <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                         </svg>
                     </div>
                 </div>
@@ -200,17 +215,22 @@
         <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 mb-8">
             <div class="flex flex-col md:flex-row gap-4">
                 <div class="flex-1">
-                    <input type="text" id="searchInput" placeholder="Buscar por plataforma, carteira, campanha ou código..." class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="text" id="searchInput" placeholder="Buscar por cliente, licença ou status..." class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div class="flex gap-2">
-                    <select id="plataformaFilter" class="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">Plataforma</option>
-                        <option value="Aspect">Aspect</option>
-                        <option value="Paneas">Paneas</option>
-                        <option value="Pontal">Pontal</option>
-                        <option value="Robbu">Robbu</option>
-                        <option value="Sinergytech">Sinergytech</option>
-                        <option value="TechIA">TechIA</option>
+                    <select id="statusFilter" class="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Status</option>
+                        <option value="Ativa">Ativa</option>
+                        <option value="Expirada">Expirada</option>
+                        <option value="Suspensa">Suspensa</option>
+                        <option value="Pendente">Pendente</option>
+                    </select>
+                    <select id="clienteFilter" class="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Cliente</option>
+                        <option value="Empresa A">Empresa A</option>
+                        <option value="Empresa B">Empresa B</option>
+                        <option value="Empresa C">Empresa C</option>
+                        <option value="Empresa D">Empresa D</option>
                     </select>
                     <button onclick="filtrarLicencas()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
                         Filtrar
@@ -225,13 +245,12 @@
                 <table class="w-full">
                     <thead class="bg-black/50">
                         <tr>
-                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Plataforma</th>
-                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Carteira</th>
-                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Campanha</th>
-                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Tipo</th>
-                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Canais</th>
-                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">AV</th>
-                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Ambiente</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Cliente</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Licença</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Status</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Data Início</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Data Fim</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Usuários</th>
                             <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Última Alteração</th>
                             <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Ações</th>
                         </tr>
@@ -259,61 +278,46 @@
             <form id="formCadastro" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label for="plataforma" class="block text-sm font-medium text-gray-300 mb-2">Plataforma</label>
-                        <select id="plataforma" name="plataforma" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <option value="">Selecione a plataforma</option>
-                            <option value="Aspect">Aspect</option>
-                            <option value="Paneas">Paneas</option>
-                            <option value="Pontal">Pontal</option>
-                            <option value="Robbu">Robbu</option>
-                            <option value="Sinergytech">Sinergytech</option>
-                            <option value="TechIA">TechIA</option>
+                        <label for="cliente" class="block text-sm font-medium text-gray-300 mb-2">Cliente</label>
+                        <select id="cliente" name="cliente" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Selecione o cliente</option>
+                            <option value="Empresa A">Empresa A</option>
+                            <option value="Empresa B">Empresa B</option>
+                            <option value="Empresa C">Empresa C</option>
+                            <option value="Empresa D">Empresa D</option>
                         </select>
                     </div>
                     <div>
-                        <label for="codigo" class="block text-sm font-medium text-gray-300 mb-2">Código</label>
-                        <input type="text" id="codigo" name="codigo" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Código (opcional)">
+                        <label for="licenca" class="block text-sm font-medium text-gray-300 mb-2">Código da Licença</label>
+                        <input type="text" id="licenca" name="licenca" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="AGV-2024-001">
                     </div>
                     <div>
-                        <label for="carteira" class="block text-sm font-medium text-gray-300 mb-2">Carteira</label>
-                        <input type="text" id="carteira" name="carteira" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nome da carteira">
+                        <label for="status" class="block text-sm font-medium text-gray-300 mb-2">Status</label>
+                        <select id="status" name="status" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Selecione o status</option>
+                            <option value="Ativa">Ativa</option>
+                            <option value="Expirada">Expirada</option>
+                            <option value="Suspensa">Suspensa</option>
+                            <option value="Pendente">Pendente</option>
+                        </select>
                     </div>
                     <div>
-                        <label for="campanha" class="block text-sm font-medium text-gray-300 mb-2">Campanha</label>
-                        <input type="text" id="campanha" name="campanha" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nome da campanha">
+                        <label for="usuarios" class="block text-sm font-medium text-gray-300 mb-2">Número de Usuários</label>
+                        <input type="number" id="usuarios" name="usuarios" min="1" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="10">
                     </div>
                     <div>
-                        <label for="tipo" class="block text-sm font-medium text-gray-300 mb-2">Tipo</label>
-                        <input type="text" id="tipo" name="tipo" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Tipo">
+                        <label for="dataInicio" class="block text-sm font-medium text-gray-300 mb-2">Data de Início</label>
+                        <input type="date" id="dataInicio" name="dataInicio" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                     </div>
                     <div>
-                        <label for="canais" class="block text-sm font-medium text-gray-300 mb-2">Canais</label>
-                        <input type="number" id="canais" name="canais" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Número de canais">
+                        <label for="dataFim" class="block text-sm font-medium text-gray-300 mb-2">Data de Fim</label>
+                        <input type="date" id="dataFim" name="dataFim" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                     </div>
-                    <div>
-                        <label for="av" class="block text-sm font-medium text-gray-300 mb-2">AV</label>
-                        <input type="number" id="av" name="av" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Número de AV">
-                    </div>
-                    <div>
-                        <label for="transbordo" class="block text-sm font-medium text-gray-300 mb-2">Transbordo</label>
-                        <input type="text" id="transbordo" name="transbordo" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Transbordo (opcional)">
-                    </div>
-                    <div>
-                        <label for="dnis" class="block text-sm font-medium text-gray-300 mb-2">DNIS</label>
-                        <input type="text" id="dnis" name="dnis" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="DNIS (opcional)">
-                    </div>
-                    <div>
-                        <label for="tech" class="block text-sm font-medium text-gray-300 mb-2">Tech</label>
-                        <input type="text" id="tech" name="tech" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Tech (opcional)">
-                    </div>
-                    <div>
-                        <label for="kmg" class="block text-sm font-medium text-gray-300 mb-2">KMG</label>
-                        <input type="text" id="kmg" name="kmg" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="KMG (opcional)">
-                    </div>
-                    <div>
-                        <label for="ambiente" class="block text-sm font-medium text-gray-300 mb-2">Ambiente</label>
-                        <input type="text" id="ambiente" name="ambiente" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Ambiente">
-                    </div>
+                </div>
+                
+                <div>
+                    <label for="observacoes" class="block text-sm font-medium text-gray-300 mb-2">Observações</label>
+                    <textarea id="observacoes" name="observacoes" rows="3" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Observações sobre a licença..."></textarea>
                 </div>
                 
                 <div class="flex justify-end space-x-4 pt-4">
@@ -349,40 +353,44 @@
         let licencas = [
             {
                 id: 1,
-                plataforma: "Aspect",
-                codigo: "ASP001",
-                carteira: "Vendas Corporativas",
-                campanha: "Black Friday 2024",
-                tipo: "Receptivo",
-                canais: 10,
-                av: 5,
-                transbordo: "Sim",
-                dnis: "4000-1234",
-                tech: "João Silva",
-                kmg: "KMG001",
-                ambiente: "Produção",
+                cliente: "Empresa A",
+                licenca: "AGV-2024-001",
+                status: "Ativa",
+                dataInicio: "2024-01-01",
+                dataFim: "2024-12-31",
+                usuarios: 50,
+                observacoes: "Licença principal para call center",
                 ultimaAlteracao: {
                     cpf: "123.456.789-01",
-                    dataHora: "2024-01-15 14:30:25"
+                    dataHora: "2024-01-15 10:30:25"
                 }
             },
             {
                 id: 2,
-                plataforma: "Robbu",
-                codigo: "",
-                carteira: "Atendimento Geral",
-                campanha: "Suporte Técnico",
-                tipo: "Ativo",
-                canais: 15,
-                av: 8,
-                transbordo: "",
-                dnis: "",
-                tech: "",
-                kmg: "",
-                ambiente: "Homologação",
+                cliente: "Empresa B",
+                licenca: "AGV-2024-002",
+                status: "Suspensa",
+                dataInicio: "2024-02-01",
+                dataFim: "2024-11-30",
+                usuarios: 25,
+                observacoes: "Suspensa por falta de pagamento",
                 ultimaAlteracao: {
                     cpf: "987.654.321-00",
-                    dataHora: "2024-01-10 09:15:42"
+                    dataHora: "2024-01-20 14:15:42"
+                }
+            },
+            {
+                id: 3,
+                cliente: "Empresa C",
+                licenca: "AGV-2023-015",
+                status: "Expirada",
+                dataInicio: "2023-06-01",
+                dataFim: "2023-12-31",
+                usuarios: 100,
+                observacoes: "Licença expirada - renovação pendente",
+                ultimaAlteracao: {
+                    cpf: "111.222.333-44",
+                    dataHora: "2024-01-01 08:00:12"
                 }
             }
         ];
@@ -412,10 +420,10 @@
         // Função para obter classe do status
         function obterClasseStatus(status) {
             const classes = {
-                'ativa': 'status-ativa',
-                'vencida': 'status-vencida',
-                'renovada': 'status-renovada',
-                'cancelada': 'status-cancelada'
+                'Ativa': 'status-ativa',
+                'Expirada': 'status-expirada',
+                'Suspensa': 'status-suspensa',
+                'Pendente': 'status-pendente'
             };
             return classes[status] || 'bg-gray-500';
         }
@@ -427,10 +435,10 @@
             if (licencasFiltradas.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="px-6 py-8 text-center text-gray-400">
+                        <td colspan="8" class="px-6 py-8 text-center text-gray-400">
                             <div class="flex flex-col items-center">
                                 <svg class="w-12 h-12 mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                                 </svg>
                                 <p class="text-lg font-medium">Nenhuma licença encontrada</p>
                                 <p class="text-sm">Cadastre uma nova licença para começar</p>
@@ -443,13 +451,16 @@
 
             tbody.innerHTML = licencasFiltradas.map(licenca => `
                 <tr class="hover:bg-white/5 transition-colors">
-                    <td class="px-6 py-4 text-white">${licenca.plataforma || '-'}</td>
-                    <td class="px-6 py-4 text-white">${licenca.carteira || '-'}</td>
-                    <td class="px-6 py-4 text-white">${licenca.campanha || '-'}</td>
-                    <td class="px-6 py-4 text-white">${licenca.tipo || '-'}</td>
-                    <td class="px-6 py-4 text-white">${licenca.canais || '-'}</td>
-                    <td class="px-6 py-4 text-white">${licenca.av || '-'}</td>
-                    <td class="px-6 py-4 text-white">${licenca.ambiente || '-'}</td>
+                    <td class="px-6 py-4 text-white">${licenca.cliente || '-'}</td>
+                    <td class="px-6 py-4 text-white font-mono">${licenca.licenca || '-'}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 rounded-full text-xs font-medium text-white ${obterClasseStatus(licenca.status)}">
+                            ${licenca.status || '-'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-white">${formatarData(licenca.dataInicio)}</td>
+                    <td class="px-6 py-4 text-white">${formatarData(licenca.dataFim)}</td>
+                    <td class="px-6 py-4 text-white">${licenca.usuarios || '-'}</td>
                     <td class="px-6 py-4 text-white text-xs">
                         ${licenca.ultimaAlteracao ? `
                             <div class="text-gray-300">
@@ -483,29 +494,32 @@
         // Função para atualizar estatísticas
         function atualizarEstatisticas() {
             const totalLicencas = licencas.length;
-            const totalCanais = licencas.reduce((sum, licenca) => sum + (parseInt(licenca.canais) || 0), 0);
-            const totalCampanhas = [...new Set(licencas.map(l => l.campanha).filter(c => c))].length;
+            const totalAtivas = licencas.filter(l => l.status === 'Ativa').length;
+            const totalExpiradas = licencas.filter(l => l.status === 'Expirada').length;
+            const totalSuspensas = licencas.filter(l => l.status === 'Suspensa').length;
 
             document.getElementById('totalLicencas').textContent = totalLicencas;
-            document.getElementById('totalCanais').textContent = totalCanais;
-            document.getElementById('totalCampanhas').textContent = totalCampanhas;
+            document.getElementById('totalAtivas').textContent = totalAtivas;
+            document.getElementById('totalExpiradas').textContent = totalExpiradas;
+            document.getElementById('totalSuspensas').textContent = totalSuspensas;
         }
 
         // Função para filtrar licenças
         function filtrarLicencas() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const plataformaFilter = document.getElementById('plataformaFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const clienteFilter = document.getElementById('clienteFilter').value;
 
             const licencasFiltradas = licencas.filter(licenca => {
                 const matchSearch = !searchTerm || 
-                    (licenca.plataforma && licenca.plataforma.toLowerCase().includes(searchTerm)) ||
-                    (licenca.carteira && licenca.carteira.toLowerCase().includes(searchTerm)) ||
-                    (licenca.campanha && licenca.campanha.toLowerCase().includes(searchTerm)) ||
-                    (licenca.codigo && licenca.codigo.toLowerCase().includes(searchTerm));
+                    (licenca.cliente && licenca.cliente.toLowerCase().includes(searchTerm)) ||
+                    (licenca.licenca && licenca.licenca.toLowerCase().includes(searchTerm)) ||
+                    (licenca.status && licenca.status.toLowerCase().includes(searchTerm));
                 
-                const matchPlataforma = !plataformaFilter || licenca.plataforma === plataformaFilter;
+                const matchStatus = !statusFilter || licenca.status === statusFilter;
+                const matchCliente = !clienteFilter || licenca.cliente === clienteFilter;
                 
-                return matchSearch && matchPlataforma;
+                return matchSearch && matchStatus && matchCliente;
             });
 
             renderizarTabela(licencasFiltradas);
@@ -513,7 +527,8 @@
 
         // Event listeners para filtros em tempo real
         document.getElementById('searchInput').addEventListener('input', filtrarLicencas);
-        document.getElementById('plataformaFilter').addEventListener('change', filtrarLicencas);
+        document.getElementById('statusFilter').addEventListener('change', filtrarLicencas);
+        document.getElementById('clienteFilter').addEventListener('change', filtrarLicencas);
 
         // Função para cadastrar nova licença
         document.getElementById('formCadastro').addEventListener('submit', function(e) {
@@ -522,18 +537,13 @@
             const formData = new FormData(e.target);
             const novaLicenca = {
                 id: Date.now(),
-                plataforma: formData.get('plataforma') || '',
-                codigo: formData.get('codigo') || '',
-                carteira: formData.get('carteira') || '',
-                campanha: formData.get('campanha') || '',
-                tipo: formData.get('tipo') || '',
-                canais: parseInt(formData.get('canais')) || 0,
-                av: parseInt(formData.get('av')) || 0,
-                transbordo: formData.get('transbordo') || '',
-                dnis: formData.get('dnis') || '',
-                tech: formData.get('tech') || '',
-                kmg: formData.get('kmg') || '',
-                ambiente: formData.get('ambiente') || '',
+                cliente: formData.get('cliente') || '',
+                licenca: formData.get('licenca') || '',
+                status: formData.get('status') || '',
+                dataInicio: formData.get('dataInicio') || '',
+                dataFim: formData.get('dataFim') || '',
+                usuarios: parseInt(formData.get('usuarios')) || 0,
+                observacoes: formData.get('observacoes') || '',
                 ultimaAlteracao: {
                     cpf: usuarioLogado,
                     dataHora: obterDataHoraAtual()
@@ -554,18 +564,13 @@
             const licenca = licencas.find(l => l.id === id);
             if (licenca) {
                 // Preencher formulário com dados da licença
-                document.getElementById('plataforma').value = licenca.plataforma || '';
-                document.getElementById('codigo').value = licenca.codigo || '';
-                document.getElementById('carteira').value = licenca.carteira || '';
-                document.getElementById('campanha').value = licenca.campanha || '';
-                document.getElementById('tipo').value = licenca.tipo || '';
-                document.getElementById('canais').value = licenca.canais || '';
-                document.getElementById('av').value = licenca.av || '';
-                document.getElementById('transbordo').value = licenca.transbordo || '';
-                document.getElementById('dnis').value = licenca.dnis || '';
-                document.getElementById('tech').value = licenca.tech || '';
-                document.getElementById('kmg').value = licenca.kmg || '';
-                document.getElementById('ambiente').value = licenca.ambiente || '';
+                document.getElementById('cliente').value = licenca.cliente || '';
+                document.getElementById('licenca').value = licenca.licenca || '';
+                document.getElementById('status').value = licenca.status || '';
+                document.getElementById('dataInicio').value = licenca.dataInicio || '';
+                document.getElementById('dataFim').value = licenca.dataFim || '';
+                document.getElementById('usuarios').value = licenca.usuarios || '';
+                document.getElementById('observacoes').value = licenca.observacoes || '';
                 
                 // Alterar comportamento do formulário para edição
                 const form = document.getElementById('formCadastro');
@@ -577,18 +582,13 @@
                     const index = licencas.findIndex(l => l.id === id);
                     licencas[index] = {
                         ...licencas[index],
-                        plataforma: formData.get('plataforma') || '',
-                        codigo: formData.get('codigo') || '',
-                        carteira: formData.get('carteira') || '',
-                        campanha: formData.get('campanha') || '',
-                        tipo: formData.get('tipo') || '',
-                        canais: parseInt(formData.get('canais')) || 0,
-                        av: parseInt(formData.get('av')) || 0,
-                        transbordo: formData.get('transbordo') || '',
-                        dnis: formData.get('dnis') || '',
-                        tech: formData.get('tech') || '',
-                        kmg: formData.get('kmg') || '',
-                        ambiente: formData.get('ambiente') || '',
+                        cliente: formData.get('cliente') || '',
+                        licenca: formData.get('licenca') || '',
+                        status: formData.get('status') || '',
+                        dataInicio: formData.get('dataInicio') || '',
+                        dataFim: formData.get('dataFim') || '',
+                        usuarios: parseInt(formData.get('usuarios')) || 0,
+                        observacoes: formData.get('observacoes') || '',
                         ultimaAlteracao: {
                             cpf: usuarioLogado,
                             dataHora: obterDataHoraAtual()
@@ -680,6 +680,11 @@
             podeEditar = false;
             usuarioLogado = '';
             
+            // Limpar todas as sessões
+            sessionStorage.removeItem('usuarioAutorizado');
+            sessionStorage.removeItem('usuarioVisualizacao');
+            sessionStorage.removeItem('cpfUsuario');
+            
             // Mostrar modal de autenticação
             document.getElementById('modalAuth').classList.add('show');
             
@@ -707,10 +712,33 @@
             const cpf = document.getElementById('cpfInput').value;
             const authError = document.getElementById('authError');
             
-            if (fazerLogin(cpf)) {
+            // Verificar se o CPF tem pelo menos 11 dígitos
+            if (limparCPF(cpf).length < 11) {
+                authError.textContent = 'Digite um CPF válido';
+                authError.classList.remove('hidden');
+                return;
+            }
+            
+            if (autenticarUsuario(cpf)) {
+                // CPF autorizado - acesso completo
+                podeEditar = true;
+                usuarioLogado = formatarCPF(cpf);
+                
+                // Ocultar modal de autenticação
+                document.getElementById('modalAuth').classList.remove('show');
+                
+                // Mostrar informações do usuário e botão de nova licença
+                document.getElementById('userInfo').classList.remove('hidden');
+                document.getElementById('userCpf').textContent = usuarioLogado;
+                document.getElementById('btnNovaLicenca').classList.remove('hidden');
+                
+                // Salvar sessão
+                sessionStorage.setItem('usuarioAutorizado', 'true');
+                sessionStorage.setItem('cpfUsuario', limparCPF(cpf));
+                
                 authError.classList.add('hidden');
             } else {
-                // Permitir acesso de visualização para CPFs não autorizados
+                // CPF não autorizado - apenas visualização
                 podeEditar = false;
                 usuarioLogado = formatarCPF(cpf);
                 
@@ -721,11 +749,15 @@
                 document.getElementById('userInfo').classList.remove('hidden');
                 document.getElementById('userCpf').textContent = usuarioLogado + ' (Somente Visualização)';
                 
-                // Atualizar tabela sem botões de ação
-                renderizarTabela();
+                // Salvar sessão como visualização
+                sessionStorage.setItem('usuarioVisualizacao', 'true');
+                sessionStorage.setItem('cpfUsuario', limparCPF(cpf));
                 
                 authError.classList.add('hidden');
             }
+            
+            // Atualizar tabela com as permissões corretas
+            renderizarTabela();
         });
 
         // Inicializar página
@@ -733,46 +765,37 @@
             renderizarTabela();
             atualizarEstatisticas();
             
-            // Verificar se há sessão ativa (simulação básica)
-            const sessaoAtiva = sessionStorage.getItem('usuarioAutorizado');
-            if (sessaoAtiva) {
-                const cpfSessao = sessionStorage.getItem('cpfUsuario');
-                if (cpfSessao && autenticarUsuario(cpfSessao)) {
-                    fazerLogin(cpfSessao);
+            // Verificar se há sessão ativa
+            const sessaoAutorizada = sessionStorage.getItem('usuarioAutorizado');
+            const sessaoVisualizacao = sessionStorage.getItem('usuarioVisualizacao');
+            const cpfSessao = sessionStorage.getItem('cpfUsuario');
+            
+            if (cpfSessao && (sessaoAutorizada || sessaoVisualizacao)) {
+                const cpfFormatado = formatarCPF(cpfSessao);
+                
+                if (sessaoAutorizada && autenticarUsuario(cpfSessao)) {
+                    // Usuário autorizado
+                    podeEditar = true;
+                    usuarioLogado = cpfFormatado;
+                    
+                    document.getElementById('modalAuth').classList.remove('show');
+                    document.getElementById('userInfo').classList.remove('hidden');
+                    document.getElementById('userCpf').textContent = usuarioLogado;
+                    document.getElementById('btnNovaLicenca').classList.remove('hidden');
+                } else if (sessaoVisualizacao) {
+                    // Usuário apenas visualização
+                    podeEditar = false;
+                    usuarioLogado = cpfFormatado;
+                    
+                    document.getElementById('modalAuth').classList.remove('show');
+                    document.getElementById('userInfo').classList.remove('hidden');
+                    document.getElementById('userCpf').textContent = usuarioLogado + ' (Somente Visualização)';
                 }
+                
+                renderizarTabela();
             }
         });
-
-        // Salvar sessão quando usuário faz login com sucesso
-        function salvarSessao() {
-            if (podeEditar && usuarioLogado) {
-                sessionStorage.setItem('usuarioAutorizado', 'true');
-                sessionStorage.setItem('cpfUsuario', limparCPF(usuarioLogado));
-            }
-        }
-
-        // Limpar sessão no logout
-        function limparSessao() {
-            sessionStorage.removeItem('usuarioAutorizado');
-            sessionStorage.removeItem('cpfUsuario');
-        }
-
-        // Modificar função de login para salvar sessão
-        const fazerLoginOriginal = fazerLogin;
-        fazerLogin = function(cpf) {
-            const resultado = fazerLoginOriginal(cpf);
-            if (resultado) {
-                salvarSessao();
-            }
-            return resultado;
-        };
-
-        // Modificar função de logout para limpar sessão
-        const logoutOriginal = logout;
-        logout = function() {
-            limparSessao();
-            logoutOriginal();
-        };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'987c51926135f1dd',t:'MTc1OTMyNTQ2OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'987c708137e5f1dd',t:'MTc1OTMyNjczNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
