@@ -333,17 +333,14 @@
     </div>
 
     <script>
-        // CPFs autorizados para edição (apenas números)
-        // ADICIONE NOVOS CPFs AQUI - SOMENTE OS NÚMEROS, SEM PONTOS OU TRAÇOS
-        const cpfsAutorizados = [
-            '06660278974',  // CPF: 066.602.789-74
-            '08788382958',  // CPF: 087.883.829-58
-            '23100855884'   // CPF: 231.008.558-84
-            '08843197924'   // CPF: 088.431.979-24
-            '39540020867'   // CPF: 395.400.208-67
-            // Para adicionar um novo CPF, adicione uma linha como:
-            // '00011122233'   // CPF: 000.111.222-33
-        ];
+// CPFs autorizados para edição (apenas números) - SEUS CPFs REAIS
+const cpfsAutorizados = [
+    '06660278974',  // CPF: 066.602.789-74
+    '08788382958',  // CPF: 087.883.829-58
+    '23100855884',  // CPF: 231.008.558-84
+    '08843197924',  // CPF: 088.431.979-24
+    '39540020867'   // CPF: 395.400.208-67
+];
         
         // Variável para controlar se o usuário tem permissão de edição
         let podeEditar = false;
@@ -685,20 +682,64 @@
             sessionStorage.removeItem('usuarioVisualizacao');
             sessionStorage.removeItem('cpfUsuario');
             
-            // Mostrar modal de autenticação
-            document.getElementById('modalAuth').classList.add('show');
-            
-            // Ocultar informações do usuário e botão de nova licença
-            document.getElementById('userInfo').classList.add('hidden');
-            document.getElementById('btnNovaLicenca').classList.add('hidden');
-            
-            // Limpar campo de CPF
-            document.getElementById('cpfInput').value = '';
-            document.getElementById('authError').classList.add('hidden');
-            
-            // Atualizar tabela para ocultar botões de ação
-            renderizarTabela();
-        }
+            // Event listener para o formulário de autenticação
+document.getElementById('formAuth').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const cpf = document.getElementById('cpfInput').value;
+    const authError = document.getElementById('authError');
+    const cpfLimpo = limparCPF(cpf);
+    
+    // Verificar se o CPF tem pelo menos 11 dígitos
+    if (cpfLimpo.length !== 11) {
+        authError.textContent = 'Digite um CPF válido com 11 dígitos';
+        authError.classList.remove('hidden');
+        return;
+    }
+    
+    // Verificar se é um CPF autorizado
+    if (cpfsAutorizados.includes(cpfLimpo)) {
+        // CPF autorizado - acesso completo
+        podeEditar = true;
+        usuarioLogado = formatarCPF(cpf);
+        
+        // Ocultar modal de autenticação
+        document.getElementById('modalAuth').classList.remove('show');
+        
+        // Mostrar informações do usuário e botão de nova implantação/licença
+        document.getElementById('userInfo').classList.remove('hidden');
+        document.getElementById('userCpf').textContent = usuarioLogado;
+        document.getElementById('btnNovaImplantacao').classList.remove('hidden'); // Para implantações
+        // OU
+        document.getElementById('btnNovaLicenca').classList.remove('hidden'); // Para licenças
+        
+        // Salvar sessão
+        sessionStorage.setItem('usuarioAutorizado', 'true');
+        sessionStorage.setItem('cpfUsuario', cpfLimpo);
+        
+        authError.classList.add('hidden');
+    } else {
+        // CPF não autorizado - apenas visualização
+        podeEditar = false;
+        usuarioLogado = formatarCPF(cpf);
+        
+        // Ocultar modal de autenticação
+        document.getElementById('modalAuth').classList.remove('show');
+        
+        // Mostrar informações do usuário (sem botão de nova implantação/licença)
+        document.getElementById('userInfo').classList.remove('hidden');
+        document.getElementById('userCpf').textContent = usuarioLogado + ' (Somente Visualização)';
+        
+        // Salvar sessão como visualização
+        sessionStorage.setItem('usuarioVisualizacao', 'true');
+        sessionStorage.setItem('cpfUsuario', cpfLimpo);
+        
+        authError.classList.add('hidden');
+    }
+    
+    // Atualizar tabela com as permissões corretas
+    renderizarTabela();
+    });
 
         // Event listener para formatação do CPF
         document.getElementById('cpfInput').addEventListener('input', function(e) {
@@ -761,40 +802,42 @@
         });
 
         // Inicializar página
-        document.addEventListener('DOMContentLoaded', function() {
-            renderizarTabela();
-            atualizarEstatisticas();
+document.addEventListener('DOMContentLoaded', function() {
+    renderizarTabela();
+    atualizarEstatisticas();
+    
+    // Verificar se há sessão ativa
+    const sessaoAutorizada = sessionStorage.getItem('usuarioAutorizado');
+    const sessaoVisualizacao = sessionStorage.getItem('usuarioVisualizacao');
+    const cpfSessao = sessionStorage.getItem('cpfUsuario');
+    
+    if (cpfSessao && (sessaoAutorizada || sessaoVisualizacao)) {
+        const cpfFormatado = formatarCPF(cpfSessao);
+        
+        if (sessaoAutorizada && cpfsAutorizados.includes(cpfSessao)) {
+            // Usuário autorizado
+            podeEditar = true;
+            usuarioLogado = cpfFormatado;
             
-            // Verificar se há sessão ativa
-            const sessaoAutorizada = sessionStorage.getItem('usuarioAutorizado');
-            const sessaoVisualizacao = sessionStorage.getItem('usuarioVisualizacao');
-            const cpfSessao = sessionStorage.getItem('cpfUsuario');
+            document.getElementById('modalAuth').classList.remove('show');
+            document.getElementById('userInfo').classList.remove('hidden');
+            document.getElementById('userCpf').textContent = usuarioLogado;
+            document.getElementById('btnbtnNovaLicenca').classList.remove('hidden'); // Para implantações
+            // OU
+            document.getElementById('btnNovaLicenca').classList.remove('hidden'); // Para licenças
+        } else if (sessaoVisualizacao) {
+            // Usuário apenas visualização
+            podeEditar = false;
+            usuarioLogado = cpfFormatado;
             
-            if (cpfSessao && (sessaoAutorizada || sessaoVisualizacao)) {
-                const cpfFormatado = formatarCPF(cpfSessao);
-                
-                if (sessaoAutorizada && autenticarUsuario(cpfSessao)) {
-                    // Usuário autorizado
-                    podeEditar = true;
-                    usuarioLogado = cpfFormatado;
-                    
-                    document.getElementById('modalAuth').classList.remove('show');
-                    document.getElementById('userInfo').classList.remove('hidden');
-                    document.getElementById('userCpf').textContent = usuarioLogado;
-                    document.getElementById('btnNovaLicenca').classList.remove('hidden');
-                } else if (sessaoVisualizacao) {
-                    // Usuário apenas visualização
-                    podeEditar = false;
-                    usuarioLogado = cpfFormatado;
-                    
-                    document.getElementById('modalAuth').classList.remove('show');
-                    document.getElementById('userInfo').classList.remove('hidden');
-                    document.getElementById('userCpf').textContent = usuarioLogado + ' (Somente Visualização)';
-                }
-                
-                renderizarTabela();
-            }
-        });
+            document.getElementById('modalAuth').classList.remove('show');
+            document.getElementById('userInfo').classList.remove('hidden');
+            document.getElementById('userCpf').textContent = usuarioLogado + ' (Somente Visualização)';
+        }
+        
+        renderizarTabela();
+    }
+});
     </script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'987c708137e5f1dd',t:'MTc1OTMyNjczNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
