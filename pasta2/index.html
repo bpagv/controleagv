@@ -615,9 +615,13 @@ function atualizarEstatisticas() {
     const concluidas = implantacoes.filter(i => i.status === 'Concluído');
     const totalProducao = concluidas.length;
     const totalDesenvolvimento = implantacoes.filter(i => i.status === 'Em Andamento' || i.status === 'Homologação').length;
-    const tempoMedio = concluidas.length > 0 
-        ? Math.round(concluidas.reduce((acc, i) => acc + calcularDiasProducao(i.dataSolicitacao, i.dataEntrega), 0) / concluidas.length)
+
+    // calcular média dos diasProducao direto do campo existente
+    const dias = concluidas.map(i => i.diasProducao || 0);
+    const tempoMedio = dias.length > 0 
+        ? Math.round(dias.reduce((a, b) => a + b, 0) / dias.length)
         : 0;
+
     document.getElementById('totalImplantacoes').textContent = totalImplantacoes;
     document.getElementById('totalProducao').textContent = totalProducao;
     document.getElementById('totalDesenvolvimento').textContent = totalDesenvolvimento;
