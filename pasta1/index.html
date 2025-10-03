@@ -8,6 +8,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Licenças AGV</title>
@@ -283,7 +284,16 @@
                     </svg>
                 </button>
             </div>
-            
+     <!-- Modal Import -->
+          <div id="modalImport" class="modal">
+  <div class="modal-content fade-in" style="max-width:500px;">
+    <h2 class="text-2xl font-bold text-white mb-4">Importar Excel</h2>
+    <input type="file" id="fileInput" accept=".xlsx,.xls" class="mb-4 text-white">
+    <div class="flex justify-end space-x-4">
+      <button type="button" onclick="fecharModalImport()" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium">Cancelar</button>
+    </div>
+  </div>
+</div>       
             <form id="formCadastro" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
