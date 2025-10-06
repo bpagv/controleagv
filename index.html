@@ -46,15 +46,13 @@
             transform: translateY(-8px) scale(1.02);
             box-shadow: 0 20px 40px rgba(0,0,0,0.15);
         }
-        
-        .fade-in {
+                .fade-in {
             animation: fadeIn 1s ease-out;
-        }
-        
+        }    
         .slide-up {
             animation: slideUp 0.8s ease-out;
         }
-        
+ 
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -156,7 +154,7 @@
             </div>
 
             <!-- Navigation Cards -->
-            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto slide-up">
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto slide-up">
                 <!-- Controle de Licenças AGV -->
                 <div class="bg-black/40 backdrop-blur-md rounded-2xl p-8 border border-white/30 card-hover cursor-pointer" onclick="acessarSistema('https://bpagv.github.io/controleagv/pasta1/')">
                     <div class="text-center">
@@ -226,9 +224,42 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Checklist Implantação -->
+                <div class="bg-black/40 backdrop-blur-md rounded-2xl p-8 border border-white/30 card-hover cursor-pointer" onclick="acessarSistema('pages/checklist.html')">
+                    <div class="text-center">
+                        <div class="bg-green-500/20 p-6 rounded-2xl inline-block mb-6 pulse-animation">
+                            <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-4">Checklist Implantação</h3>
+                        <p class="text-white/80 mb-6 leading-relaxed">
+                            Guia completo com todas as etapas do processo de implantação de Agentes Virtuais, desde abertura do chamado até operação final.
+                        </p>
+                        <div class="flex items-center justify-center space-x-4 text-sm text-white/70 mb-6">
+                            <div class="flex items-center space-x-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span>Timeline Visual</span>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span>Guia Detalhado</span>
+                            </div>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-3 flex items-center justify-center space-x-2 text-white">
+                            <span class="font-medium">Ver Checklist</span>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-
         </div>
     </main>
 
@@ -276,7 +307,7 @@
                 const rect = card.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
-                
+
                 if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
                     const centerX = rect.width / 2;
                     const centerY = rect.height / 2;
@@ -290,4 +321,5 @@
             });
         });
     </script>
-<!DOCTYPE html> <html lang="pt-BR"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Controle AGV</title> </head> <body> <!-- Seus elementos HTML --> <input id="nome" placeholder="Nome"> <input id="email" placeholder="Email"> <button onclick="salvar()">Salvar</button> <button onclick="carregar()">Carregar</button> <!-- Scripts do Firebase --> <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script> <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script> <script> // Configuração do Firebase const firebaseConfig = { apiKey: "AIzaSyAIKzCbt60ni9BKrNUM_uyDOZvYdtN-K9k", authDomain: "controle-agv.firebaseapp.com", projectId: "controle-agv", storageBucket: "controle-agv.appspot.com", messagingSenderId: "220840335975", appId: "1:220840335975:web:242eb4dd3f39b3b0d752c2" }; // Inicializa o Firebase const app = firebase.initializeApp(firebaseConfig); const db = firebase.firestore(); // Funções de salvar e carregar async function salvarDados(id, dados) { await db.collection("controle").doc(id).set(dados); alert("Dados salvos com sucesso!"); } async function carregarDados(id) { const doc = await db.collection("controle").doc(id).get(); if (doc.exists) { return doc.data(); } else { return null; } } // Integração com os campos async function salvar() { const dados = { nome: document.getElementById("nome").value, email: document.getElementById("email").value }; await salvarDados("usuario1", dados); } async function carregar() { const dados = await carregarDados("usuario1"); if (dados) { document.getElementById("nome").value = dados.nome; document.getElementById("email").value = dados.email; } } </script> </body> </html>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98a61e5b45c4f18b',t:'MTc1OTc2Mzc3Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
