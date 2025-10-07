@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Controle de Implantações AGV</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SheetJS para leitura do Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body { box-sizing: border-box; }
+        .hero-bg { background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #581c87 100%); min-height: 100vh; }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .status-concluido { background-color: #10b981; }
+        .status-em-andamento { background-color: #f59e0b; }
+        .status-homologacao { background-color: #8b5cf6; }
+        .status-cancelado { background-color: #ef4444; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
+        .modal.show { display: flex; align-items: center; justify-content: center; }
+        .modal-content { background: #1f2937; border-radius: 1rem; padding: 2rem; width: 90%; max-width: 900px; max-height: 90vh; overflow-y: auto; border: 1px solid #374151; }
+    </style>
+</head>
+<body class="hero-bg">
+    <!-- Header -->
+    <header class="bg-black/20 backdrop-blur-md border-b border-white/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <button onclick="voltarMenu()" class="bg-white/20 p-2 rounded-lg backdrop-blur-sm hover:bg-white/30 transition-colors">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                    </button>
+                    <div class="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">Controle de Implantações AGV</h1>
+                        <p class="text-white/80 text-sm">Gestão de Implantações dos Agentes Virtuais</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <!-- Import button -->
+                    <button id="btnImportarExcel" onclick="abrirModalImport()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                        </svg>
+                        <span>Importar Excel</span>
+                    </button>
+
+                    <button id="btnNovaImplantacao" onclick="abrirModalCadastro()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2 hidden">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        <span>Nova Implantação</span>
+                    </button>
+                    <div id="userInfo" class="text-white text-sm hidden">
+                        <span class="bg-white/20 px-3 py-1 rounded-lg backdrop-blur-sm">
+                            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            <span id="userCpf"></span>
+                        </span>
+                        <button onclick="logout()" class="ml-2 bg-red-500/20 hover:bg-red-500/30 px-3 py-1 rounded-lg backdrop-blur-sm transition-colors">
+                            Sair
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Modal de Autenticação -->
+    <div id="modalAuth" class="modal show">
+        <div class="modal-content fade-in" style="max-width: 400px;">
+            <div class="text-center mb-6">
+                <div class="bg-blue-500/20 p-4 rounded-full w-16 h-16 mx-auto mb-4">
+                    <svg class="w-8 h-8 text-blue-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-white mb-2">Acesso Restrito</h2>
+                <p class="text-gray-300">Digite seu CPF para acessar o sistema</p>
+            </div>
+            
+            <form id="formAuth" class="space-y-4">
+                <div>
+                    <label for="cpfInput" class="block text-sm font-medium text-gray-300 mb-2">CPF</label>
+                    <input type="text" id="cpfInput" name="cpf" maxlength="14" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="000.000.000-00">
+                </div>
+                
+                <button type="submit" class="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+                    Acessar Sistema
+                </button>
+                
+                <div id="authError" class="text-red-400 text-sm text-center hidden">
+                    Digite um CPF válido para acessar
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white/70 text-sm">Total de Implantações</p>
+                        <p class="text-3xl font-bold text-purple-400" id="totalImplantacoes">0</p>
+                    </div>
+                    <div class="bg-purple-500/20 p-3 rounded-lg">
+                        <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white/70 text-sm">Em Produção</p>
+                        <p class="text-3xl font-bold text-green-400" id="totalProducao">0</p>
+                    </div>
+                    <div class="bg-green-500/20 p-3 rounded-lg">
+                        <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white/70 text-sm">Em Desenvolvimento</p>
+                        <p class="text-3xl font-bold text-yellow-400" id="totalDesenvolvimento">0</p>
+                    </div>
+                    <div class="bg-yellow-500/20 p-3 rounded-lg">
+                        <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white/70 text-sm">Tempo Médio (dias)</p>
+                        <p class="text-3xl font-bold text-purple-600" id="tempoMedio">0</p>
+                    </div>
+                    <div class="bg-yellow-500/20 p-3 rounded-lg">
+                        <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 mb-8">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1">
+                    <input type="text" id="searchInput" placeholder="Buscar por cliente, projeto, responsável ou status..." class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="flex gap-2">
+                    <select id="statusFilter" class="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Status</option>
+                        <option value="Concluído">Concluído</option>
+                        <option value="Em Andamento">Em Andamento</option>
+                        <option value="Homologação">Homologação</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
+                    <select id="fornecedorFilter" class="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Fornecedor</option>
+                        <option value="Aspect">Aspect</option>
+                        <option value="Paneas">Paneas</option>
+                        <option value="Pontal">Pontal</option>
+                        <option value="Robbu">Robbu</option>
+                        <option value="Sinergytech">Sinergytech</option>
+                        <option value="TechIA">TechIA</option>
+                    </select>
+                    <select id="ordenacaoFilter" class="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Ordenar por</option>
+                        <option value="fornecedor-az">Fornecedor A-Z</option>
+                        <option value="fornecedor-za">Fornecedor Z-A</option>
+                        <option value="data-recente">Data Mais Recente</option>
+                        <option value="data-antiga">Data Mais Antiga</option>
+                        <option value="status">Status</option>
+                    </select>
+                    <button onclick="filtrarImplantacoes()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                        Filtrar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Implantações Table -->
+        <div class="bg-black/30 backdrop-blur-md rounded-xl border border-white/20 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-black/50">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Chamado</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Status</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Data Solicitação</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Fornecedor</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Carteira</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Tipo AGV</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Licenças</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Data Entrega</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Dias Produção</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Última Alteração</th>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-white/80">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="implantacoesTableBody" class="divide-y divide-gray-700">
+                        <!-- Implantações serão inseridas aqui via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Cadastro (reutilizado para edição) -->
+    <div id="modalCadastro" class="modal">
+        <div class="modal-content fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="modalTitulo" class="text-2xl font-bold text-white">Nova Implantação</h2>
+                <button onclick="fecharModalCadastro()" class="text-gray-400 hover:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="formCadastro" class="space-y-4">
+                <!-- hidden id field to detect editing -->
+                <input type="hidden" id="implantacaoId" name="implantacaoId" value="">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-gray-300 mb-2">Status</label>
+                        <select id="status" name="status" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Selecione o status</option>
+                            <option value="Em Andamento">Em Andamento</option>
+                            <option value="Homologação">Homologação</option>
+                            <option value="Concluído">Concluído</option>
+                            <option value="Cancelado">Cancelado</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="chamado" class="block text-sm font-medium text-gray-300 mb-2">Chamado</label>
+                        <input type="text" id="chamado" name="chamado" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Número do chamado">
+                    </div>
+                    <div>
+                        <label for="dataSolicitacao" class="block text-sm font-medium text-gray-300 mb-2">Data Solicitação</label>
+                        <input type="date" id="dataSolicitacao" name="dataSolicitacao" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="fornecedor" class="block text-sm font-medium text-gray-300 mb-2">Fornecedor</label>
+                        <input type="text" id="fornecedor" name="fornecedor" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nome do fornecedor">
+                    </div>
+                    <div>
+                        <label for="carteira" class="block text-sm font-medium text-gray-300 mb-2">Carteira</label>
+                        <input type="text" id="carteira" name="carteira" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nome da carteira">
+                    </div>
+                    <div>
+                        <label for="tipoAgv" class="block text-sm font-medium text-gray-300 mb-2">Tipo AGV</label>
+                        <select id="tipoAgv" name="tipoAgv" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Selecione o tipo</option>
+                            <option value="Localizador">Localizador</option>
+                            <option value="Localizador SmartPlay">Localizador SmartPlay</option>
+                            <option value="Negociador">Negociador</option>
+                            <option value="Negociador SmartPlay">Negociador SmartPlay</option>
+                            <option value="Recado">Recado</option>
+                            <option value="Preventivo">Preventivo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="licencas" class="block text-sm font-medium text-gray-300 mb-2">Licenças</label>
+                        <input type="text" id="licencas" name="licencas" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Quantidade de licenças">
+                    </div>
+                    <div>
+                        <label for="dataEntrega" class="block text-sm font-medium text-gray-300 mb-2">Data Entrega</label>
+                        <input type="date" id="dataEntrega" name="dataEntrega" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label for="diasProducao" class="block text-sm font-medium text-gray-300 mb-2">Dias Produção</label>
+                        <input type="number" id="diasProducao" name="diasProducao" readonly class="w-full px-4 py-3 bg-gray-600 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none cursor-not-allowed" placeholder="Calculado automaticamente">
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-4 pt-4">
+                    <button type="button" onclick="fecharModalCadastro()" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors">
+                        Cancelar
+                    </button>
+                    <button id="salvarImplantacaoBtn" type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+                        Salvar Implantação
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Import (Excel) -->
+    <div id="modalImport" class="modal">
+      <div class="modal-content fade-in" style="max-width:500px;">
+        <h2 class="text-2xl font-bold text-white mb-4">Importar Excel - Implantações</h2>
+        <input type="file" id="fileInput" accept=".xlsx,.xls" class="mb-4 text-white">
+        <p class="text-sm text-gray-300 mb-4">Colunas esperadas: <strong>Chamado, Status, Data Solicitação, Fornecedor, Carteira, Tipo AGV, Licenças, Data Entrega, Dias Produção</strong></p>
+        <div class="flex justify-end space-x-4">
+          <button type="button" onclick="fecharModalImport()" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Firebase + App logic (module) -->
+    <script type="module">
+    // --- FIREBASE SETUP ---
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      onSnapshot,
+      doc,
+      setDoc,
+      deleteDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAIKzCbt60ni9BKrNUM_uyDOZvYdtN-K9k",
+      authDomain: "controle-agv.firebaseapp.com",
+      projectId: "controle-agv",
+      storageBucket: "controle-agv.firebasestorage.app",
+      messagingSenderId: "220840335975",
+      appId: "1:220840335975:web:242eb4dd3f39b3b0d752c2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const COLLECTION_NAME = "implantacoes";
+
+    // --- VARIÁVEIS ---
+    const cpfsAutorizados = [
+        '06660278974', '08788382958', '23100855884', '08843197924', '39540020867'
+    ];
+    let podeEditar = false;
+    let usuarioLogado = '';
+    let implantacoes = []; // preenchido pelo onSnapshot
+    let editingId = null;
+
+    // --- UTILITÁRIOS ---
+    function formatarData(data) {
+        if (!data) return '-';
+        if (typeof data === 'string' && data.match(/^\d{4}-\d{2}-\d{2}$/)) {
+            return new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
+        }
+        try { return new Date(data).toLocaleDateString('pt-BR'); } catch { return '-'; }
+    }
+    function obterDataHoraAtual() {
+        const agora = new Date();
+        const data = agora.toLocaleDateString('pt-BR');
+        const hora = agora.toLocaleTimeString('pt-BR');
+        return `${data} ${hora}`;
+    }
+    function formatarCPF(cpf) {
+        cpf = cpf.replace(/\D/g, '');
+        cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+        cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+        cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        return cpf;
+    }
+    function limparCPF(cpf) { return cpf.replace(/\D/g, ''); }
+
+    // Converte data em dd/mm/yyyy ou objeto Date para YYYY-MM-DD (string)
+    function parseDateToISO(value) {
+        if (!value && value !== 0) return '';
+        // se já for Date
+        if (value instanceof Date && !isNaN(value)) {
+            const y = value.getFullYear();
+            const m = String(value.getMonth()+1).padStart(2,'0');
+            const d = String(value.getDate()).padStart(2,'0');
+            return `${y}-${m}-${d}`;
+        }
+        // se for número do Excel (serial) - SheetJS pode retornar número; tentar converter
+        if (typeof value === 'number') {
+            // Excel serial date to JS date
+            const date = XLSX.SSF ? XLSX.SSF.parse_date_code(value) : null;
+            if (date) {
+                const jsDate = new Date(Date.UTC(date.y, date.m-1, date.d));
+                return parseDateToISO(jsDate);
+            }
+        }
+        // se for string dd/mm/yyyy
+        const ddmmyyyy = value.toString().trim();
+        const match = ddmmyyyy.match(/^(\d{2})[\/\-](\d{2})[\/\-](\d{4})$/);
+        if (match) {
+            const d = match[1], m = match[2], y = match[3];
+            return `${y}-${m}-${d}`;
+        }
+        // se for YYYY-MM-DD já
+        if (ddmmyyyy.match(/^\d{4}-\d{2}-\d{2}$/)) return ddmmyyyy;
+        // fallback: tentar criar Date
+        const tmp = new Date(ddmmyyyy);
+        if (!isNaN(tmp)) {
+            return parseDateToISO(tmp);
+        }
+        return '';
+    }
+
+    // --- FIRESTORE: realtime observer ---
+    function iniciarObservadorRealtime() {
+        const colRef = collection(db, COLLECTION_NAME);
+        onSnapshot(colRef, (snapshot) => {
+            const docs = [];
+            snapshot.forEach(d => {
+                const data = d.data();
+                docs.push({
+                    id: d.id,
+                    chamado: data.chamado || '',
+                    status: data.status || '',
+                    dataSolicitacao: data.dataSolicitacao || '',
+                    fornecedor: data.fornecedor || '',
+                    carteira: data.carteira || '',
+                    tipoAgv: data.tipoAgv || '',
+                    licencas: data.licencas || '',
+                    dataEntrega: data.dataEntrega || '',
+                    diasProducao: data.diasProducao || 0,
+                    ultimaAlteracao: data.ultimaAlteracao || null
+                });
+            });
+            // ordenar por dataSolicitacao (mais recente primeiro)
+            docs.sort((a,b) => {
+                if (!a.dataSolicitacao) return 1;
+                if (!b.dataSolicitacao) return -1;
+                return new Date(b.dataSolicitacao) - new Date(a.dataSolicitacao);
+            });
+            implantacoes = docs;
+            renderizarTabela();
+            atualizarEstatisticas();
+        }, (erro) => {
+            console.error('Erro no onSnapshot:', erro);
+            alert('Erro ao conectar ao Firestore em tempo real. Verifique o console.');
+        });
+    }
+
+    async function criarOuAtualizarImplantacaoNoFirestore(obj) {
+        try {
+            const id = obj.id ? obj.id.toString() : Date.now().toString();
+            await setDoc(doc(db, COLLECTION_NAME, id), { ...obj });
+        } catch (e) {
+            console.error('Erro ao salvar no Firestore:', e);
+            alert('Erro ao salvar no Firestore. Veja o console.');
+        }
+    }
+
+    async function excluirDoFirestore(id) {
+        try {
+            await deleteDoc(doc(db, COLLECTION_NAME, id.toString()));
+        } catch (e) {
+            console.error('Erro ao excluir no Firestore:', e);
+            alert('Erro ao excluir no Firestore. Veja o console.');
+        }
+    }
+
+    // --- UI render ---
+    function obterClasseStatus(status) {
+        const classes = {
+            'Concluído': 'status-concluido',
+            'Em Andamento': 'status-em-andamento',
+            'Homologação': 'status-homologacao',
+            'Cancelado': 'status-cancelado'
+        };
+        return classes[status] || 'bg-gray-500';
+    }
+
+    function calcularDiasEntrega(previsaoEntrega, dataEntrega) {
+        if (dataEntrega) {
+            return `<span class="text-green-400">Entregue</span>`;
+        }
+        if (!previsaoEntrega) return '-';
+        const hoje = new Date();
+        const previsao = new Date(previsaoEntrega + 'T00:00:00');
+        const diffTime = previsao - hoje;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (diffDays < 0) {
+            return `<span class="text-red-400">Atrasado ${Math.abs(diffDays)} dias</span>`;
+        } else if (diffDays === 0) {
+            return `<span class="text-yellow-400">Entrega hoje</span>`;
+        } else if (diffDays <= 7) {
+            return `<span class="text-yellow-400">${diffDays} dias</span>`;
+        } else {
+            return `<span class="text-green-400">${diffDays} dias</span>`;
+        }
+    }
+
+    function renderizarTabela(implantacoesFiltradas = implantacoes) {
+        const tbody = document.getElementById('implantacoesTableBody');
+        if (!implantacoesFiltradas || implantacoesFiltradas.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="11" class="px-6 py-8 text-center text-gray-400">
+                        <div class="flex flex-col items-center">
+                            <svg class="w-12 h-12 mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                            </svg>
+                            <p class="text-lg font-medium">Nenhuma implantação encontrada</p>
+                            <p class="text-sm">Cadastre uma nova implantação para começar</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = implantacoesFiltradas.map(implantacao => `
+            <tr class="hover:bg-white/5 transition-colors">
+                <td class="px-6 py-4 text-white">${implantacao.chamado || '-'}</td>
+                <td class="px-6 py-4">
+                    <span class="px-3 py-1 rounded-full text-xs font-medium text-white ${obterClasseStatus(implantacao.status)}">
+                        ${implantacao.status || '-'}
+                    </span>
+                </td>
+                <td class="px-6 py-4 text-white">${formatarData(implantacao.dataSolicitacao)}</td>
+                <td class="px-6 py-4 text-white">${implantacao.fornecedor || '-'}</td>
+                <td class="px-6 py-4 text-white">${implantacao.carteira || '-'}</td>
+                <td class="px-6 py-4 text-white">${implantacao.tipoAgv || '-'}</td>
+                <td class="px-6 py-4 text-white">${implantacao.licencas || '-'}</td>
+                <td class="px-6 py-4 text-white">${implantacao.dataEntrega ? formatarData(implantacao.dataEntrega) : '-'}</td>
+                <td class="px-6 py-4 text-white">${implantacao.diasProducao || '-'} dias</td>
+                <td class="px-6 py-4 text-white text-xs">
+                    ${implantacao.ultimaAlteracao ? `
+                        <div class="text-gray-300">
+                            <div class="font-medium">${implantacao.ultimaAlteracao.cpf}</div>
+                            <div class="text-gray-400">${implantacao.ultimaAlteracao.dataHora}</div>
+                        </div>
+                    ` : '-'}
+                </td>
+                <td class="px-6 py-4">
+                    <div class="flex space-x-2">
+                        ${podeEditar ? `
+                            <button onclick="editarImplantacao('${implantacao.id}')" class="text-blue-400 hover:text-blue-300 transition-colors" title="Editar">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </button>
+                            <button onclick="excluirImplantacao('${implantacao.id}')" class="text-red-400 hover:text-red-300 transition-colors" title="Excluir">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        ` : `
+                            <span class="text-gray-500 text-sm">Somente visualização</span>
+                        `}
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function atualizarEstatisticas() {
+        const totalImplantacoes = implantacoes.length;
+        const concluidas = implantacoes.filter(i => i.status === 'Concluído');
+        const totalProducao = concluidas.length;
+        const totalDesenvolvimento = implantacoes.filter(i => i.status === 'Em Andamento' || i.status === 'Homologação').length;
+        const dias = concluidas.map(i => i.diasProducao || 0);
+        const tempoMedio = dias.length > 0 ? Math.round(dias.reduce((a,b)=>a+b,0)/dias.length) : 0;
+
+        document.getElementById('totalImplantacoes').textContent = totalImplantacoes;
+        document.getElementById('totalProducao').textContent = totalProducao;
+        document.getElementById('totalDesenvolvimento').textContent = totalDesenvolvimento;
+        document.getElementById('tempoMedio').textContent = tempoMedio;
+    }
+
+    function filtrarImplantacoes() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const statusFilter = document.getElementById('statusFilter').value;
+        const fornecedorFilter = document.getElementById('fornecedorFilter').value;
+        const ordenacaoFilter = document.getElementById('ordenacaoFilter').value;
+
+        let implantacoesFiltradas = implantacoes.filter(implantacao => {
+            const matchSearch = !searchTerm ||
+                (implantacao.chamado && implantacao.chamado.toLowerCase().includes(searchTerm)) ||
+                (implantacao.fornecedor && implantacao.fornecedor.toLowerCase().includes(searchTerm)) ||
+                (implantacao.carteira && implantacao.carteira.toLowerCase().includes(searchTerm)) ||
+                (implantacao.tipoAgv && implantacao.tipoAgv.toLowerCase().includes(searchTerm)) ||
+                (implantacao.status && implantacao.status.toLowerCase().includes(searchTerm));
+
+            const matchStatus = !statusFilter || implantacao.status === statusFilter;
+            const matchFornecedor = !fornecedorFilter || implantacao.fornecedor === fornecedorFilter;
+            return matchSearch && matchStatus && matchFornecedor;
+        });
+
+        // ordenação
+        if (ordenacaoFilter) {
+            switch (ordenacaoFilter) {
+                case 'fornecedor-az':
+                    implantacoesFiltradas.sort((a,b) => (a.fornecedor||'').localeCompare(b.fornecedor||''));
+                    break;
+                case 'fornecedor-za':
+                    implantacoesFiltradas.sort((a,b) => (b.fornecedor||'').localeCompare(a.fornecedor||''));
+                    break;
+                case 'data-recente':
+                    implantacoesFiltradas.sort((a,b) => new Date(b.dataSolicitacao||'1900-01-01') - new Date(a.dataSolicitacao||'1900-01-01'));
+                    break;
+                case 'data-antiga':
+                    implantacoesFiltradas.sort((a,b) => new Date(a.dataSolicitacao||'1900-01-01') - new Date(b.dataSolicitacao||'1900-01-01'));
+                    break;
+                case 'status':
+                    const statusOrder = { 'Em Andamento': 1, 'Homologação': 2, 'Concluído': 3, 'Cancelado': 4 };
+                    implantacoesFiltradas.sort((a,b) => (statusOrder[a.status]||5) - (statusOrder[b.status]||5));
+                    break;
+            }
+        }
+
+        renderizarTabela(implantacoesFiltradas);
+    }
+
+    // --- CÁLCULOS DIAS PRODUÇÃO ---
+    function calcularDiasProducao() {
+        const dataSolicitacao = document.getElementById('dataSolicitacao').value;
+        const dataEntrega = document.getElementById('dataEntrega').value;
+        if (dataSolicitacao && dataEntrega) {
+            const inicio = new Date(dataSolicitacao);
+            const entrega = new Date(dataEntrega);
+            const diffTime = entrega - inicio;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            document.getElementById('diasProducao').value = diffDays > 0 ? diffDays : 0;
+        } else {
+            document.getElementById('diasProducao').value = '';
+        }
+    }
+
+    document.getElementById('dataSolicitacao').addEventListener('change', calcularDiasProducao);
+    document.getElementById('dataEntrega').addEventListener('change', calcularDiasProducao);
+
+    document.getElementById('searchInput').addEventListener('input', filtrarImplantacoes);
+    document.getElementById('statusFilter').addEventListener('change', filtrarImplantacoes);
+    document.getElementById('fornecedorFilter').addEventListener('change', filtrarImplantacoes);
+    document.getElementById('ordenacaoFilter').addEventListener('change', filtrarImplantacoes);
+
+    // --- CADASTRO / EDIÇÃO / EXCLUSÃO ---
+    document.getElementById('formCadastro').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const idHidden = document.getElementById('implantacaoId').value;
+        const obj = {
+            id: idHidden ? idHidden.toString() : (formData.get('chamado') ? formData.get('chamado').toString().replace(/\s+/g,'_') + '_' + Date.now().toString() : Date.now().toString()),
+            chamado: formData.get('chamado') || '',
+            status: formData.get('status') || '',
+            dataSolicitacao: formData.get('dataSolicitacao') || '',
+            fornecedor: formData.get('fornecedor') || '',
+            carteira: formData.get('carteira') || '',
+            tipoAgv: formData.get('tipoAgv') || '',
+            licencas: formData.get('licencas') || '',
+            dataEntrega: formData.get('dataEntrega') || '',
+            diasProducao: parseInt(formData.get('diasProducao')) || 0,
+            ultimaAlteracao: {
+                cpf: usuarioLogado,
+                dataHora: obterDataHoraAtual()
+            }
+        };
+
+        await criarOuAtualizarImplantacaoNoFirestore(obj);
+
+        // reset e fechar modal
+        document.getElementById('implantacaoId').value = '';
+        editingId = null;
+        fecharModalCadastro();
+        alert('Implantação salva com sucesso!');
+    });
+
+    function abrirModalCadastro() {
+        document.getElementById('modalTitulo').textContent = 'Nova Implantação';
+        document.getElementById('salvarImplantacaoBtn').textContent = 'Salvar Implantação';
+        document.getElementById('implantacaoId').value = '';
+        editingId = null;
+        const form = document.getElementById('formCadastro');
+        form.reset();
+        document.getElementById('diasProducao').value = '';
+        document.getElementById('modalCadastro').classList.add('show');
+    }
+
+    function fecharModalCadastro() {
+        document.getElementById('modalCadastro').classList.remove('show');
+        document.getElementById('formCadastro').reset();
+        document.getElementById('implantacaoId').value = '';
+        editingId = null;
+    }
+
+    function editarImplantacao(id) {
+        const implantacao = implantacoes.find(i => i.id === id);
+        if (!implantacao) return alert('Implantação não encontrada para edição.');
+
+        // preencher formulário
+        document.getElementById('chamado').value = implantacao.chamado || '';
+        document.getElementById('status').value = implantacao.status || '';
+        document.getElementById('dataSolicitacao').value = implantacao.dataSolicitacao || '';
+        document.getElementById('fornecedor').value = implantacao.fornecedor || '';
+        document.getElementById('carteira').value = implantacao.carteira || '';
+        document.getElementById('tipoAgv').value = implantacao.tipoAgv || '';
+        document.getElementById('licencas').value = implantacao.licencas || '';
+        document.getElementById('dataEntrega').value = implantacao.dataEntrega || '';
+        document.getElementById('diasProducao').value = implantacao.diasProducao || '';
+
+        // set hidden id so submit updates instead of creating new
+        document.getElementById('implantacaoId').value = implantacao.id;
+
+        // change modal header/button to indicate editing
+        document.getElementById('modalTitulo').textContent = 'Editar Implantação';
+        document.getElementById('salvarImplantacaoBtn').textContent = 'Salvar Alterações';
+
+        // open modal
+        document.getElementById('modalCadastro').classList.add('show');
+    }
+
+    async function excluirImplantacao(id) {
+        if (!confirm('Tem certeza que deseja excluir esta implantação?')) return;
+        await excluirDoFirestore(id);
+        alert('Implantação excluída com sucesso!');
+    }
+
+    // fechar modal ao clicar fora
+    document.getElementById('modalCadastro').addEventListener('click', function(e) {
+        if (e.target === this) fecharModalCadastro();
+    });
+
+    // --- AUTENTICAÇÃO SIMPLES POR CPF ---
+    const cpfInput = document.getElementById('cpfInput');
+    cpfInput.addEventListener('input', function(e) { e.target.value = formatarCPF(e.target.value); });
+
+    document.getElementById('formAuth').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const cpf = cpfInput.value;
+        const authError = document.getElementById('authError');
+        const cpfLimpo = limparCPF(cpf);
+        if (cpfLimpo.length !== 11) {
+            authError.textContent = 'Digite um CPF válido com 11 dígitos';
+            authError.classList.remove('hidden');
+            return;
+        }
+        if (cpfsAutorizados.includes(cpfLimpo)) {
+            podeEditar = true;
+            usuarioLogado = formatarCPF(cpfLimpo);
+            document.getElementById('modalAuth').classList.remove('show');
+            document.getElementById('userInfo').classList.remove('hidden');
+            document.getElementById('userCpf').textContent = usuarioLogado;
+            document.getElementById('btnNovaImplantacao').classList.remove('hidden');
+            sessionStorage.setItem('usuarioAutorizado', 'true');
+            sessionStorage.setItem('cpfUsuario', cpfLimpo);
+            authError.classList.add('hidden');
+        } else {
+            podeEditar = false;
+            usuarioLogado = formatarCPF(cpfLimpo);
+            document.getElementById('modalAuth').classList.remove('show');
+            document.getElementById('userInfo').classList.remove('hidden');
+            document.getElementById('userCpf').textContent = usuarioLogado + ' (Somente Visualização)';
+            sessionStorage.setItem('usuarioVisualizacao', 'true');
+            sessionStorage.setItem('cpfUsuario', cpfLimpo);
+            authError.classList.add('hidden');
+        }
+        renderizarTabela();
+    });
+
+    function logout() {
+        podeEditar = false;
+        usuarioLogado = '';
+        sessionStorage.removeItem('usuarioAutorizado');
+        sessionStorage.removeItem('usuarioVisualizacao');
+        sessionStorage.removeItem('cpfUsuario');
+        document.getElementById('modalAuth').classList.add('show');
+        document.getElementById('userInfo').classList.add('hidden');
+        document.getElementById('btnNovaImplantacao').classList.add('hidden');
+        document.getElementById('cpfInput').value = '';
+        document.getElementById('authError').classList.add('hidden');
+        renderizarTabela();
+    }
+
+    // --- IMPORTAÇÃO EXCEL (acrescentar/atualizar por Chamado) ---
+    function abrirModalImport(){ document.getElementById('modalImport').classList.add('show'); }
+    function fecharModalImport(){ document.getElementById('modalImport').classList.remove('show'); document.getElementById('fileInput').value = ''; }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('fileInput');
+        if (fileInput) {
+            fileInput.addEventListener('change', async function(e){
+                const file = e.target.files[0]; if(!file) return;
+                const reader = new FileReader();
+                reader.onload = async function(evt){
+                    try {
+                        const data = new Uint8Array(evt.target.result);
+                        const workbook = XLSX.read(data, {type:'array'});
+                        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const rows = XLSX.utils.sheet_to_json(sheet, {defval: ''});
+
+                        // counters for summary
+                        let created = 0, updated = 0, skipped = 0;
+
+                        for (const row of rows) {
+                            // mapeamento exato das colunas (com acentos e espaços)
+                            const chamadoVal = (row['Chamado'] || row['chamado'] || '').toString().trim();
+                            const statusVal = row['Status'] || row['status'] || '';
+                            const dataSolicitacaoRaw = row['Data Solicitação'] || row['Data solicitacao'] || row['DataSolicitação'] || '';
+                            const dataSolicitacaoVal = parseDateToISO(dataSolicitacaoRaw);
+                            const fornecedorVal = row['Fornecedor'] || row['fornecedor'] || '';
+                            const carteiraVal = row['Carteira'] || row['carteira'] || '';
+                            const tipoAgvVal = row['Tipo AGV'] || row['TipoAGV'] || row['tipo agv'] || row['tipoAgv'] || '';
+                            const licencasVal = row['Licenças'] || row['Licencas'] || row['licenças'] || row['licencas'] || '';
+                            const dataEntregaRaw = row['Data Entrega'] || row['DataEntrega'] || '';
+                            const dataEntregaVal = parseDateToISO(dataEntregaRaw);
+                            const diasProducaoVal = row['Dias Produção'] || row['DiasProducao'] || row['dias_producao'] || row['diasProducao'] || '';
+
+                            // ignorar linhas sem Chamado (você pode ajustar isso)
+                            if (!chamadoVal) { skipped++; continue; }
+
+                            // procurar existing pelo chamado
+                            const existing = implantacoes.find(i => (i.chamado || '').toString().trim() === chamadoVal);
+
+                            const obj = {
+                                id: existing ? existing.id.toString() : (chamadoVal.replace(/\s+/g,'_') + '_' + Date.now().toString()),
+                                chamado: chamadoVal,
+                                status: statusVal,
+                                dataSolicitacao: dataSolicitacaoVal,
+                                fornecedor: fornecedorVal,
+                                carteira: carteiraVal,
+                                tipoAgv: tipoAgvVal,
+                                licencas: licencasVal,
+                                dataEntrega: dataEntregaVal,
+                                diasProducao: (diasProducaoVal !== '' ? parseInt(diasProducaoVal) || 0 : 0),
+                                ultimaAlteracao: {
+                                    cpf: usuarioLogado || '',
+                                    dataHora: obterDataHoraAtual()
+                                }
+                            };
+
+                            await criarOuAtualizarImplantacaoNoFirestore(obj);
+                            if (existing) updated++; else created++;
+                        }
+
+                        fecharModalImport();
+                        alert(`Importação concluída! Criados: ${created}, Atualizados: ${updated}, Pulados (sem Chamado): ${skipped}`);
+                    } catch (err) {
+                        console.error('Erro ao processar Excel:', err);
+                        alert('Erro ao importar o arquivo. Verifique o formato da planilha.');
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        // iniciar listener em tempo real
+        iniciarObservadorRealtime();
+
+        // restaurar sessão (se houver)
+        const sessaoAutorizada = sessionStorage.getItem('usuarioAutorizado');
+        const sessaoVisualizacao = sessionStorage.getItem('usuarioVisualizacao');
+        const cpfSessao = sessionStorage.getItem('cpfUsuario');
+
+        if (cpfSessao && (sessaoAutorizada || sessaoVisualizacao)) {
+            const cpfFormatado = formatarCPF(cpfSessao);
+            if (sessaoAutorizada && cpfsAutorizados.includes(cpfSessao)) {
+                podeEditar = true;
+                usuarioLogado = cpfFormatado;
+                document.getElementById('modalAuth').classList.remove('show');
+                document.getElementById('userInfo').classList.remove('hidden');
+                document.getElementById('userCpf').textContent = usuarioLogado;
+                document.getElementById('btnNovaImplantacao').classList.remove('hidden');
+            } else if (sessaoVisualizacao) {
+                podeEditar = false;
+                usuarioLogado = cpfFormatado;
+                document.getElementById('modalAuth').classList.remove('show');
+                document.getElementById('userInfo').classList.remove('hidden');
+                document.getElementById('userCpf').textContent = usuarioLogado + ' (Somente Visualização)';
+            }
+        }
+    });
+
+    // --- util funções globais ---
+    window.voltarMenu = function() { window.location.href = '../index.html'; };
+    window.abrirModalCadastro = abrirModalCadastro;
+    window.fecharModalCadastro = fecharModalCadastro;
+    window.editarImplantacao = editarImplantacao;
+    window.excluirImplantacao = excluirImplantacao;
+    window.filtrarImplantacoes = filtrarImplantacoes;
+    window.logout = logout;
+    window.abrirModalImport = abrirModalImport;
+    window.fecharModalImport = fecharModalImport;
+    </script>
+</body>
+</html>
