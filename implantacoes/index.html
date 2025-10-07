@@ -336,7 +336,8 @@
       onSnapshot,
       doc,
       setDoc,
-      deleteDoc
+      deleteDoc,
+      addDoc
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -459,8 +460,13 @@
 
     async function criarOuAtualizarImplantacaoNoFirestore(obj) {
         try {
-            const id = obj.id ? obj.id.toString() : Date.now().toString();
-            await setDoc(doc(db, COLLECTION_NAME, id), { ...obj });
+            const id = obj.id ? obj.id.toString() : null;
+            if (id) {
+                await setDoc(doc(db, COLLECTION_NAME, id), { ...obj });
+            } else {
+                // se não vier id (caso de addDoc) -> cria com addDoc e retorna
+                await addDoc(collection(db, COLLECTION_NAME), { ...obj });
+            }
         } catch (e) {
             console.error('Erro ao salvar no Firestore:', e);
             alert('Erro ao salvar no Firestore. Veja o console.');
@@ -789,7 +795,7 @@
         renderizarTabela();
     }
 
-    // --- IMPORTAÇÃO EXCEL (acrescentar/atualizar por Chamado) ---
+    // --- IMPORTAÇÃO EXCEL (acrescentar/atualizar por Chamado; aceita Chamado em branco criando ID automático) ---
     function abrirModalImport(){ document.getElementById('modalImport').classList.add('show'); }
     function fecharModalImport(){ document.getElementById('modalImport').classList.remove('show'); document.getElementById('fileInput').value = ''; }
 
@@ -807,7 +813,7 @@
                         const rows = XLSX.utils.sheet_to_json(sheet, {defval: ''});
 
                         // counters for summary
-                        let created = 0, updated = 0, skipped = 0;
+                        let created = 0, updated = 0;
 
                         for (const row of rows) {
                             // mapeamento exato das colunas (com acentos e espaços)
@@ -823,14 +829,14 @@
                             const dataEntregaVal = parseDateToISO(dataEntregaRaw);
                             const diasProducaoVal = row['Dias Produção'] || row['DiasProducao'] || row['dias_producao'] || row['diasProducao'] || '';
 
-                            // ignorar linhas sem Chamado (você pode ajustar isso)
-                            if (!chamadoVal) { skipped++; continue; }
+                            // procurar existing pelo chamado (somente se chamado preenchido)
+                            let existing = null;
+                            if (chamadoVal) {
+                                existing = implantacoes.find(i => (i.chamado || '').toString().trim() === chamadoVal);
+                            }
 
-                            // procurar existing pelo chamado
-                            const existing = implantacoes.find(i => (i.chamado || '').toString().trim() === chamadoVal);
-
-                            const obj = {
-                                id: existing ? existing.id.toString() : (chamadoVal.replace(/\s+/g,'_') + '_' + Date.now().toString()),
+                            // montar objeto para salvar
+                            const baseObj = {
                                 chamado: chamadoVal,
                                 status: statusVal,
                                 dataSolicitacao: dataSolicitacaoVal,
@@ -846,12 +852,29 @@
                                 }
                             };
 
-                            await criarOuAtualizarImplantacaoNoFirestore(obj);
-                            if (existing) updated++; else created++;
+                            if (existing) {
+                                // atualizar documento existente (manter same doc id)
+                                const objToSave = { id: existing.id.toString(), ...baseObj };
+                                await criarOuAtualizarImplantacaoNoFirestore(objToSave);
+                                updated++;
+                            } else {
+                                if (chamadoVal) {
+                                    // criar documento com id gerado a partir do chamado (como antes)
+                                    const newId = chamadoVal.replace(/\s+/g,'_') + '_' + Date.now().toString();
+                                    const objToSave = { id: newId, ...baseObj };
+                                    await criarOuAtualizarImplantacaoNoFirestore(objToSave);
+                                    created++;
+                                } else {
+                                    // Chamado em branco -> criar com ID automático do Firestore usando addDoc
+                                    // NÃO incluímos campo 'id' no documento; o Firestore gerará doc.id
+                                    await addDoc(collection(db, COLLECTION_NAME), { ...baseObj });
+                                    created++;
+                                }
+                            }
                         }
 
                         fecharModalImport();
-                        alert(`Importação concluída! Criados: ${created}, Atualizados: ${updated}, Pulados (sem Chamado): ${skipped}`);
+                        alert(`Importação concluída! Criados: ${created}, Atualizados: ${updated}`);
                     } catch (err) {
                         console.error('Erro ao processar Excel:', err);
                         alert('Erro ao importar o arquivo. Verifique o formato da planilha.');
