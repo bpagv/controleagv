@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checklist Implantações - Sistema AGV</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        .hero-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #581c87 100%);
+            min-height: 100vh;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 1rem;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
+            border-radius: 2px;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-left: 2rem;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -0.75rem;
+            top: 0.5rem;
+            width: 1.5rem;
+            height: 1.5rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 50%;
+            border: 4px solid #1f2937;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+        }
+        
+        .timeline-branch {
+            margin-top: 1rem;
+            padding-left: 1.5rem;
+            border-left: 2px dashed #6b7280;
+            position: relative;
+        }
+        
+        .timeline-branch::before {
+            content: '';
+            position: absolute;
+            left: -0.5rem;
+            top: 0.75rem;
+            width: 1rem;
+            height: 1rem;
+            background: #374151;
+            border-radius: 50%;
+            border: 2px solid #6b7280;
+        }
+        
+        .branch-item {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .branch-item::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #8b5cf6;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body class="hero-bg">
+    <!-- Header -->
+    <header class="bg-black/20 backdrop-blur-md border-b border-white/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <button onclick="voltarMenu()" class="bg-white/20 p-2 rounded-lg backdrop-blur-sm hover:bg-white/30 transition-colors">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                    </button>
+                    <div class="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">Checklist Implantações</h1>
+                        <p class="text-white/80 text-sm">Processo de solicitação, desenvolvimento e homologação</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-2 text-white/70 text-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Guia de Implantação de Agentes Virtuais</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Intro Card -->
+        <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-white/20 mb-8 card-hover fade-in">
+            <div class="flex items-start space-x-4">
+                <div class="bg-blue-500/20 p-3 rounded-lg">
+                    <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-white mb-2">Processo de Implantação</h2>
+                    <p class="text-white/80">
+                        Este checklist apresenta todas as etapas necessárias para a implantação completa de agentes virtuais e fornecedores, 
+                        desde a abertura do chamado até a homologação dos serviços.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="bg-black/30 backdrop-blur-md rounded-xl p-8 border border-white/20 card-hover fade-in">
+            <div class="timeline">
+                <!-- Chamado GLPI -->
+                <div class="timeline-item">
+                    <div class="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="bg-red-500/20 p-2 rounded-lg">
+                                <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-white">Chamado GLPI</h3>
+                            <span class="bg-red-500/20 text-red-300 px-3 py-1 rounded-full text-sm font-medium">Início</span>
+                        </div>
+                        <p class="text-gray-300">Abertura do chamado inicial pela operação para início do processo de implantação.</p>
+                        <div class="timeline-branch">
+                            <div class="branch-item">
+                                <span class="text-white font-medium">Regras Carteira</span>
+                                <p class="text-gray-400 text-sm mt-1">Informações de Tipo AGV, limite tentativa, Duplo CPC, etc</p>
+                            </div>
+                            <div class="branch-item">
+                                <span class="text-white font-medium">Dados Implantação</span>
+                                <p class="text-gray-400 text-sm mt-1">Horário de atuação da campanha, Quantidade de base, Spin e Hit esperado</p>
+                            </div>
+                            <div class="branch-item">
+                                <span class="text-white font-medium">Data Alinhamento</span>
+                                <p class="text-gray-400 text-sm mt-1">Informar opções de data para call</p>
+                         </div>
+                        </div>
+                    </div>
+                </div>   
+
+                <!-- Call de alinhamento -->
+                <div class="timeline-item">
+                    <div class="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="bg-blue-500/20 p-2 rounded-lg">
+                                <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-white">Call de Alinhamento</h3>
+                            <span class="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-sm font-medium">Planejamento</span>
+                        </div>
+                        <p class="text-gray-300">Reunião de alinhamento entre as equipes para definição dos parâmetros e cálculos do agente virtual.</p>
+                    </div>
+                </div>
+
+                <!-- De Acordo da Diretoria -->
+                <div class="timeline-item">
+                    <div class="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="bg-purple-500/20 p-2 rounded-lg">
+                                <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-white">De Acordo da Diretoria</h3>
+                            <span class="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm font-medium">Aprovação</span>
+                        </div>
+                        <p class="text-gray-300">Validação e autorização formal da diretoria para prosseguir com a implantação.</p>
+                    </div>
+                </div>
+
+                <!-- Envio informações campanha -->
+                <div class="timeline-item">
+                    <div class="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="bg-green-500/20 p-2 rounded-lg">
+                                <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-white">Envio Informações Campanha</h3>
+                            <span class="bg-green-500/20 text-green-300 px-3 py-1 rounded-full text-sm font-medium">Documentação</span>
+                        </div>
+                        <p class="text-gray-300 mb-4">Envio de todas as informações técnicas necessárias para configuração da campanha.</p>
+                        
+                        <div class="timeline-branch">
+                            <div class="branch-item">
+                                <span class="text-white font-medium">Árvore</span>
+                                <p class="text-gray-400 text-sm mt-1">Estrutura de navegação do agente virtual</p>
+                            </div>
+                            <div class="branch-item">
+                                <span class="text-white font-medium">Credenciais de API</span>
+                                <p class="text-gray-400 text-sm mt-1">Chaves de acesso e autenticação</p>
+                            </div>
+                            <div class="branch-item">
+                                <span class="text-white font-medium">Documentação de API</span>
+                                <p class="text-gray-400 text-sm mt-1">Especificações técnicas da integração</p>
+                            </div>
+                            <div class="branch-item">
+                                <span class="text-white font-medium">Métodos e endpoints de busca</span>
+                                <p class="text-gray-400 text-sm mt-1">URLs e parâmetros para consultas</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configurações Control Desk -->
+                <div class="timeline-item">
+                    <div class="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="bg-yellow-500/20 p-2 rounded-lg">
+                                <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-white">Configurações Control Desk</h3>
+                            <span class="bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full text-sm font-medium">Configuração</span>
+                        </div>
+                        <p class="text-gray-300 mb-4">Configurações técnicas necessárias no sistema de controle.</p>
+                        
+                        <div class="timeline-branch">
+                            <div class="branch-item">
+                                <span class="text-white font-medium">Criação DNIS</span>
+                                <p class="text-gray-400 text-sm mt-1">Configuração do número de identificação</p>
+                            </div>
+                            <div class="branch-item">
+                                <span class="text-white font-medium">Campanha Transbordo</span>
+                                <p class="text-gray-400 text-sm mt-1">Setup para transferência de chamadas</p>
+                            </div>
+                            <div class="branch-item">
+                                <span class="text-white font-medium">Chamado Telecom</span>
+                                <p class="text-gray-400 text-sm mt-1">Solicitação de configurações de rede</p>
+                            </div>
+                            <div class="branch-item">
+                                <span class="text-white font-medium">Abertura demanda com fornecedor</span>
+                                <p class="text-gray-400 text-sm mt-1">Comunicação oficial com o parceiro</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Telecom -->
+                <div class="timeline-item">
+                    <div class="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="bg-indigo-500/20 p-2 rounded-lg">
+                                <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-white">Telecom</h3>
+                            <span class="bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full text-sm font-medium">Infraestrutura</span>
+                        </div>
+                        <p class="text-gray-300 mb-4">Configurações de telecomunicações e roteamento.</p>
+                        
+                        <div class="timeline-branch">
+                            <div class="branch-item">
+                                <span class="text-white font-medium">Configuração entrada via Asterisk</span>
+                                <p class="text-gray-400 text-sm mt-1">Setup do sistema de telefonia</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fornecedor -->
+                <div class="timeline-item">
+                    <div class="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="bg-orange-500/20 p-2 rounded-lg">
+                                <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-white">Fornecedor</h3>
+                            <span class="bg-orange-500/20 text-orange-300 px-3 py-1 rounded-full text-sm font-medium">Desenvolvimento</span>
+                        </div>
+                        <p class="text-gray-300 mb-4">Atividades realizadas pelo fornecedor da solução.</p>
+                        
+                        <div class="timeline-branch">
+                            <div class="branch-item">
+                                <span class="text-white font-medium">Criação e disponibilização da campanha</span>
+                                <p class="text-gray-400 text-sm mt-1">Desenvolvimento da solução</p>
+                            </div>
+                            <div class="branch-item">
+                                <span class="text-white font-medium">Envio do layout</span>
+                                <p class="text-gray-400 text-sm mt-1">Interface e fluxo de navegação</p>
+                            </div>
+                            <div class="branch-item">
+                                <span class="text-white font-medium">Testes de API</span>
+                                <p class="text-gray-400 text-sm mt-1">Validação das integrações</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Homologação -->
+                <div class="timeline-item">
+                    <div class="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="bg-cyan-500/20 p-2 rounded-lg">
+                                <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-white">Homologação</h3>
+                            <span class="bg-cyan-500/20 text-cyan-300 px-3 py-1 rounded-full text-sm font-medium">Testes</span>
+                        </div>
+                        <p class="text-gray-300 mb-4">Bateria completa de testes para validação da solução.</p>
+                        
+                        <div class="timeline-branch">
+                            <div class="branch-item">
+                                <span class="text-white font-medium">Testes de todos os nós da árvore</span>
+                                <p class="text-gray-400 text-sm mt-1">Validação completa do fluxo</p>
+                            </div>
+                            <div class="branch-item">
+                                <span class="text-white font-medium">Teste de transferência</span>
+                                <p class="text-gray-400 text-sm mt-1">Verificação do transbordo</p>
+                            </div>
+                            <div class="branch-item">
+                                <span class="text-white font-medium">Teste disparo de SMS</span>
+                                <p class="text-gray-400 text-sm mt-1">Funcionalidade de mensagens</p>
+                            </div>
+                            <div class="branch-item">
+                                <span class="text-white font-medium">Geração de acordo</span>
+                                <p class="text-gray-400 text-sm mt-1">Documentação de negociação</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Entrega Implantação -->
+                <div class="timeline-item">
+                    <div class="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="bg-emerald-500/20 p-2 rounded-lg">
+                                <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-white">Entrega Implantação</h3>
+                            <span class="bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full text-sm font-medium">Aprovado</span>
+                        </div>
+                        <p class="text-gray-300 mb-4">Configurações finais após aprovação nos testes.</p>
+                        
+                        <div class="timeline-branch">
+                            <div class="branch-item">
+                                <span class="text-white font-medium">Configuração horário da campanha</span>
+                                <p class="text-gray-400 text-sm mt-1">Definição de horários de operação</p>
+                            </div>
+                            <div class="branch-item">
+                                <span class="text-white font-medium">Renitências e regras de discagem por UF</span>
+                                <p class="text-gray-400 text-sm mt-1">Configurações regionais</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produção -->
+                <div class="timeline-item">
+                    <div class="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="bg-green-500/20 p-2 rounded-lg">
+                                <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-white">Produção</h3>
+                            <span class="bg-green-500/20 text-green-300 px-3 py-1 rounded-full text-sm font-medium">Online</span>
+                        </div>
+                        <p class="text-gray-300">Envio de mailing para atuação na plataforma.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Info -->
+    <footer class="bg-black/30 backdrop-blur-md border-t border-white/30 py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center text-white/70">
+                <p>&copy; 2024 Equipe Agentes Virtuais. Sistema de Gestão AGV.</p>
+                <p class="mt-2 text-white/60 text-sm">Desenvolvido por Évelim Esquetini</p>
+            </div>
+        </div>
+    </footer>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Função para voltar ao menu principal
+        function voltarMenu() {
+            window.location.href = '../index.html';
+        }
+
+        // Animação de entrada dos elementos
+        document.addEventListener('DOMContentLoaded', function() {
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, index * 100);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            timelineItems.forEach(item => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                item.style.transition = 'all 0.6s ease-out';
+                observer.observe(item);
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98a60275b3464ae8',t:'MTc1OTc2MjYzMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
