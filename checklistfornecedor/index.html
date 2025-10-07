@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checklist Implantação Fornecedor - AGV</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        .hero-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #581c87 100%);
+            min-height: 100vh;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .progress-bar {
+            transition: width 0.5s ease;
+        }
+        
+        .checklist-item {
+            transition: all 0.3s ease;
+        }
+        
+        .checklist-item.completed {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+        
+        .status-badge {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body class="hero-bg">
+    <!-- Header -->
+    <header class="bg-black/20 backdrop-blur-md border-b border-white/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <button onclick="voltarMenu()" class="bg-white/20 p-2 rounded-lg hover:bg-white/30 transition-colors">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                    </button>
+                    <div class="bg-orange-500/20 p-3 rounded-xl">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">Checklist Implantação Fornecedor</h1>
+                        <p class="text-white/80 text-sm">Validação de Requisitos AGV</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+
+
+
+        <!-- Checklist -->
+        <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 fade-in">
+            <h2 class="text-xl font-bold text-white mb-6 flex items-center space-x-2">
+                <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                </svg>
+                <span>Checklist de Validação</span>
+            </h2>
+            
+            <div id="checklistContainer" class="space-y-4">
+                <!-- Os itens serão gerados dinamicamente -->
+            </div>
+        </div>
+
+
+    </main>
+
+    <script>
+        // Dados do checklist
+        const checklistItems = [
+            {
+                id: 1,
+                categoria: "Apresentação Fornecedor",
+                titulo: "Processo de Triagem",
+                descricao: "Avaliação inicial das capacidades e adequação do fornecedor",
+                obrigatorio: true,
+                icone: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            },
+            {
+                id: 2,
+                categoria: "Apresentação Fornecedor",
+                titulo: "Cases de Sucesso",
+                descricao: "Apresentação de projetos similares implementados com sucesso",
+                obrigatorio: true,
+                icone: "M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+            },
+            {
+                id: 3,
+                categoria: "Apresentação Fornecedor",
+                titulo: "Produtos Ofertados",
+                descricao: "Catálogo completo de soluções e produtos disponíveis",
+                obrigatorio: true,
+                icone: "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+            },
+            {
+                id: 4,
+                categoria: "Apresentação Fornecedor",
+                titulo: "Possibilidade de POC",
+                descricao: "Viabilidade de execução de Prova de Conceito",
+                obrigatorio: false,
+                icone: "M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+            },
+            {
+                id: 5,
+                categoria: "Qualificação Técnica",
+                titulo: "Certificações em IA/ML",
+                descricao: "Comprovação de expertise em Inteligência Artificial",
+                obrigatorio: true,
+                icone: "M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+            },
+            {
+                id: 6,
+                categoria: "Qualificação Técnica",
+                titulo: "Portfolio de Projetos AGV",
+                descricao: "Histórico de implementações similares de Agentes Virtuais",
+                obrigatorio: true,
+                icone: "M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+            },
+            {
+                id: 7,
+                categoria: "Qualificação Técnica",
+                titulo: "Integração com API e BpMessage",
+                descricao: "Capacidade técnica para integração com sistemas internos",
+                obrigatorio: true,
+                icone: "M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            },
+            {
+                id: 8,
+                categoria: "Qualificação Técnica",
+                titulo: "Liberação de Acesso a Banco de Dados",
+                descricao: "Processo e documentação para acesso aos dados necessários",
+                obrigatorio: true,
+                icone: "M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"
+            },
+            {
+                id: 9,
+                categoria: "Qualificação Técnica",
+                titulo: "Disponibilização SFTP",
+                descricao: "Configuração de ambiente seguro para transferência de arquivos",
+                obrigatorio: true,
+                icone: "M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"
+            },
+            {
+                id: 10,
+                categoria: "Proposta Técnica",
+                titulo: "Contrato com Cláusulas Negociadas",
+                descricao: "Envio de contrato com todas as cláusulas acordadas",
+                obrigatorio: true,
+                icone: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            },
+            {
+                id: 11,
+                categoria: "Proposta Técnica",
+                titulo: "Valores do Produto",
+                descricao: "Definição clara de preços e condições comerciais",
+                obrigatorio: true,
+                icone: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            },
+            {
+                id: 12,
+                categoria: "Proposta Técnica",
+                titulo: "Regras de Renovação e Cancelamento",
+                descricao: "Termos contratuais para renovação e rescisão",
+                obrigatorio: true,
+                icone: "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+            },
+            {
+                id: 13,
+                categoria: "Proposta Técnica",
+                titulo: "Metodologia de Desenvolvimento",
+                descricao: "Descrição detalhada da metodologia de trabalho",
+                obrigatorio: true,
+                icone: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            },
+            {
+                id: 14,
+                categoria: "Proposta Técnica",
+                titulo: "Cronograma de Implantação",
+                descricao: "Timeline detalhado com marcos e entregas",
+                obrigatorio: true,
+                icone: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            },
+            {
+                id: 15,
+                categoria: "Infraestrutura",
+                titulo: "Ambiente de Desenvolvimento",
+                descricao: "Servidores, Cloud e ferramentas de desenvolvimento",
+                obrigatorio: true,
+                icone: "M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"
+            },
+            {
+                id: 16,
+                categoria: "Infraestrutura",
+                titulo: "Backup e Segurança dos Dados",
+                descricao: "Políticas de backup e segurança da informação",
+                obrigatorio: true,
+                icone: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+            },
+            {
+                id: 17,
+                categoria: "Infraestrutura",
+                titulo: "Suporte - Ambiente de Chamados",
+                descricao: "Disponibilidade de ambiente para abertura de chamados",
+                obrigatorio: true,
+                icone: "M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"
+            },
+            {
+                id: 18,
+                categoria: "Compliance",
+                titulo: "LGPD",
+                descricao: "Políticas de proteção de dados pessoais",
+                obrigatorio: true,
+                icone: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+            },
+            {
+                id: 19,
+                categoria: "Compliance",
+                titulo: "ISO 27001",
+                descricao: "Certificação de segurança da informação",
+                obrigatorio: false,
+                icone: "M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+            },
+            {
+                id: 20,
+                categoria: "Compliance",
+                titulo: "Regras de Discagem",
+                descricao: "Conformidade com regulamentações de discagem",
+                obrigatorio: true,
+                icone: "M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+            },
+            {
+                id: 21,
+                categoria: "Compliance",
+                titulo: "Regras do Contratante",
+                descricao: "Adequação às políticas internas da empresa",
+                obrigatorio: true,
+                icone: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+            }
+        ];
+
+        // Inicializar checklist
+        function inicializarChecklist() {
+            const container = document.getElementById('checklistContainer');
+            const categorias = [...new Set(checklistItems.map(item => item.categoria))];
+            
+            categorias.forEach(categoria => {
+                // Cabeçalho da categoria
+                const categoriaDiv = document.createElement('div');
+                categoriaDiv.className = 'mb-4';
+                categoriaDiv.innerHTML = `
+                    <h3 class="text-lg font-semibold text-white mb-3 flex items-center space-x-2">
+                        <div class="w-2 h-2 bg-orange-400 rounded-full"></div>
+                        <span>${categoria}</span>
+                    </h3>
+                `;
+                
+                // Itens da categoria
+                const itensCategoria = checklistItems.filter(item => item.categoria === categoria);
+                itensCategoria.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'checklist-item bg-white/5 border border-white/10 rounded-lg p-4 mb-3 card-hover';
+                    itemDiv.innerHTML = `
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="bg-orange-500/20 p-2 rounded-lg">
+                                    <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${item.icone}"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <h4 class="text-white font-medium">
+                                        ${item.titulo}
+                                    </h4>
+                                </div>
+                                <p class="text-white/70 text-sm">${item.descricao}</p>
+                            </div>
+                        </div>
+                    `;
+                    categoriaDiv.appendChild(itemDiv);
+                });
+                
+                container.appendChild(categoriaDiv);
+            });
+        }
+
+<!-- Footer Info -->
+    <footer class="bg-black/30 backdrop-blur-md border-t border-white/30 py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center text-white/70">
+                <p>&copy; 2024 Equipe Agentes Virtuais. Sistema de Gestão AGV.</p>
+                <p class="mt-2 text-white/60 text-sm">Desenvolvido por Évelim Esquetini</p>
+            </div>
+        </div>
+    </footer>
+
+        // Voltar ao menu
+        function voltarMenu() {
+            if (confirm('Deseja salvar o progresso antes de sair?')) {
+                salvarProgresso();
+            }
+            window.location.href = '../index.html';
+        }
+
+        // Inicializar aplicação
+        document.addEventListener('DOMContentLoaded', function() {
+            inicializarChecklist();
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98afa8631354877a',t:'MTc1OTg2Mzc5OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
