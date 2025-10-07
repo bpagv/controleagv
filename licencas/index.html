@@ -642,26 +642,55 @@ function atualizarEstatisticasFiltradas(lista) {
         editingId = null;
     }
 
-    function editarLicenca(id) {
-        const licenca = licencas.find(l => l.id === id);
-        if (!licenca) return alert('Licença não encontrada para edição.');
-        document.getElementById('fornecedor').value = licenca.fornecedor || '';
-        document.getElementById('codigo').value = licenca.codigo || '';
-        document.getElementById('carteira').value = licenca.carteira || '';
-        document.getElementById('campanha').value = licenca.campanha || '';
-        document.getElementById('tipo').value = licenca.tipo || '';
-        document.getElementById('canais').value = licenca.canais || '';
-        document.getElementById('av').value = licenca.av || '';
-        document.getElementById('transbordo').value = licenca.transbordo || '';
-        document.getElementById('dnis').value = licenca.dnis || '';
-        document.getElementById('tech').value = licenca.tech || '';
-        document.getElementById('kmg').value = licenca.kmg || '';
-        document.getElementById('ambiente').value = licenca.ambiente || '';
-        document.getElementById('valorLicenca').value = licenca.valorLicenca || '';
-        document.getElementById('valorTotalLicenca').value = licenca.valorTotalLicenca || '';
-        editingId = licenca.id;
-        abrirModalCadastro();
-    }
+// === Função para editar licença existente ===
+function editarLicenca(id) {
+  const licenca = licencas.find(l => l.id === id);
+  if (!licenca) return;
+
+  // Preenche os campos do modal com os dados da licença
+  document.getElementById('campanha').value = licenca.campanha || '';
+  document.getElementById('fornecedor').value = licenca.fornecedor || '';
+  document.getElementById('canais').value = licenca.canais || '';
+  document.getElementById('valorTotalLicenca').value = licenca.valorTotalLicenca || '';
+  document.getElementById('av').value = licenca.av || '';
+
+  // Guarda o ID atual para saber que estamos editando
+  document.getElementById('licencaId').value = id;
+
+  // Altera título e botão do modal
+  document.getElementById('modalTitulo').textContent = 'Editar Licença';
+  document.getElementById('salvarLicencaBtn').textContent = 'Salvar Alterações';
+
+  // Exibe o modal
+  const modal = new bootstrap.Modal(document.getElementById('licencaModal'));
+  modal.show();
+}
+
+// === Atualiza ou cria no Firestore ===
+async function salvarLicenca() {
+  const id = document.getElementById('licencaId').value;
+
+  const novaLicenca = {
+    campanha: document.getElementById('campanha').value,
+    fornecedor: document.getElementById('fornecedor').value,
+    canais: document.getElementById('canais').value,
+    valorTotalLicenca: parseFloat(document.getElementById('valorTotalLicenca').value) || 0,
+    av: parseFloat(document.getElementById('av').value) || 0
+  };
+
+  if (id) {
+    // Atualiza registro existente
+    await setDoc(doc(db, "licencasAGV", id), novaLicenca);
+  } else {
+    // Cria novo registro
+    await addDoc(collection(db, "licencasAGV"), novaLicenca);
+  }
+
+  // Fecha modal
+  const modalEl = document.getElementById('licencaModal');
+  const modal = bootstrap.Modal.getInstance(modalEl);
+  modal.hide();
+}
 
     async function excluirLicenca(id) {
         if (!confirm('Tem certeza que deseja excluir esta licença?')) return;
