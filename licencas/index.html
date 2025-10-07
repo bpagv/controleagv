@@ -642,28 +642,33 @@ function atualizarEstatisticasFiltradas(lista) {
         editingId = null;
     }
 
-// === Função para editar licença existente ===
+// === Função corrigida para editar licença existente ===
 function editarLicenca(id) {
-  const licenca = licencas.find(l => l.id === id);
-  if (!licenca) return;
+    const licenca = licencas.find(l => l.id === id);
+    if (!licenca) return;
 
-  // Preenche os campos do modal com os dados da licença
-  document.getElementById('campanha').value = licenca.campanha || '';
-  document.getElementById('fornecedor').value = licenca.fornecedor || '';
-  document.getElementById('canais').value = licenca.canais || '';
-  document.getElementById('valorTotalLicenca').value = licenca.valorTotalLicenca || '';
-  document.getElementById('av').value = licenca.av || '';
+    // Abre o mesmo modal usado para novo cadastro
+    const modal = document.getElementById('modalCadastro');
+    modal.classList.add('show');
 
-  // Guarda o ID atual para saber que estamos editando
-  document.getElementById('licencaId').value = id;
+    // Preenche todos os campos do formulário
+    document.getElementById('fornecedor').value = licenca.fornecedor || '';
+    document.getElementById('codigo').value = licenca.codigo || '';
+    document.getElementById('carteira').value = licenca.carteira || '';
+    document.getElementById('campanha').value = licenca.campanha || '';
+    document.getElementById('tipo').value = licenca.tipo || '';
+    document.getElementById('canais').value = licenca.canais || '';
+    document.getElementById('av').value = licenca.av || '';
+    document.getElementById('transbordo').value = licenca.transbordo || '';
+    document.getElementById('dnis').value = licenca.dnis || '';
+    document.getElementById('tech').value = licenca.tech || '';
+    document.getElementById('kmg').value = licenca.kmg || '';
+    document.getElementById('ambiente').value = licenca.ambiente || '';
+    document.getElementById('valorLicenca').value = licenca.valorLicenca || '';
+    document.getElementById('valorTotalLicenca').value = licenca.valorTotalLicenca || '';
 
-  // Altera título e botão do modal
-  document.getElementById('modalTitulo').textContent = 'Editar Licença';
-  document.getElementById('salvarLicencaBtn').textContent = 'Salvar Alterações';
-
-  // Exibe o modal
-  const modal = new bootstrap.Modal(document.getElementById('licencaModal'));
-  modal.show();
+    // Marca que estamos editando
+    editingId = id;
 }
 
 // === Atualiza ou cria no Firestore ===
