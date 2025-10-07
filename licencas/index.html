@@ -560,24 +560,28 @@
     }
 
     function filtrarLicencas() {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        const fornecedorFilter = document.getElementById('fornecedorFilter').value;
+  const fornecedorSelecionado = document.getElementById('fornecedorFilter').value;
 
-        const licencasFiltradas = licencas.filter(licenca => {
-            const matchSearch = !searchTerm ||
-                (licenca.fornecedor && licenca.fornecedor.toLowerCase().includes(searchTerm)) ||
-                (licenca.codigo && licenca.codigo.toLowerCase().includes(searchTerm)) ||
-                (licenca.carteira && licenca.carteira.toLowerCase().includes(searchTerm)) ||
-                (licenca.campanha && licenca.campanha.toLowerCase().includes(searchTerm)) ||
-                (licenca.tipo && licenca.tipo.toLowerCase().includes(searchTerm)) ||
-                (licenca.ambiente && licenca.ambiente.toLowerCase().includes(searchTerm));
+  const licencasFiltradas = fornecedorSelecionado
+    ? licencas.filter(l => l.fornecedor === fornecedorSelecionado)
+    : licencas;
 
-            const matchFornecedor = !fornecedorFilter || licenca.fornecedor === fornecedorFilter;
-            return matchSearch && matchFornecedor;
-        });
+  renderizarTabela(licencasFiltradas);
+  atualizarEstatisticasFiltradas(licencasFiltradas);
+}
 
-        renderizarTabela(licencasFiltradas);
-    }
+function atualizarEstatisticasFiltradas(lista) {
+  const totalLicencas = lista.reduce((total, licenca) => total + (parseFloat(licenca.av) || 0), 0);
+  const totalCanais = lista.reduce((sum, l) => sum + (parseInt(l.canais) || 0), 0);
+  const totalCampanhas = [...new Set(lista.map(l => l.campanha).filter(c => c))].length;
+  const totalValorLicenca = lista.reduce((sum, l) => sum + (parseFloat(l.valorTotalLicenca) || 0), 0);
+
+  document.getElementById('totalLicencas').textContent = totalLicencas;
+  document.getElementById('totalCanais').textContent = totalCanais;
+  document.getElementById('totalCampanhas').textContent = totalCampanhas;
+  document.getElementById('totalValorLicenca').textContent = formatarValor(totalValorLicenca);
+}
+
 
     // cálculo valor total
     function calcularValorTotal() {
