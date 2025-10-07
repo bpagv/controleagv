@@ -1,81 +1,26 @@
-<!-- Botão Voltar -->
-<script>
-  // Função para voltar à página inicial
-  function voltarInicio() {
-    window.location.href = "../index.html"; // volta um nível para cima
-  }
-</script>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Licenças AGV</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        body {
-            box-sizing: border-box;
-        }
-        
-        .hero-bg {
-            background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #581c87 100%);
-            min-height: 100vh;
-        }
-        
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-        
-        .card-hover:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.6s ease-out;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
+        body { box-sizing: border-box; }
+        .hero-bg { background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #581c87 100%); min-height: 100vh; }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .status-ativa { background-color: #10b981; }
         .status-expirada { background-color: #ef4444; }
         .status-suspensa { background-color: #f59e0b; }
         .status-cancelada { background-color: #6b7280; }
         .status-pendente { background-color: #3b82f6; }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            backdrop-filter: blur(5px);
-        }
-        
-        .modal.show {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-content {
-            background: #1f2937;
-            border-radius: 1rem;
-            padding: 2rem;
-            width: 90%;
-            max-width: 900px;
-            max-height: 90vh;
-            overflow-y: auto;
-            border: 1px solid #374151;
-        }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
+        .modal.show { display: flex; align-items: center; justify-content: center; }
+        .modal-content { background: #1f2937; border-radius: 1rem; padding: 2rem; width: 90%; max-width: 900px; max-height: 90vh; overflow-y: auto; border: 1px solid #374151; }
     </style>
 </head>
 <body class="hero-bg">
@@ -104,6 +49,8 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
                         </svg>
+                        <span>Importar Excel</span>
+                    </button>
                     <button id="btnNovaLicenca" onclick="abrirModalCadastro()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2 hidden">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
@@ -142,7 +89,7 @@
             <form id="formAuth" class="space-y-4">
                 <div>
                     <label for="cpfInput" class="block text-sm font-medium text-gray-300 mb-2">CPF</label>
-                    <input type="text" id="cpfInput" name="cpf" maxlength="14" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="000.000.000-00">
+                    <input type="text" id="cpfInput" name="cpf" maxlength="14" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="000.000.000-00">
                 </div>
                 
                 <button type="submit" class="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
@@ -272,8 +219,8 @@
             </div>
         </div>
     </main>
-  
-    <!-- Modal de Cadastro -->
+
+    <!-- Modal Cadastro -->
     <div id="modalCadastro" class="modal">
         <div class="modal-content fade-in">
             <div class="flex justify-between items-center mb-6">
@@ -284,21 +231,12 @@
                     </svg>
                 </button>
             </div>
-     <!-- Modal Import -->
-          <div id="modalImport" class="modal">
-  <div class="modal-content fade-in" style="max-width:500px;">
-    <h2 class="text-2xl font-bold text-white mb-4">Importar Excel</h2>
-    <input type="file" id="fileInput" accept=".xlsx,.xls" class="mb-4 text-white">
-    <div class="flex justify-end space-x-4">
-      <button type="button" onclick="fecharModalImport()" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium">Cancelar</button>
-    </div>
-  </div>
-</div>       
+
             <form id="formCadastro" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="fornecedor" class="block text-sm font-medium text-gray-300 mb-2">Fornecedor</label>
-                        <select id="fornecedor" name="fornecedor" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <select id="fornecedor" name="fornecedor" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <option value="">Selecione o fornecedor</option>
                             <option value="Aspect">Aspect</option>
                             <option value="Paneas">Paneas</option>
@@ -310,19 +248,19 @@
                     </div>
                     <div>
                         <label for="codigo" class="block text-sm font-medium text-gray-300 mb-2">Código <span class="text-gray-500">(opcional)</span></label>
-                        <input type="text" id="codigo" name="codigo" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Código da licença">
+                        <input type="text" id="codigo" name="codigo" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Código da licença">
                     </div>
                     <div>
                         <label for="carteira" class="block text-sm font-medium text-gray-300 mb-2">Carteira</label>
-                        <input type="text" id="carteira" name="carteira" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nome da carteira">
+                        <input type="text" id="carteira" name="carteira" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Nome da carteira">
                     </div>
                     <div>
                         <label for="campanha" class="block text-sm font-medium text-gray-300 mb-2">Campanha</label>
-                        <input type="text" id="campanha" name="campanha" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nome da campanha">
+                        <input type="text" id="campanha" name="campanha" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Nome da campanha">
                     </div>
                     <div>
                         <label for="tipo" class="block text-sm font-medium text-gray-300 mb-2">Tipo</label>
-                        <select id="tipo" name="tipo" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <select id="tipo" name="tipo" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <option value="">Selecione o tipo</option>
                             <option value="Localizador">Localizador</option>
                             <option value="Localizador SmartPlay">Localizador SmartPlay</option>
@@ -334,35 +272,35 @@
                     </div>
                     <div>
                         <label for="canais" class="block text-sm font-medium text-gray-300 mb-2">Canais</label>
-                        <input type="number" id="canais" name="canais" min="1" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Número de canais">
+                        <input type="number" id="canais" name="canais" min="1" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Número de canais">
                     </div>
                     <div>
                         <label for="av" class="block text-sm font-medium text-gray-300 mb-2">AV</label>
-                        <input type="number" id="av" name="av" min="1" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Quantidade de AV">
+                        <input type="number" id="av" name="av" min="1" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Quantidade de AV">
                     </div>
                     <div>
                         <label for="transbordo" class="block text-sm font-medium text-gray-300 mb-2">Transbordo <span class="text-gray-500">(opcional)</span></label>
-                        <input type="text" id="transbordo" name="transbordo" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Transbordo">
+                        <input type="text" id="transbordo" name="transbordo" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Transbordo">
                     </div>
                     <div>
                         <label for="dnis" class="block text-sm font-medium text-gray-300 mb-2">DNIS <span class="text-gray-500">(opcional)</span></label>
-                        <input type="text" id="dnis" name="dnis" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="DNIS">
+                        <input type="text" id="dnis" name="dnis" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="DNIS">
                     </div>
                     <div>
                         <label for="tech" class="block text-sm font-medium text-gray-300 mb-2">Tech <span class="text-gray-500">(opcional)</span></label>
-                        <input type="text" id="tech" name="tech" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Tech">
+                        <input type="text" id="tech" name="tech" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Tech">
                     </div>
                     <div>
                         <label for="kmg" class="block text-sm font-medium text-gray-300 mb-2">KMG <span class="text-gray-500">(opcional)</span></label>
-                        <input type="text" id="kmg" name="kmg" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="KMG">
+                        <input type="text" id="kmg" name="kmg" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="KMG">
                     </div>
                     <div>
                         <label for="ambiente" class="block text-sm font-medium text-gray-300 mb-2">Ambiente</label>
-                        <input type="text" id="ambiente" name="ambiente" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Ambiente">
+                        <input type="text" id="ambiente" name="ambiente" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ambiente">
                     </div>
                     <div>
                         <label for="valorLicenca" class="block text-sm font-medium text-gray-300 mb-2">Valor da Licença (R$)</label>
-                        <input type="number" id="valorLicenca" name="valorLicenca" min="0" step="0.01" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0,00">
+                        <input type="number" id="valorLicenca" name="valorLicenca" min="0" step="0.01" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0,00">
                     </div>
                     <div>
                         <label for="valorTotalLicenca" class="block text-sm font-medium text-gray-300 mb-2">Valor Total Licença (R$)</label>
@@ -382,627 +320,395 @@
         </div>
     </div>
 
-    <script>
-        // CPFs autorizados para edição (apenas números) - SEUS CPFs REAIS
-        const cpfsAutorizados = [
-            '06660278974',  // CPF: 066.602.789-74
-            '08788382958',  // CPF: 087.883.829-58
-            '23100855884',  // CPF: 231.008.558-84
-            '08843197924',  // CPF: 088.431.979-24
-            '39540020867'   // CPF: 395.400.208-67
-        ];
-        
-        // Variável para controlar se o usuário tem permissão de edição
-        let podeEditar = false;
-        let usuarioLogado = '';
+    <!-- Modal Import (Excel) -->
+    <div id="modalImport" class="modal">
+      <div class="modal-content fade-in" style="max-width:500px;">
+        <h2 class="text-2xl font-bold text-white mb-4">Importar Excel</h2>
+        <input type="file" id="fileInput" accept=".xlsx,.xls" class="mb-4 text-white">
+        <div class="flex justify-end space-x-4">
+          <button type="button" onclick="fecharModalImport()" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium">Cancelar</button>
+        </div>
+      </div>
+    </div>
 
-        // Array para armazenar as licenças
-        const dadosIniciais = [
-            {
-                id: 1,
-                fornecedor: "Aspect",
-                codigo: "ASP001",
-                carteira: "Cobrança Premium",
-                campanha: "Recuperação 2024",
-                tipo: "Negociador SmartPlay",
-                canais: 50,
-                av: 25,
-                transbordo: "SIP Trunk",
-                dnis: "4000-1234",
-                tech: "VoIP",
-                kmg: "KMG-001",
-                ambiente: "Produção",
-                valorLicenca: 150.00,
-                valorTotalLicenca: 3750.00,
-                ultimaAlteracao: {
-                    cpf: "066.602.789-74",
-                    dataHora: "2024-01-20 14:30:25"
-                }
-            },
-            {
-                id: 2,
-                fornecedor: "Paneas",
-                codigo: "",
-                carteira: "Vendas Ativas",
-                campanha: "Prospecção Q1",
-                tipo: "Localizador",
-                canais: 30,
-                av: 15,
-                transbordo: "",
-                dnis: "",
-                tech: "",
-                kmg: "",
-                ambiente: "Homologação",
-                valorLicenca: 120.00,
-                valorTotalLicenca: 1800.00,
-                ultimaAlteracao: {
-                    cpf: "087.883.829-58",
-                    dataHora: "2024-01-18 09:15:42"
-                }
-            },
-            {
-                id: 3,
-                fornecedor: "TechIA",
-                codigo: "TIA-2024-001",
-                carteira: "Preventivo Saúde",
-                campanha: "Lembretes Médicos",
-                tipo: "Preventivo",
-                canais: 20,
-                av: 10,
-                transbordo: "E1",
-                dnis: "0800-555-0123",
-                tech: "TDM",
-                kmg: "KMG-PRV",
-                ambiente: "Produção",
-                valorLicenca: 200.00,
-                valorTotalLicenca: 2000.00,
-                ultimaAlteracao: {
-                    cpf: "231.008.558-84",
-                    dataHora: "2024-01-15 16:45:12"
-                }
-            }
-        ];
+    <!-- Firebase + App logic (module) -->
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      onSnapshot,
+      doc,
+      setDoc,
+      deleteDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+    // sua configuração Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAIKzCbt60ni9BKrNUM_uyDOZvYdtN-K9k",
+      authDomain: "controle-agv.firebaseapp.com",
+      projectId: "controle-agv",
+      storageBucket: "controle-agv.firebasestorage.app",
+      messagingSenderId: "220840335975",
+      appId: "1:220840335975:web:242eb4dd3f39b3b0d752c2"
+    };
 
-// Função para carregar dados do localStorage
-function carregarDados() {
-    const dadosSalvos = localStorage.getItem('licencasAGV');
-    if (dadosSalvos) {
-        try {
-            return JSON.parse(dadosSalvos);
-        } catch (e) {
-            console.error('Erro ao carregar dados salvos:', e);
-            return dadosIniciais;
-        }
-    }
-    return dadosIniciais;
-}
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-// Função para salvar dados no localStorage
-function salvarDados() {
-    try {
-        localStorage.setItem('licencasAGV', JSON.stringify(licencas));
-    } catch (e) {
-        console.error('Erro ao salvar dados:', e);
-        alert('Erro ao salvar dados. Verifique o espaço de armazenamento do navegador.');
-    }
-}
+    const COLLECTION_NAME = "licencasAGV";
 
-let licencas = carregarDados();
+    // CPFs autorizados (mesmo do original)
+    const cpfsAutorizados = [
+        '06660278974', '08788382958', '23100855884', '08843197924', '39540020867'
+    ];
+    let podeEditar = false;
+    let usuarioLogado = '';
+    let licencas = []; // será preenchido pelo onSnapshot
+    let editingId = null;
 
-        // Função para voltar ao menu principal
-        function voltarMenu() {
-            window.location.href = '../index.html';
-        }
-
-        // Função para abrir modal de cadastro
-        function abrirModalCadastro() {
-            document.getElementById('modalCadastro').classList.add('show');
-        }
-
-        // Função para fechar modal de cadastro
-        function fecharModalCadastro() {
-            document.getElementById('modalCadastro').classList.remove('show');
-            document.getElementById('formCadastro').reset();
-        }
-
-        // Função para formatar data
-        function formatarData(data) {
-            if (!data) return '-';
+    // utilitários
+    function formatarData(data) {
+        if (!data) return '-';
+        if (typeof data === 'string' && data.match(/^\d{4}-\d{2}-\d{2}$/)) {
             return new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
         }
+        try { return new Date(data).toLocaleDateString('pt-BR'); } catch { return '-'; }
+    }
+    function formatarValor(valor) {
+        if (!valor && valor !== 0) return 'R$ 0,00';
+        return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(valor || 0));
+    }
+    function obterDataHoraAtual() {
+        const agora = new Date();
+        const data = agora.toLocaleDateString('pt-BR');
+        const hora = agora.toLocaleTimeString('pt-BR');
+        return `${data} ${hora}`;
+    }
+    function formatarCPF(cpf) {
+        cpf = cpf.replace(/\D/g, '');
+        cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+        cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+        cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        return cpf;
+    }
+    function limparCPF(cpf) { return cpf.replace(/\D/g, ''); }
 
-        // Função para formatar valor monetário
-        function formatarValor(valor) {
-            if (!valor) return 'R$ 0,00';
-            return new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            }).format(valor);
+    // FIRESTORE: observer realtime
+    function iniciarObservadorRealtime() {
+        const colRef = collection(db, COLLECTION_NAME);
+        onSnapshot(colRef, (snapshot) => {
+            const docs = [];
+            snapshot.forEach(d => {
+                const data = d.data();
+                docs.push({
+                    id: d.id,
+                    fornecedor: data.fornecedor || '',
+                    codigo: data.codigo || '',
+                    carteira: data.carteira || '',
+                    campanha: data.campanha || '',
+                    tipo: data.tipo || '',
+                    canais: data.canais || 0,
+                    av: data.av || 0,
+                    transbordo: data.transbordo || '',
+                    dnis: data.dnis || '',
+                    tech: data.tech || '',
+                    kmg: data.kmg || '',
+                    ambiente: data.ambiente || '',
+                    valorLicenca: data.valorLicenca || 0,
+                    valorTotalLicenca: data.valorTotalLicenca || 0,
+                    ultimaAlteracao: data.ultimaAlteracao || null
+                });
+            });
+
+            // opcional: ordenar por fornecedor ou outro critério (mantive por inserção)
+            licencas = docs;
+            renderizarTabela();
+            atualizarEstatisticas();
+        }, (err) => {
+            console.error("Erro no onSnapshot:", err);
+            alert('Erro ao conectar ao Firestore em tempo real. Verifique o console.');
+        });
+    }
+
+    // criar/atualizar documento no Firestore
+    async function criarOuAtualizarLicencaNoFirestore(obj) {
+        try {
+            const id = obj.id ? obj.id.toString() : Date.now().toString();
+            await setDoc(doc(db, COLLECTION_NAME, id), { ...obj });
+            // onSnapshot atualiza a UI automaticamente
+        } catch (e) {
+            console.error('Erro ao salvar no Firestore:', e);
+            alert('Erro ao salvar no Firestore. Veja o console.');
         }
+    }
 
-        // Função para calcular dias restantes
-        function calcularDiasRestantes(dataExpiracao) {
-            if (!dataExpiracao) return '-';
-            
-            const hoje = new Date();
-            const expiracao = new Date(dataExpiracao + 'T00:00:00');
-            const diffTime = expiracao - hoje;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            if (diffDays < 0) {
-                return `<span class="text-red-400">Expirada há ${Math.abs(diffDays)} dias</span>`;
-            } else if (diffDays === 0) {
-                return `<span class="text-yellow-400">Expira hoje</span>`;
-            } else if (diffDays <= 30) {
-                return `<span class="text-yellow-400">${diffDays} dias</span>`;
-            } else {
-                return `<span class="text-green-400">${diffDays} dias</span>`;
-            }
+    // excluir documento
+    async function excluirDoFirestore(id) {
+        try {
+            await deleteDoc(doc(db, COLLECTION_NAME, id.toString()));
+        } catch (e) {
+            console.error('Erro ao excluir no Firestore:', e);
+            alert('Erro ao excluir no Firestore. Veja o console.');
         }
+    }
 
-        // Função para obter classe do status
-        function obterClasseStatus(status) {
-            const classes = {
-                'Ativa': 'status-ativa',
-                'Expirada': 'status-expirada',
-                'Suspensa': 'status-suspensa',
-                'Cancelada': 'status-cancelada',
-                'Pendente': 'status-pendente'
-            };
-            return classes[status] || 'bg-gray-500';
+    // UI / render
+    function obterClasseStatus(status) {
+        const classes = {
+            'Ativa': 'status-ativa',
+            'Expirada': 'status-expirada',
+            'Suspensa': 'status-suspensa',
+            'Cancelada': 'status-cancelada',
+            'Pendente': 'status-pendente'
+        };
+        return classes[status] || 'bg-gray-500';
+    }
+
+    function calcularDiasRestantes(dataExpiracao) {
+        if (!dataExpiracao) return '-';
+        const hoje = new Date();
+        const expiracao = new Date(dataExpiracao + 'T00:00:00');
+        const diffTime = expiracao - hoje;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (diffDays < 0) {
+            return `<span class="text-red-400">Expirada há ${Math.abs(diffDays)} dias</span>`;
+        } else if (diffDays === 0) {
+            return `<span class="text-yellow-400">Expira hoje</span>`;
+        } else if (diffDays <= 30) {
+            return `<span class="text-yellow-400">${diffDays} dias</span>`;
+        } else {
+            return `<span class="text-green-400">${diffDays} dias</span>`;
         }
+    }
 
-
-
-        // Função para renderizar tabela
-        function renderizarTabela(licencasFiltradas = licencas) {
-            const tbody = document.getElementById('licencasTableBody');
-            
-            if (licencasFiltradas.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="13" class="px-6 py-8 text-center text-gray-400">
-                            <div class="flex flex-col items-center">
-                                <svg class="w-12 h-12 mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                                </svg>
-                                <p class="text-lg font-medium">Nenhuma licença encontrada</p>
-                                <p class="text-sm">Cadastre uma nova licença para começar</p>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            tbody.innerHTML = licencasFiltradas.map(licenca => `
-                <tr class="hover:bg-white/5 transition-colors">
-                    <td class="px-6 py-4 text-white">${licenca.fornecedor || '-'}</td>
-                    <td class="px-6 py-4 text-white">${licenca.codigo || '-'}</td>
-                    <td class="px-6 py-4 text-white">${licenca.carteira || '-'}</td>
-                    <td class="px-6 py-4 text-white">${licenca.campanha || '-'}</td>
-                    <td class="px-6 py-4 text-white">${licenca.tipo || '-'}</td>
-                    <td class="px-6 py-4 text-white">${licenca.canais || '-'}</td>
-                    <td class="px-6 py-4 text-white">${licenca.av || '-'}</td>
-                    <td class="px-6 py-4 text-white">${licenca.transbordo || '-'}</td>
-                    <td class="px-6 py-4 text-white">${licenca.dnis || '-'}</td>
-                    <td class="px-6 py-4 text-white">${licenca.tech || '-'}</td>
-                    <td class="px-6 py-4 text-white">${licenca.kmg || '-'}</td>
-                    <td class="px-6 py-4 text-white">${licenca.ambiente || '-'}</td>
-                    <td class="px-6 py-4 text-white">${podeEditar ? podeEditar ? formatarValor(licenca.valorLicenca) : '---' : '---'}</td>
-                    <td class="px-6 py-4 text-white">${podeEditar ? podeEditar ? formatarValor(licenca.valorTotalLicenca) : '---' : '---'}</td>
-                    <td class="px-6 py-4 text-white text-xs">
-                        ${licenca.ultimaAlteracao ? `
-                            <div class="text-gray-300">
-                                <div class="font-medium">${licenca.ultimaAlteracao.cpf}</div>
-                                <div class="text-gray-400">${licenca.ultimaAlteracao.dataHora}</div>
-                            </div>
-                        ` : '-'}
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="flex space-x-2">
-                            ${podeEditar ? `
-                                <button onclick="editarLicenca(${licenca.id})" class="text-blue-400 hover:text-blue-300 transition-colors" title="Editar">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                    </svg>
-                                </button>
-                                <button onclick="excluirLicenca(${licenca.id})" class="text-red-400 hover:text-red-300 transition-colors" title="Excluir">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                    </svg>
-                                </button>
-                            ` : `
-                                <span class="text-gray-500 text-sm">Somente visualização</span>
-                            `}
+    function renderizarTabela(licencasFiltradas = licencas) {
+        const tbody = document.getElementById('licencasTableBody');
+        if (!licencasFiltradas || licencasFiltradas.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="17" class="px-6 py-8 text-center text-gray-400">
+                        <div class="flex flex-col items-center">
+                            <svg class="w-12 h-12 mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            </svg>
+                            <p class="text-lg font-medium">Nenhuma licença encontrada</p>
+                            <p class="text-sm">Cadastre uma nova licença para começar</p>
                         </div>
                     </td>
                 </tr>
-            `).join('');
+            `;
+            return;
         }
 
-          // Função para atualizar estatísticas
-          function atualizarEstatisticas() {
-              // Somar valores do campo AV (convertendo para número)
-              const totalLicencas = licencas.reduce((total, licenca) => {
-                  const valorAV = parseFloat(licenca.av) || 0;
-                  return total + valorAV;
-              }, 0);
-            const totalCanais = licencas.reduce((sum, l) => sum + (l.canais || 0), 0);
-            const totalCampanhas = [...new Set(licencas.map(l => l.campanha).filter(c => c))].length;
-            const totalValorLicenca = licencas.reduce((sum, l) => sum + (l.valorTotalLicenca || 0), 0);
+        tbody.innerHTML = licencasFiltradas.map(licenca => `
+            <tr class="hover:bg-white/5 transition-colors">
+                <td class="px-6 py-4 text-white">${licenca.fornecedor || '-'}</td>
+                <td class="px-6 py-4 text-white">${licenca.codigo || '-'}</td>
+                <td class="px-6 py-4 text-white">${licenca.carteira || '-'}</td>
+                <td class="px-6 py-4 text-white">${licenca.campanha || '-'}</td>
+                <td class="px-6 py-4 text-white">${licenca.tipo || '-'}</td>
+                <td class="px-6 py-4 text-white">${licenca.canais || '-'}</td>
+                <td class="px-6 py-4 text-white">${licenca.av || '-'}</td>
+                <td class="px-6 py-4 text-white">${licenca.transbordo || '-'}</td>
+                <td class="px-6 py-4 text-white">${licenca.dnis || '-'}</td>
+                <td class="px-6 py-4 text-white">${licenca.tech || '-'}</td>
+                <td class="px-6 py-4 text-white">${licenca.kmg || '-'}</td>
+                <td class="px-6 py-4 text-white">${licenca.ambiente || '-'}</td>
+                <td class="px-6 py-4 text-white">${podeEditar ? formatarValor(licenca.valorLicenca) : '---'}</td>
+                <td class="px-6 py-4 text-white">${podeEditar ? formatarValor(licenca.valorTotalLicenca) : '---'}</td>
+                <td class="px-6 py-4 text-white text-xs">
+                    ${licenca.ultimaAlteracao ? `
+                        <div class="text-gray-300">
+                            <div class="font-medium">${licenca.ultimaAlteracao.cpf}</div>
+                            <div class="text-gray-400">${licenca.ultimaAlteracao.dataHora}</div>
+                        </div>
+                    ` : '-'}
+                </td>
+                <td class="px-6 py-4">
+                    <div class="flex space-x-2">
+                        ${podeEditar ? `
+                            <button onclick="editarLicenca('${licenca.id}')" class="text-blue-400 hover:text-blue-300 transition-colors" title="Editar">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </button>
+                            <button onclick="excluirLicenca('${licenca.id}')" class="text-red-400 hover:text-red-300 transition-colors" title="Excluir">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        ` : `
+                            <span class="text-gray-500 text-sm">Somente visualização</span>
+                        `}
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    }
 
-            document.getElementById('totalLicencas').textContent = totalLicencas;
-            document.getElementById('totalCanais').textContent = totalCanais;
-            document.getElementById('totalCampanhas').textContent = totalCampanhas;
-            document.getElementById('totalValorLicenca').textContent = formatarValor(totalValorLicenca);
-        }
+    function atualizarEstatisticas() {
+        const totalLicencas = licencas.reduce((total, licenca) => total + (parseFloat(licenca.av) || 0), 0);
+        const totalCanais = licencas.reduce((sum, l) => sum + (parseInt(l.canais) || 0), 0);
+        const totalCampanhas = [...new Set(licencas.map(l => l.campanha).filter(c => c))].length;
+        const totalValorLicenca = licencas.reduce((sum, l) => sum + (parseFloat(l.valorTotalLicenca) || 0), 0);
 
-        // Função para filtrar licenças
-        function filtrarLicencas() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const fornecedorFilter = document.getElementById('fornecedorFilter').value;
+        document.getElementById('totalLicencas').textContent = totalLicencas;
+        document.getElementById('totalCanais').textContent = totalCanais;
+        document.getElementById('totalCampanhas').textContent = totalCampanhas;
+        document.getElementById('totalValorLicenca').textContent = formatarValor(totalValorLicenca);
+    }
 
-            const licencasFiltradas = licencas.filter(licenca => {
-                const matchSearch = !searchTerm || 
-                    (licenca.fornecedor && licenca.fornecedor.toLowerCase().includes(searchTerm)) ||
-                    (licenca.codigo && licenca.codigo.toLowerCase().includes(searchTerm)) ||
-                    (licenca.carteira && licenca.carteira.toLowerCase().includes(searchTerm)) ||
-                    (licenca.campanha && licenca.campanha.toLowerCase().includes(searchTerm)) ||
-                    (licenca.tipo && licenca.tipo.toLowerCase().includes(searchTerm)) ||
-                    (licenca.ambiente && licenca.ambiente.toLowerCase().includes(searchTerm));
-                
-                const matchFornecedor = !fornecedorFilter || licenca.fornecedor === fornecedorFilter;
-                
-                return matchSearch && matchFornecedor;
-            });
+    function filtrarLicencas() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const fornecedorFilter = document.getElementById('fornecedorFilter').value;
 
-            renderizarTabela(licencasFiltradas);
-        }
+        const licencasFiltradas = licencas.filter(licenca => {
+            const matchSearch = !searchTerm ||
+                (licenca.fornecedor && licenca.fornecedor.toLowerCase().includes(searchTerm)) ||
+                (licenca.codigo && licenca.codigo.toLowerCase().includes(searchTerm)) ||
+                (licenca.carteira && licenca.carteira.toLowerCase().includes(searchTerm)) ||
+                (licenca.campanha && licenca.campanha.toLowerCase().includes(searchTerm)) ||
+                (licenca.tipo && licenca.tipo.toLowerCase().includes(searchTerm)) ||
+                (licenca.ambiente && licenca.ambiente.toLowerCase().includes(searchTerm));
 
-        // Event listeners para filtros em tempo real
-        document.getElementById('searchInput').addEventListener('input', filtrarLicencas);
-        document.getElementById('fornecedorFilter').addEventListener('change', filtrarLicencas);
-
-        // Função para calcular valor total automaticamente
-        function calcularValorTotal() {
-            const av = parseFloat(document.getElementById('av').value) || 0;
-            const valorLicenca = parseFloat(document.getElementById('valorLicenca').value) || 0;
-            const valorTotal = av * valorLicenca;
-            document.getElementById('valorTotalLicenca').value = valorTotal.toFixed(2);
-        }
-
-        // Event listeners para cálculo automático
-        document.getElementById('av').addEventListener('input', calcularValorTotal);
-        document.getElementById('valorLicenca').addEventListener('input', calcularValorTotal);
-
-        // Função para cadastrar nova licença
-        document.getElementById('formCadastro').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(e.target);
-            const novaLicenca = {
-                id: Date.now(),
-                fornecedor: formData.get('fornecedor') || '',
-                codigo: formData.get('codigo') || '',
-                carteira: formData.get('carteira') || '',
-                campanha: formData.get('campanha') || '',
-                tipo: formData.get('tipo') || '',
-                canais: parseInt(formData.get('canais')) || 0,
-                av: parseInt(formData.get('av')) || 0,
-                transbordo: formData.get('transbordo') || '',
-                dnis: formData.get('dnis') || '',
-                tech: formData.get('tech') || '',
-                kmg: formData.get('kmg') || '',
-                ambiente: formData.get('ambiente') || '',
-                valorLicenca: parseFloat(formData.get('valorLicenca')) || 0,
-                valorTotalLicenca: parseFloat(formData.get('valorTotalLicenca')) || 0,
-                ultimaAlteracao: {
-                    cpf: usuarioLogado,
-                    dataHora: obterDataHoraAtual()
-                }
-            };
-
-            licencas.push(novaLicenca);
-            salvarDados(); // <--- adicionar aqui
-            renderizarTabela();
-            atualizarEstatisticas();
-            fecharModalCadastro();
-            
-            // Mostrar mensagem de sucesso
-            alert('Licença cadastrada com sucesso!');
+            const matchFornecedor = !fornecedorFilter || licenca.fornecedor === fornecedorFilter;
+            return matchSearch && matchFornecedor;
         });
 
-        // Função para editar licença
-        function editarLicenca(id) {
-            const licenca = licencas.find(l => l.id === id);
-            if (licenca) {
-                // Preencher formulário com dados da licença
-                document.getElementById('fornecedor').value = licenca.fornecedor || '';
-                document.getElementById('codigo').value = licenca.codigo || '';
-                document.getElementById('carteira').value = licenca.carteira || '';
-                document.getElementById('campanha').value = licenca.campanha || '';
-                document.getElementById('tipo').value = licenca.tipo || '';
-                document.getElementById('canais').value = licenca.canais || '';
-                document.getElementById('av').value = licenca.av || '';
-                document.getElementById('transbordo').value = licenca.transbordo || '';
-                document.getElementById('dnis').value = licenca.dnis || '';
-                document.getElementById('tech').value = licenca.tech || '';
-                document.getElementById('kmg').value = licenca.kmg || '';
-                document.getElementById('ambiente').value = licenca.ambiente || '';
-                document.getElementById('valorLicenca').value = licenca.valorLicenca || '';
-                document.getElementById('valorTotalLicenca').value = licenca.valorTotalLicenca || '';
-                
-                // Alterar comportamento do formulário para edição
-                const form = document.getElementById('formCadastro');
-                form.onsubmit = function(e) {
-                    e.preventDefault();
-                    const formData = new FormData(e.target);
-                    
-                    // Atualizar licença existente
-                    const index = licencas.findIndex(l => l.id === id);
-                    licencas[index] = {
-                        ...licencas[index],
-                        fornecedor: formData.get('fornecedor') || '',
-                        codigo: formData.get('codigo') || '',
-                        carteira: formData.get('carteira') || '',
-                        campanha: formData.get('campanha') || '',
-                        tipo: formData.get('tipo') || '',
-                        canais: parseInt(formData.get('canais')) || 0,
-                        av: parseInt(formData.get('av')) || 0,
-                        transbordo: formData.get('transbordo') || '',
-                        dnis: formData.get('dnis') || '',
-                        tech: formData.get('tech') || '',
-                        kmg: formData.get('kmg') || '',
-                        ambiente: formData.get('ambiente') || '',
-                        valorLicenca: parseFloat(formData.get('valorLicenca')) || 0,
-                        valorTotalLicenca: parseFloat(formData.get('valorTotalLicenca')) || 0,
-                        ultimaAlteracao: {
-                            cpf: usuarioLogado,
-                            dataHora: obterDataHoraAtual()
-                        }
-                    };
-                    
-                    salvarDados();
-                    renderizarTabela();
-                    atualizarEstatisticas();
-                    fecharModalCadastro();
-                    alert('Licença atualizada com sucesso!');
-                    
-                    // Restaurar comportamento original do formulário
-                    form.onsubmit = null;
-                };
-                
-                abrirModalCadastro();
+        renderizarTabela(licencasFiltradas);
+    }
+
+    // cálculo valor total
+    function calcularValorTotal() {
+        const av = parseFloat(document.getElementById('av').value) || 0;
+        const valorLicenca = parseFloat(document.getElementById('valorLicenca').value) || 0;
+        const valorTotal = av * valorLicenca;
+        document.getElementById('valorTotalLicenca').value = valorTotal.toFixed(2);
+    }
+
+    // listeners UI
+    document.getElementById('av').addEventListener('input', calcularValorTotal);
+    document.getElementById('valorLicenca').addEventListener('input', calcularValorTotal);
+    document.getElementById('searchInput').addEventListener('input', filtrarLicencas);
+    document.getElementById('fornecedorFilter').addEventListener('change', filtrarLicencas);
+
+    // CADASTRO / EDIÇÃO
+    document.getElementById('formCadastro').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const obj = {
+            id: editingId ? editingId.toString() : Date.now().toString(),
+            fornecedor: formData.get('fornecedor') || '',
+            codigo: formData.get('codigo') || '',
+            carteira: formData.get('carteira') || '',
+            campanha: formData.get('campanha') || '',
+            tipo: formData.get('tipo') || '',
+            canais: parseInt(formData.get('canais')) || 0,
+            av: parseInt(formData.get('av')) || 0,
+            transbordo: formData.get('transbordo') || '',
+            dnis: formData.get('dnis') || '',
+            tech: formData.get('tech') || '',
+            kmg: formData.get('kmg') || '',
+            ambiente: formData.get('ambiente') || '',
+            valorLicenca: parseFloat(formData.get('valorLicenca')) || 0,
+            valorTotalLicenca: parseFloat(formData.get('valorTotalLicenca')) || 0,
+            ultimaAlteracao: {
+                cpf: usuarioLogado,
+                dataHora: obterDataHoraAtual()
             }
-        }
+        };
 
-        // Função para excluir licença
-        function excluirLicenca(id) {
-            if (confirm('Tem certeza que deseja excluir esta licença?')) {
-                licencas = licencas.filter(l => l.id !== id);
-                salvarDados();
-                renderizarTabela();
-                atualizarEstatisticas();
-                atualizarFiltroClientes();
-                alert('Licença excluída com sucesso!');
-            }
-        }
+        await criarOuAtualizarLicencaNoFirestore(obj);
+        editingId = null;
+        fecharModalCadastro();
+        alert('Licença salva com sucesso!');
+    });
 
-        // Fechar modal ao clicar fora
-        document.getElementById('modalCadastro').addEventListener('click', function(e) {
-            if (e.target === this) {
-                fecharModalCadastro();
-            }
-        });
+    function abrirModalCadastro() {
+        document.getElementById('modalCadastro').classList.add('show');
+        editingId = null;
+        const form = document.getElementById('formCadastro');
+        form.reset();
+        document.getElementById('valorTotalLicenca').value = '';
+    }
+    function fecharModalCadastro() {
+        document.getElementById('modalCadastro').classList.remove('show');
+        document.getElementById('formCadastro').reset();
+        editingId = null;
+    }
 
-        // Função para formatar CPF
-        function formatarCPF(cpf) {
-            cpf = cpf.replace(/\D/g, '');
-            cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
-            cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
-            cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-            return cpf;
-        }
+    function editarLicenca(id) {
+        const licenca = licencas.find(l => l.id === id);
+        if (!licenca) return alert('Licença não encontrada para edição.');
+        document.getElementById('fornecedor').value = licenca.fornecedor || '';
+        document.getElementById('codigo').value = licenca.codigo || '';
+        document.getElementById('carteira').value = licenca.carteira || '';
+        document.getElementById('campanha').value = licenca.campanha || '';
+        document.getElementById('tipo').value = licenca.tipo || '';
+        document.getElementById('canais').value = licenca.canais || '';
+        document.getElementById('av').value = licenca.av || '';
+        document.getElementById('transbordo').value = licenca.transbordo || '';
+        document.getElementById('dnis').value = licenca.dnis || '';
+        document.getElementById('tech').value = licenca.tech || '';
+        document.getElementById('kmg').value = licenca.kmg || '';
+        document.getElementById('ambiente').value = licenca.ambiente || '';
+        document.getElementById('valorLicenca').value = licenca.valorLicenca || '';
+        document.getElementById('valorTotalLicenca').value = licenca.valorTotalLicenca || '';
+        editingId = licenca.id;
+        abrirModalCadastro();
+    }
 
-        // Função para limpar CPF (apenas números)
-        function limparCPF(cpf) {
-            return cpf.replace(/\D/g, '');
-        }
+    async function excluirLicenca(id) {
+        if (!confirm('Tem certeza que deseja excluir esta licença?')) return;
+        await excluirDoFirestore(id);
+        alert('Licença excluída com sucesso!');
+    }
 
-        // Função para obter data e hora atual formatada
-        function obterDataHoraAtual() {
-            const agora = new Date();
-            const data = agora.toLocaleDateString('pt-BR');
-            const hora = agora.toLocaleTimeString('pt-BR');
-            return `${data} ${hora}`;
-        }
+    // Fechar modal ao clicar fora
+    document.getElementById('modalCadastro').addEventListener('click', function(e) {
+        if (e.target === this) fecharModalCadastro();
+    });
 
-        // Função para fazer logout
-        function logout() {
-            podeEditar = false;
-            usuarioLogado = '';
-            
-            // Limpar todas as sessões
-            sessionStorage.removeItem('usuarioAutorizado');
-            sessionStorage.removeItem('usuarioVisualizacao');
-            sessionStorage.removeItem('cpfUsuario');
-            
-            // Mostrar modal de autenticação
-            document.getElementById('modalAuth').classList.add('show');
-            
-            // Ocultar informações do usuário e botão de nova licença
-            document.getElementById('userInfo').classList.add('hidden');
-            document.getElementById('btnNovaLicenca').classList.add('hidden');
-            
-            // Limpar campo de CPF
-            document.getElementById('cpfInput').value = '';
-            document.getElementById('authError').classList.add('hidden');
-            
-            // Atualizar tabela para ocultar botões de ação
-            renderizarTabela();
-        }
+    // IMPORTAÇÃO EXCEL (agora salva direto no Firestore)
+    function abrirModalImport(){ document.getElementById('modalImport').classList.add('show'); }
+    function fecharModalImport(){ document.getElementById('modalImport').classList.remove('show'); document.getElementById('fileInput').value = ''; }
 
-        // Event listener para formatação do CPF
-        document.getElementById('cpfInput').addEventListener('input', function(e) {
-            e.target.value = formatarCPF(e.target.value);
-        });
-
-        // Event listener para o formulário de autenticação
-        document.getElementById('formAuth').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const cpf = document.getElementById('cpfInput').value;
-            const authError = document.getElementById('authError');
-            const cpfLimpo = limparCPF(cpf);
-            
-            // Verificar se o CPF tem pelo menos 11 dígitos
-            if (cpfLimpo.length !== 11) {
-                authError.textContent = 'Digite um CPF válido com 11 dígitos';
-                authError.classList.remove('hidden');
-                return;
-            }
-            
-            // Verificar se é um CPF autorizado
-            if (cpfsAutorizados.includes(cpfLimpo)) {
-                // CPF autorizado - acesso completo
-                podeEditar = true;
-                usuarioLogado = formatarCPF(cpf);
-                
-                // Ocultar modal de autenticação
-                document.getElementById('modalAuth').classList.remove('show');
-                
-                // Mostrar informações do usuário e botão de nova licença
-                document.getElementById('userInfo').classList.remove('hidden');
-                document.getElementById('userCpf').textContent = usuarioLogado;
-                document.getElementById('btnNovaLicenca').classList.remove('hidden');
-                
-                // Salvar sessão
-                sessionStorage.setItem('usuarioAutorizado', 'true');
-                sessionStorage.setItem('cpfUsuario', cpfLimpo);
-                
-                authError.classList.add('hidden');
-            } else {
-                // CPF não autorizado - apenas visualização
-                podeEditar = false;
-                usuarioLogado = formatarCPF(cpf);
-                
-                // Ocultar modal de autenticação
-                document.getElementById('modalAuth').classList.remove('show');
-                
-                // Mostrar informações do usuário (sem botão de nova licença)
-                document.getElementById('userInfo').classList.remove('hidden');
-                document.getElementById('userCpf').textContent = usuarioLogado + ' (Somente Visualização)';
-                
-                // Salvar sessão como visualização
-                sessionStorage.setItem('usuarioVisualizacao', 'true');
-                sessionStorage.setItem('cpfUsuario', cpfLimpo);
-                
-                authError.classList.add('hidden');
-            }
-            
-            // Atualizar tabela com as permissões corretas
-            renderizarTabela();
-        });
-
-        // Inicializar página
-        document.addEventListener('DOMContentLoaded', function() {
-            renderizarTabela();
-            atualizarEstatisticas();
-            
-            // Verificar se há sessão ativa
-            const sessaoAutorizada = sessionStorage.getItem('usuarioAutorizado');
-            const sessaoVisualizacao = sessionStorage.getItem('usuarioVisualizacao');
-            const cpfSessao = sessionStorage.getItem('cpfUsuario');
-            
-            if (cpfSessao && (sessaoAutorizada || sessaoVisualizacao)) {
-                const cpfFormatado = formatarCPF(cpfSessao);
-                
-                if (sessaoAutorizada && cpfsAutorizados.includes(cpfSessao)) {
-                    // Usuário autorizado
-                    podeEditar = true;
-                    usuarioLogado = cpfFormatado;
-                    
-                    document.getElementById('modalAuth').classList.remove('show');
-                    document.getElementById('userInfo').classList.remove('hidden');
-                    document.getElementById('userCpf').textContent = usuarioLogado;
-                    document.getElementById('btnNovaLicenca').classList.remove('hidden');
-                } else if (sessaoVisualizacao) {
-                    // Usuário apenas visualização
-                    podeEditar = false;
-                    usuarioLogado = cpfFormatado;
-                    
-                    document.getElementById('modalAuth').classList.remove('show');
-                    document.getElementById('userInfo').classList.remove('hidden');
-                    document.getElementById('userCpf').textContent = usuarioLogado + ' (Somente Visualização)';
-                }
-                
-                renderizarTabela();
-            }
-        });
-    </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'987d0399e3a8f1dd',t:'MTc1OTMzMjc2MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
-    <!-- Modal Importação Excel (adicionado) -->
-    <div id="modalImport" class="modal">
-        <div class="modal-content fade-in" style="max-width:500px;">
-            <h2 class="text-2xl font-bold text-white mb-4">Importar Excel</h2>
-            <input type="file" id="fileInput" accept=".xlsx,.xls" class="mb-4 text-white">
-            <div class="flex justify-end space-x-4">
-                <button type="button" onclick="fecharModalImport()" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium">Cancelar</button>
-            </div>
-        </div>
-    </div>
-
-
-    <script>
-        // Funções para importar Excel (SheetJS)
-        function abrirModalImport(){ document.getElementById('modalImport').classList.add('show'); }
-        function fecharModalImport(){ document.getElementById('modalImport').classList.remove('show'); document.getElementById('fileInput').value = ''; }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // proteger caso elemento não exista
-            var fileInput = document.getElementById('fileInput');
-            if (!fileInput) return;
-
-            fileInput.addEventListener('change', function(e){
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('fileInput');
+        if (fileInput) {
+            fileInput.addEventListener('change', async function(e){
                 const file = e.target.files[0]; if(!file) return;
                 const reader = new FileReader();
-                reader.onload = function(evt){
+                reader.onload = async function(evt){
                     try {
                         const data = new Uint8Array(evt.target.result);
                         const workbook = XLSX.read(data, {type:'array'});
                         const sheet = workbook.Sheets[workbook.SheetNames[0]];
                         const rows = XLSX.utils.sheet_to_json(sheet, {defval: ''});
 
-                        rows.forEach(row => {
+                        for (const row of rows) {
                             const novaLicenca = {
-                                id: Date.now() + Math.floor(Math.random()*1000),
+                                id: Date.now().toString() + Math.floor(Math.random()*1000).toString(),
                                 fornecedor: row.Fornecedor || row.fornecedor || '',
                                 codigo: row['Código'] || row.Codigo || row.codigo || '',
                                 carteira: row.Carteira || row.carteira || '',
                                 campanha: row.Campanha || row.campanha || '',
                                 tipo: row.Tipo || row.tipo || '',
                                 canais: parseInt(row.Canais) || parseInt(row.canais) || 0,
-                                av: parseInt(row.AV) || parseInt(row.AV) || parseInt(row.av) || 0,
+                                av: parseInt(row.AV) || parseInt(row.av) || 0,
                                 transbordo: row.Transbordo || row.transbordo || '',
                                 dnis: row.DNIS || row.dnis || '',
                                 tech: row.Tech || row.tech || '',
                                 kmg: row.KMG || row.kmg || '',
                                 ambiente: row.Ambiente || row.ambiente || '',
-                                valorLicenca: parseFloat((row['Valor da Licença'] || row['Valor da Licenca'] || row.valorLicenca || row['valorLicenca']) || 0) || 0,
-                                valorTotalLicenca: parseFloat((row['Valor Total Licença'] || row['Valor Total Licenca'] || row.valorTotalLicenca || row['valorTotalLicenca']) || 0) || 0,
-                                ultimaAlteracao: {
-                                    cpf: usuarioLogado || '',
-                                    dataHora: obterDataHoraAtual ? obterDataHoraAtual() : ''
-                                }
+                                valorLicenca: parseFloat((row['Valor da Licença'] || row['Valor da_Licenca'] || row.valorLicenca || 0)) || 0,
+                                valorTotalLicenca: parseFloat((row['Valor Total Licença'] || row['Valor Total Licenca'] || row.valorTotalLicenca || 0)) || 0,
+                                ultimaAlteracao: { cpf: usuarioLogado || '', dataHora: obterDataHoraAtual() }
                             };
-                            licencas.push(novaLicenca);
-                        });
+                            await criarOuAtualizarLicencaNoFirestore(novaLicenca);
+                        }
 
-                        salvarDados && salvarDados();
-                        renderizarTabela && renderizarTabela();
-                        atualizarEstatisticas && atualizarEstatisticas();
                         fecharModalImport();
                         alert('Importação concluída com sucesso!');
                     } catch (err) {
@@ -1012,6 +718,97 @@ let licencas = carregarDados();
                 };
                 reader.readAsArrayBuffer(file);
             });
-        });
+        }
+
+        // iniciar realtime
+        iniciarObservadorRealtime();
+
+        // restaurar sessão (se houver)
+        const sessaoAutorizada = sessionStorage.getItem('usuarioAutorizado');
+        const sessaoVisualizacao = sessionStorage.getItem('usuarioVisualizacao');
+        const cpfSessao = sessionStorage.getItem('cpfUsuario');
+
+        if (cpfSessao && (sessaoAutorizada || sessaoVisualizacao)) {
+            const cpfFormatado = formatarCPF(cpfSessao);
+            if (sessaoAutorizada && cpfsAutorizados.includes(cpfSessao)) {
+                podeEditar = true;
+                usuarioLogado = cpfFormatado;
+                document.getElementById('modalAuth').classList.remove('show');
+                document.getElementById('userInfo').classList.remove('hidden');
+                document.getElementById('userCpf').textContent = usuarioLogado;
+                document.getElementById('btnNovaLicenca').classList.remove('hidden');
+            } else if (sessaoVisualizacao) {
+                podeEditar = false;
+                usuarioLogado = cpfFormatado;
+                document.getElementById('modalAuth').classList.remove('show');
+                document.getElementById('userInfo').classList.remove('hidden');
+                document.getElementById('userCpf').textContent = usuarioLogado + ' (Somente Visualização)';
+            }
+        }
+    });
+
+    // Autenticação simples por CPF (front-end)
+    const cpfInput = document.getElementById('cpfInput');
+    cpfInput.addEventListener('input', function(e) { e.target.value = formatarCPF(e.target.value); });
+
+    document.getElementById('formAuth').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const cpf = cpfInput.value;
+        const authError = document.getElementById('authError');
+        const cpfLimpo = limparCPF(cpf);
+        if (cpfLimpo.length !== 11) {
+            authError.textContent = 'Digite um CPF válido com 11 dígitos';
+            authError.classList.remove('hidden');
+            return;
+        }
+        if (cpfsAutorizados.includes(cpfLimpo)) {
+            podeEditar = true;
+            usuarioLogado = formatarCPF(cpfLimpo);
+            document.getElementById('modalAuth').classList.remove('show');
+            document.getElementById('userInfo').classList.remove('hidden');
+            document.getElementById('userCpf').textContent = usuarioLogado;
+            document.getElementById('btnNovaLicenca').classList.remove('hidden');
+            sessionStorage.setItem('usuarioAutorizado', 'true');
+            sessionStorage.setItem('cpfUsuario', cpfLimpo);
+            authError.classList.add('hidden');
+        } else {
+            podeEditar = false;
+            usuarioLogado = formatarCPF(cpfLimpo);
+            document.getElementById('modalAuth').classList.remove('show');
+            document.getElementById('userInfo').classList.remove('hidden');
+            document.getElementById('userCpf').textContent = usuarioLogado + ' (Somente Visualização)';
+            sessionStorage.setItem('usuarioVisualizacao', 'true');
+            sessionStorage.setItem('cpfUsuario', cpfLimpo);
+            authError.classList.add('hidden');
+        }
+        renderizarTabela();
+    });
+
+    function logout() {
+        podeEditar = false;
+        usuarioLogado = '';
+        sessionStorage.removeItem('usuarioAutorizado');
+        sessionStorage.removeItem('usuarioVisualizacao');
+        sessionStorage.removeItem('cpfUsuario');
+        document.getElementById('modalAuth').classList.add('show');
+        document.getElementById('userInfo').classList.add('hidden');
+        document.getElementById('btnNovaLicenca').classList.add('hidden');
+        document.getElementById('cpfInput').value = '';
+        document.getElementById('authError').classList.add('hidden');
+        renderizarTabela();
+    }
+
+    // util funções expostas globalmente
+    window.voltarMenu = function() { window.location.href = '../index.html'; };
+    window.abrirModalCadastro = abrirModalCadastro;
+    window.fecharModalCadastro = fecharModalCadastro;
+    window.editarLicenca = editarLicenca;
+    window.excluirLicenca = excluirLicenca;
+    window.filtrarLicencas = filtrarLicencas;
+    window.abrirModalImport = abrirModalImport;
+    window.fecharModalImport = fecharModalImport;
+    window.logout = logout;
     </script>
-<!DOCTYPE html> <html lang="pt-BR"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Controle AGV</title> <style> .botao-personalizado { background-color: #ffffff; color: #1E2631; border: 2px solid #B9274B; padding: 10px 26px; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.2); transition: all 0.3s ease; } .botao-personalizado:hover { background-color: #B9274B; color: #ffffff; box-shadow: 0 5px 10px rgba(185,39,75,0.4); transform: translateY(-2px); } .botao-personalizado:active { transform: translateY(0); box-shadow: 0 2px 4px rgba(0,0,0,0.2); } </style> </head> <body> <button class="botao-personalizado" onclick="salvar()">Salvar</button> <button class="botao-personalizado" onclick="carregar()">Carregar</button> <script type="module"> import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"; import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"; const firebaseConfig = { apiKey: "AIzaSyAIKzCbt60ni9BKrNUM_uyDOZvYdtN-K9k", authDomain: "controle-agv.firebaseapp.com", projectId: "controle-agv", storageBucket: "controle-agv.appspot.com", messagingSenderId: "220840335975", appId: "1:220840335975:web:242eb4dd3f39b3b0d752c2" }; const app = initializeApp(firebaseConfig); const db = getFirestore(app); async function salvarDados(id, dados) { try { await setDoc(doc(db, "controle", id), dados); alert("Dados salvos com sucesso!"); } catch (erro) { console.error("Erro ao salvar:", erro); alert("Erro ao salvar os dados."); } } async function carregarDados(id) { try { const ref = doc(db, "controle", id); const snap = await getDoc(ref); if (snap.exists()) { return snap.data(); } else { alert("Nenhum dado encontrado."); return null; } } catch (erro) { console.error("Erro ao carregar:", erro); alert("Erro ao carregar os dados."); } } window.salvar = async function() { const dados = { atualizadoEm: new Date().toISOString() }; await salvarDados("usuario1", dados); } window.carregar = async function() { const dados = await carregarDados("usuario1"); if (dados) { alert("Dados carregados: " + JSON.stringify(dados)); } } </script> </body> </html>
+
+</body>
+</html>
