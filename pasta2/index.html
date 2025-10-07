@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Controle de Implantações AGV</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- SheetJS para ler Excel -->
+    <!-- SheetJS para leitura do Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body { box-sizing: border-box; }
@@ -45,7 +45,7 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <!-- Import button (adicionado) -->
+                    <!-- Import button -->
                     <button id="btnImportarExcel" onclick="abrirModalImport()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
@@ -233,11 +233,11 @@
         </div>
     </main>
 
-    <!-- Modal de Cadastro -->
+    <!-- Modal de Cadastro (reutilizado para edição) -->
     <div id="modalCadastro" class="modal">
         <div class="modal-content fade-in">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-white">Nova Implantação</h2>
+                <h2 id="modalTitulo" class="text-2xl font-bold text-white">Nova Implantação</h2>
                 <button onclick="fecharModalCadastro()" class="text-gray-400 hover:text-white">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -246,6 +246,9 @@
             </div>
             
             <form id="formCadastro" class="space-y-4">
+                <!-- hidden id field to detect editing -->
+                <input type="hidden" id="implantacaoId" name="implantacaoId" value="">
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="status" class="block text-sm font-medium text-gray-300 mb-2">Status</label>
@@ -303,7 +306,7 @@
                     <button type="button" onclick="fecharModalCadastro()" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors">
                         Cancelar
                     </button>
-                    <button type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+                    <button id="salvarImplantacaoBtn" type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
                         Salvar Implantação
                     </button>
                 </div>
@@ -325,7 +328,7 @@
 
     <!-- Firebase + App logic (module) -->
     <script type="module">
-    // --- FIREBASE SETUP (modifique se necessário) ---
+    // --- FIREBASE SETUP ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
       getFirestore,
@@ -348,29 +351,24 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Nome da coleção (conforme criado por você)
     const COLLECTION_NAME = "implantacoes";
 
-    // --- VARIÁVEIS GLOBAIS ---
+    // --- VARIÁVEIS ---
     const cpfsAutorizados = [
         '06660278974', '08788382958', '23100855884', '08843197924', '39540020867'
     ];
     let podeEditar = false;
     let usuarioLogado = '';
-    let implantacoes = [];
-    let editingId = null; // id do documento que estamos editando (null = criar novo)
+    let implantacoes = []; // preenchido pelo onSnapshot
+    let editingId = null;
 
     // --- UTILITÁRIOS ---
     function formatarData(data) {
         if (!data) return '-';
-        // se for data já no formato YYYY-MM-DD
         if (typeof data === 'string' && data.match(/^\d{4}-\d{2}-\d{2}$/)) {
             return new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
         }
-        // fallback
-        try {
-            return new Date(data).toLocaleDateString('pt-BR');
-        } catch { return '-'; }
+        try { return new Date(data).toLocaleDateString('pt-BR'); } catch { return '-'; }
     }
     function obterDataHoraAtual() {
         const agora = new Date();
@@ -387,15 +385,49 @@
     }
     function limparCPF(cpf) { return cpf.replace(/\D/g, ''); }
 
-    // --- FUNÇÕES FIRESTORE ---
-    // Observador em tempo real: atualiza "implantacoes" sempre que a coleção mudar
+    // Converte data em dd/mm/yyyy ou objeto Date para YYYY-MM-DD (string)
+    function parseDateToISO(value) {
+        if (!value && value !== 0) return '';
+        // se já for Date
+        if (value instanceof Date && !isNaN(value)) {
+            const y = value.getFullYear();
+            const m = String(value.getMonth()+1).padStart(2,'0');
+            const d = String(value.getDate()).padStart(2,'0');
+            return `${y}-${m}-${d}`;
+        }
+        // se for número do Excel (serial) - SheetJS pode retornar número; tentar converter
+        if (typeof value === 'number') {
+            // Excel serial date to JS date
+            const date = XLSX.SSF ? XLSX.SSF.parse_date_code(value) : null;
+            if (date) {
+                const jsDate = new Date(Date.UTC(date.y, date.m-1, date.d));
+                return parseDateToISO(jsDate);
+            }
+        }
+        // se for string dd/mm/yyyy
+        const ddmmyyyy = value.toString().trim();
+        const match = ddmmyyyy.match(/^(\d{2})[\/\-](\d{2})[\/\-](\d{4})$/);
+        if (match) {
+            const d = match[1], m = match[2], y = match[3];
+            return `${y}-${m}-${d}`;
+        }
+        // se for YYYY-MM-DD já
+        if (ddmmyyyy.match(/^\d{4}-\d{2}-\d{2}$/)) return ddmmyyyy;
+        // fallback: tentar criar Date
+        const tmp = new Date(ddmmyyyy);
+        if (!isNaN(tmp)) {
+            return parseDateToISO(tmp);
+        }
+        return '';
+    }
+
+    // --- FIRESTORE: realtime observer ---
     function iniciarObservadorRealtime() {
         const colRef = collection(db, COLLECTION_NAME);
         onSnapshot(colRef, (snapshot) => {
             const docs = [];
             snapshot.forEach(d => {
                 const data = d.data();
-                // mantemos os campos como strings/valores existentes
                 docs.push({
                     id: d.id,
                     chamado: data.chamado || '',
@@ -410,7 +442,7 @@
                     ultimaAlteracao: data.ultimaAlteracao || null
                 });
             });
-            // ordenar por dataSolicitacao (mais recente primeiro) como default visual
+            // ordenar por dataSolicitacao (mais recente primeiro)
             docs.sort((a,b) => {
                 if (!a.dataSolicitacao) return 1;
                 if (!b.dataSolicitacao) return -1;
@@ -427,10 +459,8 @@
 
     async function criarOuAtualizarImplantacaoNoFirestore(obj) {
         try {
-            // usamos o id fornecido (se houver) ou geramos com Date.now().toString()
             const id = obj.id ? obj.id.toString() : Date.now().toString();
             await setDoc(doc(db, COLLECTION_NAME, id), { ...obj });
-            // onSnapshot irá atualizar a UI automaticamente
         } catch (e) {
             console.error('Erro ao salvar no Firestore:', e);
             alert('Erro ao salvar no Firestore. Veja o console.');
@@ -440,14 +470,13 @@
     async function excluirDoFirestore(id) {
         try {
             await deleteDoc(doc(db, COLLECTION_NAME, id.toString()));
-            // onSnapshot atualizará a UI
         } catch (e) {
             console.error('Erro ao excluir no Firestore:', e);
             alert('Erro ao excluir no Firestore. Veja o console.');
         }
     }
 
-    // --- FUNÇÕES DE RENDER / UI (adaptadas) ---
+    // --- UI render ---
     function obterClasseStatus(status) {
         const classes = {
             'Concluído': 'status-concluido',
@@ -556,10 +585,6 @@
         document.getElementById('tempoMedio').textContent = tempoMedio;
     }
 
-    function atualizarFiltroFornecedores() {
-        // Mantive fixo conforme original
-    }
-
     function filtrarImplantacoes() {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
         const statusFilter = document.getElementById('statusFilter').value;
@@ -604,7 +629,7 @@
         renderizarTabela(implantacoesFiltradas);
     }
 
-    // --- CÁLCULOS DE DIAS DE PRODUÇÃO ---
+    // --- CÁLCULOS DIAS PRODUÇÃO ---
     function calcularDiasProducao() {
         const dataSolicitacao = document.getElementById('dataSolicitacao').value;
         const dataEntrega = document.getElementById('dataEntrega').value;
@@ -631,8 +656,9 @@
     document.getElementById('formCadastro').addEventListener('submit', async function(e) {
         e.preventDefault();
         const formData = new FormData(e.target);
+        const idHidden = document.getElementById('implantacaoId').value;
         const obj = {
-            id: editingId ? editingId.toString() : Date.now().toString(),
+            id: idHidden ? idHidden.toString() : (formData.get('chamado') ? formData.get('chamado').toString().replace(/\s+/g,'_') + '_' + Date.now().toString() : Date.now().toString()),
             chamado: formData.get('chamado') || '',
             status: formData.get('status') || '',
             dataSolicitacao: formData.get('dataSolicitacao') || '',
@@ -648,33 +674,37 @@
             }
         };
 
-        // Salvar no Firestore (criação ou atualização)
         await criarOuAtualizarImplantacaoNoFirestore(obj);
 
-        // reset editingId e fechar modal
+        // reset e fechar modal
+        document.getElementById('implantacaoId').value = '';
         editingId = null;
         fecharModalCadastro();
         alert('Implantação salva com sucesso!');
     });
 
     function abrirModalCadastro() {
-        document.getElementById('modalCadastro').classList.add('show');
-        // reset form para novo
+        document.getElementById('modalTitulo').textContent = 'Nova Implantação';
+        document.getElementById('salvarImplantacaoBtn').textContent = 'Salvar Implantação';
+        document.getElementById('implantacaoId').value = '';
         editingId = null;
         const form = document.getElementById('formCadastro');
         form.reset();
         document.getElementById('diasProducao').value = '';
+        document.getElementById('modalCadastro').classList.add('show');
     }
 
     function fecharModalCadastro() {
         document.getElementById('modalCadastro').classList.remove('show');
         document.getElementById('formCadastro').reset();
+        document.getElementById('implantacaoId').value = '';
         editingId = null;
     }
 
     function editarImplantacao(id) {
         const implantacao = implantacoes.find(i => i.id === id);
         if (!implantacao) return alert('Implantação não encontrada para edição.');
+
         // preencher formulário
         document.getElementById('chamado').value = implantacao.chamado || '';
         document.getElementById('status').value = implantacao.status || '';
@@ -685,8 +715,16 @@
         document.getElementById('licencas').value = implantacao.licencas || '';
         document.getElementById('dataEntrega').value = implantacao.dataEntrega || '';
         document.getElementById('diasProducao').value = implantacao.diasProducao || '';
-        editingId = implantacao.id;
-        abrirModalCadastro();
+
+        // set hidden id so submit updates instead of creating new
+        document.getElementById('implantacaoId').value = implantacao.id;
+
+        // change modal header/button to indicate editing
+        document.getElementById('modalTitulo').textContent = 'Editar Implantação';
+        document.getElementById('salvarImplantacaoBtn').textContent = 'Salvar Alterações';
+
+        // open modal
+        document.getElementById('modalCadastro').classList.add('show');
     }
 
     async function excluirImplantacao(id) {
@@ -700,7 +738,7 @@
         if (e.target === this) fecharModalCadastro();
     });
 
-    // --- AUTENTICAÇÃO SIMPLES POR CPF (client-side) ---
+    // --- AUTENTICAÇÃO SIMPLES POR CPF ---
     const cpfInput = document.getElementById('cpfInput');
     cpfInput.addEventListener('input', function(e) { e.target.value = formatarCPF(e.target.value); });
 
@@ -751,7 +789,7 @@
         renderizarTabela();
     }
 
-    // --- IMPORTAÇÃO EXCEL (ACRESCENTAR/ATUALIZAR) ---
+    // --- IMPORTAÇÃO EXCEL (acrescentar/atualizar por Chamado) ---
     function abrirModalImport(){ document.getElementById('modalImport').classList.add('show'); }
     function fecharModalImport(){ document.getElementById('modalImport').classList.remove('show'); document.getElementById('fileInput').value = ''; }
 
@@ -768,35 +806,39 @@
                         const sheet = workbook.Sheets[workbook.SheetNames[0]];
                         const rows = XLSX.utils.sheet_to_json(sheet, {defval: ''});
 
-                        // percorrer linhas: mapear colunas e criar/atualizar
+                        // counters for summary
+                        let created = 0, updated = 0, skipped = 0;
+
                         for (const row of rows) {
-                            // mapeamento conforme informado pelo usuário
+                            // mapeamento exato das colunas (com acentos e espaços)
                             const chamadoVal = (row['Chamado'] || row['chamado'] || '').toString().trim();
                             const statusVal = row['Status'] || row['status'] || '';
-                            const dataSolicitacaoVal = row['Data Solicitação'] || row['Data solicitacao'] || row['DataSolicitação'] || '';
+                            const dataSolicitacaoRaw = row['Data Solicitação'] || row['Data solicitacao'] || row['DataSolicitação'] || '';
+                            const dataSolicitacaoVal = parseDateToISO(dataSolicitacaoRaw);
                             const fornecedorVal = row['Fornecedor'] || row['fornecedor'] || '';
                             const carteiraVal = row['Carteira'] || row['carteira'] || '';
                             const tipoAgvVal = row['Tipo AGV'] || row['TipoAGV'] || row['tipo agv'] || row['tipoAgv'] || '';
                             const licencasVal = row['Licenças'] || row['Licencas'] || row['licenças'] || row['licencas'] || '';
-                            const dataEntregaVal = row['Data Entrega'] || row['DataEntrega'] || '';
+                            const dataEntregaRaw = row['Data Entrega'] || row['DataEntrega'] || '';
+                            const dataEntregaVal = parseDateToISO(dataEntregaRaw);
                             const diasProducaoVal = row['Dias Produção'] || row['DiasProducao'] || row['dias_producao'] || row['diasProducao'] || '';
 
-                            // buscar se já existe pelo chamado na memória (implantacoes)
-                            let existing = null;
-                            if (chamadoVal) {
-                                existing = implantacoes.find(i => (i.chamado || '').toString().trim() === chamadoVal);
-                            }
+                            // ignorar linhas sem Chamado (você pode ajustar isso)
+                            if (!chamadoVal) { skipped++; continue; }
+
+                            // procurar existing pelo chamado
+                            const existing = implantacoes.find(i => (i.chamado || '').toString().trim() === chamadoVal);
 
                             const obj = {
-                                id: existing ? existing.id.toString() : (chamadoVal ? chamadoVal.replace(/\s+/g,'_') + '_' + Date.now().toString() : Date.now().toString() + Math.floor(Math.random()*1000).toString()),
+                                id: existing ? existing.id.toString() : (chamadoVal.replace(/\s+/g,'_') + '_' + Date.now().toString()),
                                 chamado: chamadoVal,
                                 status: statusVal,
-                                dataSolicitacao: (typeof dataSolicitacaoVal === 'string' ? dataSolicitacaoVal : ''),
+                                dataSolicitacao: dataSolicitacaoVal,
                                 fornecedor: fornecedorVal,
                                 carteira: carteiraVal,
                                 tipoAgv: tipoAgvVal,
                                 licencas: licencasVal,
-                                dataEntrega: (typeof dataEntregaVal === 'string' ? dataEntregaVal : ''),
+                                dataEntrega: dataEntregaVal,
                                 diasProducao: (diasProducaoVal !== '' ? parseInt(diasProducaoVal) || 0 : 0),
                                 ultimaAlteracao: {
                                     cpf: usuarioLogado || '',
@@ -805,10 +847,11 @@
                             };
 
                             await criarOuAtualizarImplantacaoNoFirestore(obj);
+                            if (existing) updated++; else created++;
                         }
 
                         fecharModalImport();
-                        alert('Importação concluída com sucesso!');
+                        alert(`Importação concluída! Criados: ${created}, Atualizados: ${updated}, Pulados (sem Chamado): ${skipped}`);
                     } catch (err) {
                         console.error('Erro ao processar Excel:', err);
                         alert('Erro ao importar o arquivo. Verifique o formato da planilha.');
@@ -845,7 +888,7 @@
         }
     });
 
-    // --- Funções utilitárias externas (necessárias por referência global) ---
+    // --- util funções globais ---
     window.voltarMenu = function() { window.location.href = '../index.html'; };
     window.abrirModalCadastro = abrirModalCadastro;
     window.fecharModalCadastro = fecharModalCadastro;
