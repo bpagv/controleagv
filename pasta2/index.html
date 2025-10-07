@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Controle de Implantações AGV</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SheetJS para ler Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body { box-sizing: border-box; }
         .hero-bg { background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #581c87 100%); min-height: 100vh; }
@@ -43,6 +45,14 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
+                    <!-- Import button (adicionado) -->
+                    <button id="btnImportarExcel" onclick="abrirModalImport()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                        </svg>
+                        <span>Importar Excel</span>
+                    </button>
+
                     <button id="btnNovaImplantacao" onclick="abrirModalCadastro()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2 hidden">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
@@ -299,6 +309,18 @@
                 </div>
             </form>
         </div>
+    </div>
+
+    <!-- Modal Import (Excel) -->
+    <div id="modalImport" class="modal">
+      <div class="modal-content fade-in" style="max-width:500px;">
+        <h2 class="text-2xl font-bold text-white mb-4">Importar Excel - Implantações</h2>
+        <input type="file" id="fileInput" accept=".xlsx,.xls" class="mb-4 text-white">
+        <p class="text-sm text-gray-300 mb-4">Colunas esperadas: <strong>Chamado, Status, Data Solicitação, Fornecedor, Carteira, Tipo AGV, Licenças, Data Entrega, Dias Produção</strong></p>
+        <div class="flex justify-end space-x-4">
+          <button type="button" onclick="fecharModalImport()" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium">Cancelar</button>
+        </div>
+      </div>
     </div>
 
     <!-- Firebase + App logic (module) -->
@@ -729,8 +751,73 @@
         renderizarTabela();
     }
 
-    // --- Inicialização da página ---
+    // --- IMPORTAÇÃO EXCEL (ACRESCENTAR/ATUALIZAR) ---
+    function abrirModalImport(){ document.getElementById('modalImport').classList.add('show'); }
+    function fecharModalImport(){ document.getElementById('modalImport').classList.remove('show'); document.getElementById('fileInput').value = ''; }
+
     document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('fileInput');
+        if (fileInput) {
+            fileInput.addEventListener('change', async function(e){
+                const file = e.target.files[0]; if(!file) return;
+                const reader = new FileReader();
+                reader.onload = async function(evt){
+                    try {
+                        const data = new Uint8Array(evt.target.result);
+                        const workbook = XLSX.read(data, {type:'array'});
+                        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const rows = XLSX.utils.sheet_to_json(sheet, {defval: ''});
+
+                        // percorrer linhas: mapear colunas e criar/atualizar
+                        for (const row of rows) {
+                            // mapeamento conforme informado pelo usuário
+                            const chamadoVal = (row['Chamado'] || row['chamado'] || '').toString().trim();
+                            const statusVal = row['Status'] || row['status'] || '';
+                            const dataSolicitacaoVal = row['Data Solicitação'] || row['Data solicitacao'] || row['DataSolicitação'] || '';
+                            const fornecedorVal = row['Fornecedor'] || row['fornecedor'] || '';
+                            const carteiraVal = row['Carteira'] || row['carteira'] || '';
+                            const tipoAgvVal = row['Tipo AGV'] || row['TipoAGV'] || row['tipo agv'] || row['tipoAgv'] || '';
+                            const licencasVal = row['Licenças'] || row['Licencas'] || row['licenças'] || row['licencas'] || '';
+                            const dataEntregaVal = row['Data Entrega'] || row['DataEntrega'] || '';
+                            const diasProducaoVal = row['Dias Produção'] || row['DiasProducao'] || row['dias_producao'] || row['diasProducao'] || '';
+
+                            // buscar se já existe pelo chamado na memória (implantacoes)
+                            let existing = null;
+                            if (chamadoVal) {
+                                existing = implantacoes.find(i => (i.chamado || '').toString().trim() === chamadoVal);
+                            }
+
+                            const obj = {
+                                id: existing ? existing.id.toString() : (chamadoVal ? chamadoVal.replace(/\s+/g,'_') + '_' + Date.now().toString() : Date.now().toString() + Math.floor(Math.random()*1000).toString()),
+                                chamado: chamadoVal,
+                                status: statusVal,
+                                dataSolicitacao: (typeof dataSolicitacaoVal === 'string' ? dataSolicitacaoVal : ''),
+                                fornecedor: fornecedorVal,
+                                carteira: carteiraVal,
+                                tipoAgv: tipoAgvVal,
+                                licencas: licencasVal,
+                                dataEntrega: (typeof dataEntregaVal === 'string' ? dataEntregaVal : ''),
+                                diasProducao: (diasProducaoVal !== '' ? parseInt(diasProducaoVal) || 0 : 0),
+                                ultimaAlteracao: {
+                                    cpf: usuarioLogado || '',
+                                    dataHora: obterDataHoraAtual()
+                                }
+                            };
+
+                            await criarOuAtualizarImplantacaoNoFirestore(obj);
+                        }
+
+                        fecharModalImport();
+                        alert('Importação concluída com sucesso!');
+                    } catch (err) {
+                        console.error('Erro ao processar Excel:', err);
+                        alert('Erro ao importar o arquivo. Verifique o formato da planilha.');
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
         // iniciar listener em tempo real
         iniciarObservadorRealtime();
 
@@ -766,6 +853,8 @@
     window.excluirImplantacao = excluirImplantacao;
     window.filtrarImplantacoes = filtrarImplantacoes;
     window.logout = logout;
+    window.abrirModalImport = abrirModalImport;
+    window.fecharModalImport = fecharModalImport;
     </script>
 </body>
 </html>
