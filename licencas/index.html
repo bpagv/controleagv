@@ -556,11 +556,12 @@
         document.getElementById('totalLicencas').textContent = totalLicencas;
         document.getElementById('totalCanais').textContent = totalCanais;
         document.getElementById('totalCampanhas').textContent = totalCampanhas;
-        if (usuarioAutorizado) {
+        if (podeEditar) {
         document.getElementById('totalValorLicenca').textContent = formatarValor(totalValorLicenca);
-        } else {
+} else {
         document.getElementById('totalValorLicenca').textContent = '–';
 }
+
     }
 
     function filtrarLicencas() {
@@ -583,7 +584,7 @@ function atualizarEstatisticasFiltradas(lista) {
   document.getElementById('totalLicencas').textContent = totalLicencas;
   document.getElementById('totalCanais').textContent = totalCanais;
   document.getElementById('totalCampanhas').textContent = totalCampanhas;
-if (usuarioAutorizado) {
+if (podeEditar) {
     document.getElementById('totalValorLicenca').textContent = formatarValor(totalValorLicenca);
 } else {
     document.getElementById('totalValorLicenca').textContent = '–';
