@@ -583,9 +583,13 @@ function atualizarEstatisticasFiltradas(lista) {
   document.getElementById('totalLicencas').textContent = totalLicencas;
   document.getElementById('totalCanais').textContent = totalCanais;
   document.getElementById('totalCampanhas').textContent = totalCampanhas;
-  document.getElementById('totalValorLicenca').textContent = formatarValor(totalValorLicenca);
+if (usuarioAutorizado) {
+    document.getElementById('totalValorLicenca').textContent = formatarValor(totalValorLicenca);
+} else {
+    document.getElementById('totalValorLicenca').textContent = '–';
 }
 
+}
 
     // cálculo valor total
     function calcularValorTotal() {
