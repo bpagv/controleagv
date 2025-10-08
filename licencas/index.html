@@ -556,12 +556,11 @@
         document.getElementById('totalLicencas').textContent = totalLicencas;
         document.getElementById('totalCanais').textContent = totalCanais;
         document.getElementById('totalCampanhas').textContent = totalCampanhas;
-        if (podeEditar) {
-        document.getElementById('totalValorLicenca').textContent = formatarValor(totalValorLicenca);
+if (podeEditar) {
+    document.getElementById('totalValorLicenca').textContent = formatarValor(totalValorLicenca);
 } else {
-        document.getElementById('totalValorLicenca').textContent = '–';
+    document.getElementById('totalValorLicenca').textContent = '–';
 }
-
     }
 
     function filtrarLicencas() {
@@ -570,10 +569,6 @@
   const licencasFiltradas = fornecedorSelecionado
     ? licencas.filter(l => l.fornecedor === fornecedorSelecionado)
     : licencas;
-
-  renderizarTabela(licencasFiltradas);
-  atualizarEstatisticasFiltradas(licencasFiltradas);
-}
 
   renderizarTabela(licencasFiltradas);
   atualizarEstatisticasFiltradas(licencasFiltradas);
