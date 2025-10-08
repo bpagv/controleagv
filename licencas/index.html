@@ -564,11 +564,14 @@ if (podeEditar) {
     }
 
     function filtrarLicencas() {
-  const fornecedorSelecionado = document.getElementById('fornecedorFilter').value;
+  const fornecedorSelecionado = document.getElementById('fornecedorFilter').value.toLowerCase().trim();
+  const termoBusca = document.getElementById('searchInput').value.toLowerCase().trim();
 
-  const licencasFiltradas = fornecedorSelecionado
-    ? licencas.filter(l => l.fornecedor === fornecedorSelecionado)
-    : licencas;
+  const licencasFiltradas = licencas.filter(l => {
+    const fornecedorOk = !fornecedorSelecionado || (l.fornecedor || '').toLowerCase() === fornecedorSelecionado;
+    const campanhaOk = !termoBusca || (l.campanha || '').toLowerCase().includes(termoBusca);
+    return fornecedorOk && campanhaOk;
+  });
 
   renderizarTabela(licencasFiltradas);
   atualizarEstatisticasFiltradas(licencasFiltradas);
