@@ -578,20 +578,6 @@
   renderizarTabela(licencasFiltradas);
   atualizarEstatisticasFiltradas(licencasFiltradas);
 }
-        // === Busca por nome da campanha ===
-document.getElementById('searchInput').addEventListener('input', function() {
-  const termoBusca = this.value.toLowerCase().trim();
-
-  // Filtra as licenças com base no nome da campanha
-  const licencasFiltradas = termoBusca
-    ? licencas.filter(l => (l.campanha || '').toLowerCase().includes(termoBusca))
-    : licencas;
-
-  // Re-renderiza a tabela e estatísticas com o resultado filtrado
-  renderizarTabela(licencasFiltradas);
-  atualizarEstatisticasFiltradas(licencasFiltradas);
-});
-
 
 function atualizarEstatisticasFiltradas(lista) {
   const totalLicencas = lista.reduce((total, licenca) => total + (parseFloat(licenca.av) || 0), 0);
