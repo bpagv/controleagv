@@ -556,7 +556,11 @@
         document.getElementById('totalLicencas').textContent = totalLicencas;
         document.getElementById('totalCanais').textContent = totalCanais;
         document.getElementById('totalCampanhas').textContent = totalCampanhas;
+        if (usuarioAutorizado) {
         document.getElementById('totalValorLicenca').textContent = formatarValor(totalValorLicenca);
+        } else {
+        document.getElementById('totalValorLicenca').textContent = '–';
+}
     }
 
     function filtrarLicencas() {
