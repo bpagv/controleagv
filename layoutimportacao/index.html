@@ -549,19 +549,19 @@
         <div class="mt-12 bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 fade-in">
             <h3 class="text-xl font-bold text-white mb-6">Ações Rápidas</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <button class="bg-indigo-600 hover:bg-indigo-700 p-4 rounded-lg text-white font-medium transition-colors flex items-center space-x-3">
+                <button onclick="criarNovoLayout()" class="bg-indigo-600 hover:bg-indigo-700 p-4 rounded-lg text-white font-medium transition-colors flex items-center space-x-3">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                     </svg>
                     <span>Criar Novo Layout</span>
                 </button>
-                <button class="bg-purple-600 hover:bg-purple-700 p-4 rounded-lg text-white font-medium transition-colors flex items-center space-x-3">
+                <button onclick="importarTemplate()" class="bg-purple-600 hover:bg-purple-700 p-4 rounded-lg text-white font-medium transition-colors flex items-center space-x-3">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
                     </svg>
                     <span>Importar Template</span>
                 </button>
-                <button class="bg-green-600 hover:bg-green-700 p-4 rounded-lg text-white font-medium transition-colors flex items-center space-x-3">
+                <button onclick="exportarLayouts()" class="bg-green-600 hover:bg-green-700 p-4 rounded-lg text-white font-medium transition-colors flex items-center space-x-3">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
@@ -691,6 +691,371 @@
             }
         }
 
+        // Funções das ações rápidas
+        function criarNovoLayout() {
+            mostrarModalCriarLayout();
+        }
+
+        function mostrarModalCriarLayout() {
+            // Remove modal existente se houver
+            const modalExistente = document.querySelector('.modal-criar-layout');
+            if (modalExistente) {
+                modalExistente.remove();
+            }
+
+            // Cria o modal
+            const modal = document.createElement('div');
+            modal.className = 'modal-criar-layout fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 rounded-t-xl">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-2xl font-bold text-white">🎨 Criar Novo Layout</h2>
+                            <button onclick="fecharModalCriarLayout()" class="text-white hover:text-gray-200 transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <form id="formNovoLayout" class="p-6 space-y-6">
+                        <!-- Nome do Layout -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Nome do Layout *</label>
+                            <input type="text" id="nomeLayout" required 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                   placeholder="Ex: Layout Cobrança Premium">
+                        </div>
+
+                        <!-- Descrição -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Descrição *</label>
+                            <textarea id="descricaoLayout" required rows="3"
+                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                      placeholder="Descreva o propósito e características do layout..."></textarea>
+                        </div>
+
+                        <!-- Tipo/Categoria -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Categoria *</label>
+                            <select id="categoriaLayout" required 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
+                                <option value="">Selecione uma categoria</option>
+                                <option value="cobranca">Cobrança</option>
+                                <option value="negociacao">Negociação</option>
+                                <option value="localizacao">Localização</option>
+                                <option value="preventivo">Preventivo</option>
+                                <option value="recado">Recado</option>
+                                <option value="pesquisa">Pesquisa</option>
+                                <option value="confirmacao">Confirmação</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+
+                        <!-- Colunas do Layout -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Colunas do Layout *</label>
+                            <div id="colunasContainer" class="space-y-2">
+                                <div class="flex items-center space-x-2">
+                                    <input type="text" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg" placeholder="Nome da coluna (ex: TELEFONE)" value="TELEFONE">
+                                    <button type="button" onclick="removerColuna(this)" class="text-red-500 hover:text-red-700 p-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <input type="text" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg" placeholder="Nome da coluna (ex: NOME)" value="NOME">
+                                    <button type="button" onclick="removerColuna(this)" class="text-red-500 hover:text-red-700 p-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <input type="text" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg" placeholder="Nome da coluna (ex: CPF)" value="CPF">
+                                    <button type="button" onclick="removerColuna(this)" class="text-red-500 hover:text-red-700 p-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="button" onclick="adicionarColuna()" class="mt-2 text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center space-x-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                <span>Adicionar Coluna</span>
+                            </button>
+                        </div>
+
+                        <!-- Observações -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Observações e Regras</label>
+                            <textarea id="observacoesLayout" rows="4"
+                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                      placeholder="Adicione regras específicas, formatações necessárias, exemplos de preenchimento, etc..."></textarea>
+                        </div>
+
+                        <!-- Botões -->
+                        <div class="flex justify-end space-x-4 pt-4 border-t border-gray-200">
+                            <button type="button" onclick="fecharModalCriarLayout()" 
+                                    class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors">
+                                Cancelar
+                            </button>
+                            <button type="submit" 
+                                    class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors">
+                                Criar Layout
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+
+            // Adiciona evento de submit ao formulário
+            document.getElementById('formNovoLayout').addEventListener('submit', function(e) {
+                e.preventDefault();
+                processarNovoLayout();
+            });
+
+            // Anima entrada do modal
+            setTimeout(() => {
+                modal.classList.add('animate-fade-in');
+            }, 10);
+        }
+
+        function fecharModalCriarLayout() {
+            const modal = document.querySelector('.modal-criar-layout');
+            if (modal) {
+                modal.classList.add('animate-fade-out');
+                setTimeout(() => modal.remove(), 200);
+            }
+        }
+
+        function adicionarColuna() {
+            const container = document.getElementById('colunasContainer');
+            const novaColuna = document.createElement('div');
+            novaColuna.className = 'flex items-center space-x-2';
+            novaColuna.innerHTML = `
+                <input type="text" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg" placeholder="Nome da coluna">
+                <button type="button" onclick="removerColuna(this)" class="text-red-500 hover:text-red-700 p-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                </button>
+            `;
+            container.appendChild(novaColuna);
+        }
+
+        function removerColuna(botao) {
+            const container = document.getElementById('colunasContainer');
+            if (container.children.length > 1) {
+                botao.parentElement.remove();
+            } else {
+                mostrarNotificacao('⚠️ Deve haver pelo menos uma coluna no layout', 'warning');
+            }
+        }
+
+        function processarNovoLayout() {
+            // Coleta dados do formulário
+            const nome = document.getElementById('nomeLayout').value.trim();
+            const descricao = document.getElementById('descricaoLayout').value.trim();
+            const categoria = document.getElementById('categoriaLayout').value;
+            const observacoes = document.getElementById('observacoesLayout').value.trim();
+            
+            // Coleta colunas
+            const colunas = [];
+            const inputsColunas = document.querySelectorAll('#colunasContainer input');
+            inputsColunas.forEach(input => {
+                if (input.value.trim()) {
+                    colunas.push(input.value.trim().toUpperCase());
+                }
+            });
+
+            // Validações
+            if (!nome || !descricao || !categoria || colunas.length === 0) {
+                mostrarNotificacao('❌ Por favor, preencha todos os campos obrigatórios', 'error');
+                return;
+            }
+
+            // Simula criação do layout
+            mostrarNotificacao('🔄 Criando novo layout...', 'info');
+            
+            setTimeout(() => {
+                // Adiciona o novo layout à lista
+                adicionarLayoutNaLista({
+                    nome: nome,
+                    descricao: descricao,
+                    categoria: categoria,
+                    colunas: colunas,
+                    observacoes: observacoes
+                });
+
+                fecharModalCriarLayout();
+                mostrarNotificacao(`✅ Layout "${nome}" criado com sucesso!`, 'success');
+            }, 1500);
+        }
+
+        function adicionarLayoutNaLista(layout) {
+            const container = document.querySelector('.space-y-6.fade-in');
+            
+            // Define cor baseada na categoria
+            const coresCategorias = {
+                'cobranca': 'red',
+                'negociacao': 'green',
+                'localizacao': 'purple',
+                'preventivo': 'yellow',
+                'recado': 'indigo',
+                'pesquisa': 'pink',
+                'confirmacao': 'teal',
+                'outro': 'gray'
+            };
+            
+            const cor = coresCategorias[layout.categoria] || 'gray';
+            
+            // Cria preview das colunas
+            const previewColunas = layout.colunas.slice(0, 4).map(coluna => 
+                `<div class="bg-${cor}-100 p-1 font-semibold border text-xs">${coluna}</div>`
+            ).join('');
+            
+            const exemplosDados = layout.colunas.slice(0, 4).map((coluna, index) => {
+                const exemplos = {
+                    'TELEFONE': '11999999999',
+                    'NOME': 'João Silva',
+                    'CPF': '123.456.789-00',
+                    'VALOR': 'R$ 1.500,00',
+                    'CODIGO': 'ABC123',
+                    'DATA': '01/01/2024'
+                };
+                return `<div class="bg-gray-50 p-1 border text-xs">${exemplos[coluna] || `Exemplo ${index + 1}`}</div>`;
+            }).join('');
+
+            const novoLayoutHTML = `
+                <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 card-hover" data-layout-type="${layout.categoria}">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="bg-${cor}-500/20 p-3 rounded-xl">
+                                    <svg class="w-8 h-8 text-${cor}-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">${layout.nome}</h3>
+                                    <p class="text-white/80">${layout.descricao}</p>
+                                </div>
+                            </div>
+                            <div class="bg-green-500/20 px-3 py-1 rounded-full">
+                                <span class="text-green-400 text-sm font-medium">● Novo</span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="text-white font-semibold mb-3">Características:</h4>
+                                <div class="text-white/80 space-y-2">
+                                    <p>${layout.descricao}</p>
+                                    ${layout.observacoes ? `
+                                        <div class="text-sm mt-3">
+                                            <h5 class="font-medium text-white mb-1">Observações:</h5>
+                                            <p class="text-white/70">${layout.observacoes}</p>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-semibold mb-3">Preview do Arquivo:</h4>
+                                <div class="layout-preview rounded-lg overflow-hidden">
+                                    <div class="bg-white p-4 h-full">
+                                        <div class="grid grid-cols-${Math.min(layout.colunas.length, 4)} gap-1 text-xs">
+                                            ${previewColunas}
+                                            ${exemplosDados}
+                                        </div>
+                                        <div class="text-center mt-2">
+                                            <span class="text-${cor}-600 text-xs font-medium">📊 ${layout.nome}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center mt-6 pt-4 border-t border-white/20">
+                            <div class="text-white/60 text-sm">
+                                <span>Criado em: ${new Date().toLocaleDateString('pt-BR')}</span>
+                            </div>
+                            <div class="flex space-x-3">
+                                <button onclick="visualizarArquivo('${layout.nome}')" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors">
+                                    Visualizar Arquivo
+                                </button>
+                                <button onclick="baixarTemplate('${layout.nome}')" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors">
+                                    Baixar Template
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', novoLayoutHTML);
+            
+            // Atualiza contador
+            const contador = document.querySelector('.pulse-animation span');
+            const numeroAtual = parseInt(contador.textContent.match(/\d+/)[0]);
+            contador.textContent = `● ${numeroAtual + 1} Layouts Disponíveis`;
+        }
+
+        function importarTemplate() {
+            // Simula um input de arquivo
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.xlsx,.xls,.csv';
+            input.style.display = 'none';
+            
+            input.onchange = function(e) {
+                const arquivo = e.target.files[0];
+                if (arquivo) {
+                    mostrarNotificacao(`📁 Arquivo "${arquivo.name}" selecionado! Processando...`, 'info');
+                    
+                    // Simula processamento
+                    setTimeout(() => {
+                        mostrarNotificacao(`✅ Template "${arquivo.name}" importado com sucesso!`, 'success');
+                    }, 2000);
+                } else {
+                    mostrarNotificacao('❌ Nenhum arquivo selecionado', 'warning');
+                }
+            };
+            
+            document.body.appendChild(input);
+            input.click();
+            document.body.removeChild(input);
+        }
+
+        function exportarLayouts() {
+            mostrarNotificacao('📦 Preparando exportação de todos os layouts...', 'info');
+            
+            // Simula processo de exportação
+            setTimeout(() => {
+                // Cria um arquivo ZIP simulado
+                const blob = new Blob(['Conteúdo dos layouts exportados'], { type: 'application/zip' });
+                const url = URL.createObjectURL(blob);
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'Layouts_AGV_Completo.zip';
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                URL.revokeObjectURL(url);
+                
+                mostrarNotificacao('✅ Todos os layouts foram exportados com sucesso!', 'success');
+            }, 1500);
+        }
+
         // Sistema de notificações
         function mostrarNotificacao(mensagem, tipo = 'info') {
             // Remove notificação anterior se existir
@@ -739,5 +1104,5 @@
             }, 8000);
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98debbd32744a5c6',t:'MTc2MDM1NzQyNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98df1e96336e02df',t:'MTc2MDM2MTQ3MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
