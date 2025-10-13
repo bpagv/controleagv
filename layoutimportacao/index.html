@@ -575,7 +575,7 @@
     <footer class="bg-black/20 backdrop-blur-md border-t border-white/20 mt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="text-center">
-                <p class="text-white">&copy; 2025 Equipe Agentes Virtuais. Sistema de Gestão AGV.</p>
+                <p class="text-white">&copy; 2024 Equipe Agentes Virtuais. Sistema de Gestão AGV.</p>
                 <p class="mt-2 text-white/60 text-sm">Desenvolvido por Évelim Esquetini</p>
             </div>
         </div>
@@ -658,31 +658,36 @@
 
         function baixarTemplate(tipo) {
             const url = templateUrls[tipo];
-            if (url && url.view) {
+            if (url && url.download) {
                 // Mostra loading
                 mostrarNotificacao(`Preparando download do template: ${tipo}...`, 'info');
                 
-                // Para SharePoint, usamos a URL de visualização com parâmetro de download
-                const downloadUrl = url.view + '&action=download';
+                // Aguarda um pouco para mostrar a mensagem
+                setTimeout(() => {
+                    try {
+                        // Cria link temporário para download direto
+                        const link = document.createElement('a');
+                        link.href = url.download;
+                        link.download = `Layout_${tipo.replace(/\s+/g, '_')}.xlsx`;
+                        link.style.display = 'none';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        
+                        // Mostra sucesso após iniciar download
+                        setTimeout(() => {
+                            mostrarNotificacao(`✅ Download do template "${tipo}" iniciado com sucesso!`, 'success');
+                        }, 500);
+                        
+                    } catch (error) {
+                        // Fallback: usa URL de download direto
+                        window.location.href = url.download;
+                        mostrarNotificacao(`📥 Download iniciado! O arquivo será baixado automaticamente.`, 'success');
+                    }
+                }, 800);
                 
-                // Tenta fazer download direto
-                try {
-                    const link = document.createElement('a');
-                    link.href = downloadUrl;
-                    link.download = `Layout_${tipo.replace(/\s+/g, '_')}.xlsx`;
-                    link.style.display = 'none';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    
-                    mostrarNotificacao(`Download iniciado! Se não funcionar automaticamente, use o botão "Baixar" na página que abriu.`, 'success');
-                } catch (error) {
-                    // Fallback: abre em nova aba para download manual
-                    window.open(url.view, '_blank', 'noopener,noreferrer');
-                    mostrarNotificacao(`Página aberta! Clique em "Baixar" ou "Download" na nova aba para salvar o arquivo.`, 'info');
-                }
             } else {
-                mostrarNotificacao(`Erro: Template ${tipo} não encontrado`, 'error');
+                mostrarNotificacao(`❌ Erro: Template ${tipo} não encontrado`, 'error');
             }
         }
 
@@ -725,14 +730,14 @@
                 notificacao.classList.remove('translate-x-full');
             }, 100);
             
-            // Remove automaticamente após 5 segundos
+            // Remove automaticamente após 8 segundos
             setTimeout(() => {
                 if (notificacao.parentElement) {
                     notificacao.classList.add('translate-x-full');
                     setTimeout(() => notificacao.remove(), 300);
                 }
-            });
+            }, 8000);
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98deaef2375bf1db',t:'MTc2MDM1Njg5Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98debbd32744a5c6',t:'MTc2MDM1NzQyNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
