@@ -1034,26 +1034,336 @@
         }
 
         function exportarLayouts() {
-            mostrarNotificacao('📦 Preparando exportação de todos os layouts...', 'info');
-            
-            // Simula processo de exportação
+            mostrarModalExportacao();
+        }
+
+        function mostrarModalExportacao() {
+            // Remove modal existente se houver
+            const modalExistente = document.querySelector('.modal-exportacao');
+            if (modalExistente) {
+                modalExistente.remove();
+            }
+
+            // Lista de layouts disponíveis
+            const layoutsDisponiveis = [
+                { id: 'aspect-bradesco', nome: 'Layout Aspect Bradesco', arquivo: 'Layout_Aspect_Bradesco.xlsx' },
+                { id: 'localizador', nome: 'Layout Localizador', arquivo: 'Layout_Localizador.xlsx' },
+                { id: 'negociador', nome: 'Layout Negociador', arquivo: 'Layout_Negociador.xlsx' },
+                { id: 'preventivo', nome: 'Layout Preventivo', arquivo: 'Layout_Preventivo.xlsx' },
+                { id: 'recado', nome: 'Layout Recado', arquivo: 'Layout_Recado.xlsx' },
+                { id: 'recado-code', nome: 'Layout Recado Code', arquivo: 'Layout_Recado_Code.xlsx' }
+            ];
+
+            // Cria o modal
+            const modal = document.createElement('div');
+            modal.className = 'modal-exportacao fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                    <div class="bg-gradient-to-r from-green-600 to-emerald-600 p-6 rounded-t-xl">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-2xl font-bold text-white">📦 Exportar Layouts</h2>
+                            <button onclick="fecharModalExportacao()" class="text-white hover:text-gray-200 transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="text-green-100 mt-2">Selecione os layouts que deseja exportar</p>
+                    </div>
+                    
+                    <div class="p-6">
+                        <!-- Seleção Rápida -->
+                        <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                            <h3 class="font-semibold text-gray-700 mb-3">Seleção Rápida:</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="selecionarTodos()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                                    ✅ Selecionar Todos
+                                </button>
+                                <button onclick="deselecionarTodos()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                                    ❌ Desmarcar Todos
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Lista de Layouts -->
+                        <div class="space-y-3 mb-6">
+                            <h3 class="font-semibold text-gray-700">Layouts Disponíveis:</h3>
+                            ${layoutsDisponiveis.map(layout => `
+                                <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+                                    <input type="checkbox" class="layout-checkbox mr-3 w-4 h-4 text-green-600 rounded focus:ring-green-500" 
+                                           value="${layout.id}" data-nome="${layout.nome}" data-arquivo="${layout.arquivo}">
+                                    <div class="flex-1">
+                                        <div class="font-medium text-gray-900">${layout.nome}</div>
+                                        <div class="text-sm text-gray-500">Arquivo: ${layout.arquivo}</div>
+                                    </div>
+                                    <div class="text-green-600">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                    </div>
+                                </label>
+                            `).join('')}
+                        </div>
+
+                        <!-- Opções de Exportação -->
+                        <div class="mb-6 p-4 bg-blue-50 rounded-lg">
+                            <h3 class="font-semibold text-gray-700 mb-3">Formato de Exportação:</h3>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="radio" name="formatoExportacao" value="zip" checked class="mr-2 text-blue-600">
+                                    <span class="text-gray-700">📦 Arquivo ZIP (múltiplos layouts)</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="formatoExportacao" value="individual" class="mr-2 text-blue-600">
+                                    <span class="text-gray-700">📄 Arquivos individuais (um por vez)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Contador de Selecionados -->
+                        <div class="mb-6 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                            <div class="flex items-center text-yellow-800">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span id="contadorSelecionados">0 layouts selecionados</span>
+                            </div>
+                        </div>
+
+                        <!-- Botões -->
+                        <div class="flex justify-end space-x-4 pt-4 border-t border-gray-200">
+                            <button onclick="fecharModalExportacao()" 
+                                    class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors">
+                                Cancelar
+                            </button>
+                            <button onclick="processarExportacao()" 
+                                    class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors">
+                                📥 Exportar Selecionados
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+
+            // Adiciona eventos aos checkboxes
+            const checkboxes = modal.querySelectorAll('.layout-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', atualizarContador);
+            });
+
+            // Anima entrada do modal
             setTimeout(() => {
-                // Cria um arquivo ZIP simulado
-                const blob = new Blob(['Conteúdo dos layouts exportados'], { type: 'application/zip' });
-                const url = URL.createObjectURL(blob);
+                modal.classList.add('animate-fade-in');
+            }, 10);
+        }
+
+        function fecharModalExportacao() {
+            const modal = document.querySelector('.modal-exportacao');
+            if (modal) {
+                modal.classList.add('animate-fade-out');
+                setTimeout(() => modal.remove(), 200);
+            }
+        }
+
+        function selecionarTodos() {
+            const checkboxes = document.querySelectorAll('.layout-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+            });
+            atualizarContador();
+        }
+
+        function deselecionarTodos() {
+            const checkboxes = document.querySelectorAll('.layout-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            atualizarContador();
+        }
+
+        function atualizarContador() {
+            const checkboxes = document.querySelectorAll('.layout-checkbox:checked');
+            const contador = document.getElementById('contadorSelecionados');
+            const quantidade = checkboxes.length;
+            
+            if (quantidade === 0) {
+                contador.textContent = '0 layouts selecionados';
+                contador.parentElement.className = 'flex items-center text-yellow-800';
+            } else if (quantidade === 1) {
+                contador.textContent = '1 layout selecionado';
+                contador.parentElement.className = 'flex items-center text-blue-800';
+            } else {
+                contador.textContent = `${quantidade} layouts selecionados`;
+                contador.parentElement.className = 'flex items-center text-green-800';
+            }
+        }
+
+        async function processarExportacao() {
+            const checkboxesSelecionados = document.querySelectorAll('.layout-checkbox:checked');
+            const formatoExportacao = document.querySelector('input[name="formatoExportacao"]:checked').value;
+            
+            if (checkboxesSelecionados.length === 0) {
+                mostrarNotificacao('⚠️ Selecione pelo menos um layout para exportar', 'warning');
+                return;
+            }
+
+            const layoutsSelecionados = Array.from(checkboxesSelecionados).map(checkbox => ({
+                id: checkbox.value,
+                nome: checkbox.dataset.nome,
+                arquivo: checkbox.dataset.arquivo
+            }));
+
+            mostrarNotificacao(`🔄 Preparando exportação de ${layoutsSelecionados.length} layout(s)...`, 'info');
+
+            try {
+                if (formatoExportacao === 'zip' && layoutsSelecionados.length > 1) {
+                    await exportarComoZip(layoutsSelecionados);
+                } else {
+                    await exportarIndividualmente(layoutsSelecionados);
+                }
                 
+                fecharModalExportacao();
+                mostrarNotificacao(`✅ Exportação concluída com sucesso!`, 'success');
+                
+            } catch (error) {
+                console.error('Erro na exportação:', error);
+                mostrarNotificacao('❌ Erro durante a exportação. Tente novamente.', 'error');
+            }
+        }
+
+        async function exportarComoZip(layouts) {
+            // Importa a biblioteca JSZip dinamicamente
+            if (!window.JSZip) {
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+                document.head.appendChild(script);
+                
+                await new Promise((resolve, reject) => {
+                    script.onload = resolve;
+                    script.onerror = reject;
+                });
+            }
+
+            const zip = new JSZip();
+            
+            // Adiciona cada layout ao ZIP
+            for (const layout of layouts) {
+                const conteudoExcel = gerarConteudoExcel(layout);
+                zip.file(layout.arquivo, conteudoExcel);
+            }
+
+            // Adiciona arquivo README
+            const readme = `
+LAYOUTS AGV - SISTEMA BELLINATI PEREZ
+=====================================
+
+Este arquivo contém ${layouts.length} layout(s) de importação para Agentes Virtuais.
+
+Layouts incluídos:
+${layouts.map(l => `- ${l.nome} (${l.arquivo})`).join('\n')}
+
+Data de exportação: ${new Date().toLocaleString('pt-BR')}
+
+INSTRUÇÕES:
+1. Cada arquivo Excel contém o modelo de layout específico
+2. Siga as regras de formatação descritas em cada layout
+3. Mantenha os cabeçalhos exatamente como mostrado
+4. Para dúvidas, consulte a documentação do sistema
+
+Desenvolvido por: Évelim Esquetini
+Sistema AGV - Bellinati Perez
+            `.trim();
+            
+            zip.file('README.txt', readme);
+
+            // Gera e baixa o ZIP
+            const conteudoZip = await zip.generateAsync({ type: 'blob' });
+            
+            const url = URL.createObjectURL(conteudoZip);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `Layouts_AGV_${new Date().toISOString().split('T')[0]}.zip`;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        async function exportarIndividualmente(layouts) {
+            for (let i = 0; i < layouts.length; i++) {
+                const layout = layouts[i];
+                
+                // Pequeno delay entre downloads para evitar bloqueio do navegador
+                if (i > 0) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+                
+                const conteudoExcel = gerarConteudoExcel(layout);
+                const blob = new Blob([conteudoExcel], { 
+                    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+                });
+                
+                const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = 'Layouts_AGV_Completo.zip';
+                link.download = layout.arquivo;
                 link.style.display = 'none';
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                
                 URL.revokeObjectURL(url);
-                
-                mostrarNotificacao('✅ Todos os layouts foram exportados com sucesso!', 'success');
-            }, 1500);
+            }
+        }
+
+        function gerarConteudoExcel(layout) {
+            // Gera conteúdo CSV que pode ser aberto como Excel
+            const layoutsData = {
+                'aspect-bradesco': {
+                    headers: ['TELEFONE', 'NOME', 'CPF', 'ASPECT_ID'],
+                    exemplo: ['11999999999', 'João Silva', '12345678900', 'ASP001']
+                },
+                'localizador': {
+                    headers: ['TELEFONE', 'NOME', 'CPF', 'EMPRESA', 'CARTEIRA', 'TELEFONE_RECADO'],
+                    exemplo: ['11999999999', 'João Silva', '12345678900', 'Bellinati', 'Bradesco', '08007771234']
+                },
+                'negociador': {
+                    headers: ['TELEFONE', 'NOME', 'CPF', 'VALOR', 'CORINGA_1', 'CORINGA_2', 'CORINGA_3', 'CORINGA_4'],
+                    exemplo: ['11999999999', 'João Silva', '12345678900', '1500,00', '08007771234', '11999887766', '03399.12345 67890.123456 78901.234567 8 90120000150000', 'Variável']
+                },
+                'preventivo': {
+                    headers: ['TELEFONE', 'NOME', 'CPF', 'CARTEIRA', 'CODE', 'TELEFONE_RECADO'],
+                    exemplo: ['11999999999', 'João Silva', '12345678900', 'Bradesco', '03399.12345 67890.123456 78901.234567 8 90120000150000', '08007771234']
+                },
+                'recado': {
+                    headers: ['TELEFONE', 'NOME', 'CPF', 'CARTEIRA', 'TELEFONE_RECADO'],
+                    exemplo: ['11999999999', 'João Silva', '12345678900', 'Bradesco', '08007771234']
+                },
+                'recado-code': {
+                    headers: ['TELEFONE', 'NOME', 'CPF', 'CARTEIRA', 'CODE', 'TELEFONE_RECADO'],
+                    exemplo: ['11999999999', 'João Silva', '12345678900', 'Bradesco', '1', '08007771234']
+                }
+            };
+
+            const data = layoutsData[layout.id] || layoutsData['aspect-bradesco'];
+            
+            // Cria CSV com BOM para compatibilidade com Excel
+            const BOM = '\uFEFF';
+            const csvContent = BOM + [
+                data.headers.join(';'),
+                data.exemplo.join(';'),
+                // Adiciona mais algumas linhas de exemplo
+                data.exemplo.map((val, idx) => {
+                    if (idx === 0) return '11888888888';
+                    if (idx === 1) return 'Maria Santos';
+                    if (idx === 2) return '98765432100';
+                    return val;
+                }).join(';')
+            ].join('\n');
+
+            return csvContent;
         }
 
         // Sistema de notificações
@@ -1104,5 +1414,5 @@
             }, 8000);
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98df1e96336e02df',t:'MTc2MDM2MTQ3MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98df38ecf1e67a2f',t:'MTc2MDM2MjU0OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
