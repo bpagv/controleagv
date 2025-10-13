@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layout Importação - Sistema AGV</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        .hero-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #581c87 100%);
+            min-height: 100vh;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .layout-preview {
+            background: linear-gradient(45deg, #f3f4f6, #e5e7eb);
+            border: 2px dashed #9ca3af;
+            min-height: 120px;
+        }
+
+        .status-badge {
+            animation: statusPulse 2s infinite;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+    </style>
+</head>
+<body class="hero-bg">
+    <!-- Header -->
+    <header class="bg-black/20 backdrop-blur-md border-b border-white/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <button onclick="voltarMenu()" class="bg-white/10 hover:bg-white/20 p-2 rounded-lg transition-colors">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                    </button>
+                    <div class="bg-indigo-500/20 p-3 rounded-xl">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-white">Layout Importação</h1>
+                        <p class="text-white/80">Modelos de Layout para Agentes Virtuais</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="bg-green-500/20 px-4 py-2 rounded-lg pulse-animation">
+                        <span class="text-green-400 font-medium">● 6 Layouts Disponíveis</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+
+        <!-- Filtros -->
+        <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 mb-8 fade-in">
+            <div class="flex flex-wrap gap-4 items-center">
+                <h3 class="text-lg font-semibold text-white">Filtrar por:</h3>
+                <select class="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="">Todos os Tipos</option>
+                    <option value="aspect-bradesco">Aspect Bradesco</option>
+                    <option value="localizador">Localizador</option>
+                    <option value="negociador">Negociador</option>
+                    <option value="preventivo">Preventivo</option>
+                    <option value="recado">Recado</option>
+                    <option value="recado-code">Recado Code</option>
+                </select>
+                <button class="bg-indigo-600 hover:bg-indigo-700 px-6 py-2 rounded-lg text-white font-medium transition-colors">
+                    Aplicar Filtros
+                </button>
+            </div>
+        </div>
+
+        <!-- Lista de Layouts -->
+        <div class="space-y-6 fade-in">
+            <!-- Layout Aspect Bradesco -->
+            <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 card-hover" data-layout-type="aspect-bradesco">
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-blue-500/20 p-3 rounded-xl">
+                                <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white">Layout Aspect Bradesco</h3>
+                                <p class="text-white/80">Arquivo modelo para exportação de AGV no discador Aspect</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="text-white font-semibold mb-3">Características:</h4>
+                            <div class="text-white/80">
+                                <p>Arquivo modelo para exportação de AGV no discador Aspect</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-semibold mb-3">Preview do Arquivo:</h4>
+                            <div class="layout-preview rounded-lg overflow-hidden">
+                                <div class="bg-white p-4 h-full">
+                                    <div class="grid grid-cols-4 gap-1 text-xs">
+                                        <div class="bg-blue-100 p-1 font-semibold border">TELEFONE</div>
+                                        <div class="bg-blue-100 p-1 font-semibold border">NOME</div>
+                                        <div class="bg-blue-100 p-1 font-semibold border">CPF</div>
+                                        <div class="bg-blue-100 p-1 font-semibold border">ASPECT_ID</div>
+                                        <div class="bg-gray-50 p-1 border">11999999999</div>
+                                        <div class="bg-gray-50 p-1 border">João Silva</div>
+                                        <div class="bg-gray-50 p-1 border">123.456.789-00</div>
+                                        <div class="bg-gray-50 p-1 border">ASP001</div>
+                                        <div class="bg-gray-50 p-1 border">11888888888</div>
+                                        <div class="bg-gray-50 p-1 border">Maria Santos</div>
+                                        <div class="bg-gray-50 p-1 border">987.654.321-00</div>
+                                        <div class="bg-gray-50 p-1 border">ASP002</div>
+                                    </div>
+                                    <div class="text-center mt-2">
+                                        <span class="text-blue-600 text-xs font-medium">📊 Layout Aspect Bradesco</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-6 pt-4 border-t border-white/20">
+                        <div class="text-white/60 text-sm">
+                            <span>Última atualização: 15/12/2024</span> • 
+                            <span>Versão: 2.1.0</span>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button onclick="visualizarArquivo('Aspect Bradesco')" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors">
+                                Visualizar Arquivo
+                            </button>
+                            <button onclick="baixarTemplate('Aspect Bradesco')" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors">
+                                Baixar Template
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layout Localizador -->
+            <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 card-hover" data-layout-type="localizador">
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-purple-500/20 p-3 rounded-xl">
+                                <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white">Layout Localizador</h3>
+                                <p class="text-white/80">Arquivo modelo para atuar em AGV de localização, Com ou sem confirmação de CPF</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="text-white font-semibold mb-3">Características:</h4>
+                            <div class="text-white/80">
+                                <p>Arquivo modelo para atuar em AGV de localização, Com ou sem confirmação de CPF</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-semibold mb-3">Preview do Arquivo:</h4>
+                            <div class="layout-preview rounded-lg overflow-hidden">
+                                <div class="bg-white p-4 h-full">
+                                    <div class="grid grid-cols-3 gap-1 text-xs">
+                                        <div class="bg-purple-100 p-1 font-semibold border">TELEFONE</div>
+                                        <div class="bg-purple-100 p-1 font-semibold border">NOME</div>
+                                        <div class="bg-purple-100 p-1 font-semibold border">CPF</div>
+                                        <div class="bg-gray-50 p-1 border">11999999999</div>
+                                        <div class="bg-gray-50 p-1 border">João Silva</div>
+                                        <div class="bg-gray-50 p-1 border">123.456.789-00</div>
+                                        <div class="bg-gray-50 p-1 border">11888888888</div>
+                                        <div class="bg-gray-50 p-1 border">Maria Santos</div>
+                                        <div class="bg-gray-50 p-1 border">987.654.321-00</div>
+                                    </div>
+                                    <div class="text-center mt-2">
+                                        <span class="text-purple-600 text-xs font-medium">📍 Layout Localizador</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-6 pt-4 border-t border-white/20">
+                        <div class="text-white/60 text-sm">
+                            <span>Última atualização: 12/12/2024</span> • 
+                            <span>Versão: 1.9.5</span>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button onclick="visualizarArquivo('Localizador')" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors">
+                                Visualizar Arquivo
+                            </button>
+                            <button onclick="baixarTemplate('Localizador')" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors">
+                                Baixar Template
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layout Negociador -->
+            <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 card-hover" data-layout-type="negociador">
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-green-500/20 p-3 rounded-xl">
+                                <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white">Layout Negociador</h3>
+                                <p class="text-white/80">Arquivo modelo para atuar em AGV de Negociação, Campos customizáveis para inserir até 10 variáveis distintas</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="text-white font-semibold mb-3">Características:</h4>
+                            <div class="text-white/80">
+                                <p>Arquivo modelo para atuar em AGV de Negociação, Campos customizáveis para inserir até 10 variáveis distintas</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-semibold mb-3">Preview do Arquivo:</h4>
+                            <div class="layout-preview rounded-lg overflow-hidden">
+                                <div class="bg-white p-4 h-full">
+                                    <div class="grid grid-cols-5 gap-1 text-xs">
+                                        <div class="bg-green-100 p-1 font-semibold border">TELEFONE</div>
+                                        <div class="bg-green-100 p-1 font-semibold border">NOME</div>
+                                        <div class="bg-green-100 p-1 font-semibold border">CPF</div>
+                                        <div class="bg-green-100 p-1 font-semibold border">VALOR</div>
+                                        <div class="bg-green-100 p-1 font-semibold border">VAR1</div>
+                                        <div class="bg-gray-50 p-1 border">11999999999</div>
+                                        <div class="bg-gray-50 p-1 border">João Silva</div>
+                                        <div class="bg-gray-50 p-1 border">123.456.789-00</div>
+                                        <div class="bg-gray-50 p-1 border">R$ 1.500,00</div>
+                                        <div class="bg-gray-50 p-1 border">Proposta A</div>
+                                    </div>
+                                    <div class="text-center mt-2">
+                                        <span class="text-green-600 text-xs font-medium">💰 Layout Negociador</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-6 pt-4 border-t border-white/20">
+                        <div class="text-white/60 text-sm">
+                            <span>Última atualização: 10/12/2024</span> • 
+                            <span>Versão: 2.3.1</span>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button onclick="visualizarArquivo('Negociador')" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors">
+                                Visualizar Arquivo
+                            </button>
+                            <button onclick="baixarTemplate('Negociador')" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors">
+                                Baixar Template
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layout Preventivo -->
+            <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 card-hover" data-layout-type="preventivo">
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-yellow-500/20 p-3 rounded-xl">
+                                <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white">Layout Preventivo</h3>
+                                <p class="text-white/80">Arquivo modelo para atuar em AGV de Preventivo, Principais canais de atendimento (Receptivo e Whats), Envio da linha digitável para 2ª via de boleto</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="text-white font-semibold mb-3">Características:</h4>
+                            <div class="text-white/80">
+                                <p>Arquivo modelo para atuar em AGV de Preventivo, Principais canais de atendimento (Receptivo e Whats), Envio da linha digitável para 2ª via de boleto</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-semibold mb-3">Preview do Arquivo:</h4>
+                            <div class="layout-preview rounded-lg overflow-hidden">
+                                <div class="bg-white p-4 h-full">
+                                    <div class="grid grid-cols-4 gap-1 text-xs">
+                                        <div class="bg-yellow-100 p-1 font-semibold border">TELEFONE</div>
+                                        <div class="bg-yellow-100 p-1 font-semibold border">NOME</div>
+                                        <div class="bg-yellow-100 p-1 font-semibold border">CPF</div>
+                                        <div class="bg-yellow-100 p-1 font-semibold border">LINHA_DIG</div>
+                                        <div class="bg-gray-50 p-1 border">11999999999</div>
+                                        <div class="bg-gray-50 p-1 border">João Silva</div>
+                                        <div class="bg-gray-50 p-1 border">123.456.789-00</div>
+                                        <div class="bg-gray-50 p-1 border">03399.12345...</div>
+                                    </div>
+                                    <div class="text-center mt-2">
+                                        <span class="text-yellow-600 text-xs font-medium">🛡️ Layout Preventivo</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-6 pt-4 border-t border-white/20">
+                        <div class="text-white/60 text-sm">
+                            <span>Última atualização: 08/12/2024</span> • 
+                            <span>Versão: 1.7.3</span>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button onclick="visualizarArquivo('Preventivo')" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors">
+                                Visualizar Arquivo
+                            </button>
+                            <button onclick="baixarTemplate('Preventivo')" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors">
+                                Baixar Template
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layout Recado -->
+            <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 card-hover" data-layout-type="recado">
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-indigo-500/20 p-3 rounded-xl">
+                                <svg class="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white">Layout Recado</h3>
+                                <p class="text-white/80">Arquivo modelo para atuar em AGV de recado, Principais canais de atendimento (Receptivo e Whats)</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="text-white font-semibold mb-3">Características:</h4>
+                            <div class="text-white/80">
+                                <p>Arquivo modelo para atuar em AGV de recado, Principais canais de atendimento (Receptivo e Whats)</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-semibold mb-3">Preview do Arquivo:</h4>
+                            <div class="layout-preview rounded-lg overflow-hidden">
+                                <div class="bg-white p-4 h-full">
+                                    <div class="grid grid-cols-3 gap-1 text-xs">
+                                        <div class="bg-indigo-100 p-1 font-semibold border">TELEFONE</div>
+                                        <div class="bg-indigo-100 p-1 font-semibold border">NOME</div>
+                                        <div class="bg-indigo-100 p-1 font-semibold border">MENSAGEM</div>
+                                        <div class="bg-gray-50 p-1 border">11999999999</div>
+                                        <div class="bg-gray-50 p-1 border">João Silva</div>
+                                        <div class="bg-gray-50 p-1 border">Recado importante</div>
+                                        <div class="bg-gray-50 p-1 border">11888888888</div>
+                                        <div class="bg-gray-50 p-1 border">Maria Santos</div>
+                                        <div class="bg-gray-50 p-1 border">Lembrete consulta</div>
+                                    </div>
+                                    <div class="text-center mt-2">
+                                        <span class="text-indigo-600 text-xs font-medium">💬 Layout Recado</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-6 pt-4 border-t border-white/20">
+                        <div class="text-white/60 text-sm">
+                            <span>Última atualização: 05/12/2024</span> • 
+                            <span>Versão: 1.5.2</span>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button onclick="visualizarArquivo('Recado')" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors">
+                                Visualizar Arquivo
+                            </button>
+                            <button onclick="baixarTemplate('Recado')" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors">
+                                Baixar Template
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layout Recado Code -->
+            <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 card-hover" data-layout-type="recado-code">
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-orange-500/20 p-3 rounded-xl">
+                                <svg class="w-8 h-8 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white">Layout Recado Code</h3>
+                                <p class="text-white/80">Arquivo modelo para atuar em AGV de recado, Principais canais de atendimento (Receptivo e Whats), Personalização de múltiplas frases em um mesmo arquivo na coluna Code</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="text-white font-semibold mb-3">Características:</h4>
+                            <div class="text-white/80">
+                                <p>Arquivo modelo para atuar em AGV de recado, Principais canais de atendimento (Receptivo e Whats), Personalização de múltiplas frases em um mesmo arquivo na coluna Code</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-semibold mb-3">Preview do Arquivo:</h4>
+                            <div class="layout-preview rounded-lg overflow-hidden">
+                                <div class="bg-white p-4 h-full">
+                                    <div class="grid grid-cols-4 gap-1 text-xs">
+                                        <div class="bg-orange-100 p-1 font-semibold border">TELEFONE</div>
+                                        <div class="bg-orange-100 p-1 font-semibold border">NOME</div>
+                                        <div class="bg-orange-100 p-1 font-semibold border">CODE</div>
+                                        <div class="bg-orange-100 p-1 font-semibold border">MENSAGEM</div>
+                                        <div class="bg-gray-50 p-1 border">11999999999</div>
+                                        <div class="bg-gray-50 p-1 border">João Silva</div>
+                                        <div class="bg-gray-50 p-1 border">001</div>
+                                        <div class="bg-gray-50 p-1 border">Recado A</div>
+                                        <div class="bg-gray-50 p-1 border">11888888888</div>
+                                        <div class="bg-gray-50 p-1 border">Maria Santos</div>
+                                        <div class="bg-gray-50 p-1 border">002</div>
+                                        <div class="bg-gray-50 p-1 border">Recado B</div>
+                                    </div>
+                                    <div class="text-center mt-2">
+                                        <span class="text-orange-600 text-xs font-medium">🔢 Layout Recado Code</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-6 pt-4 border-t border-white/20">
+                        <div class="text-white/60 text-sm">
+                            <span>Última atualização: 03/12/2024</span> • 
+                            <span>Versão: 1.4.8</span>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button onclick="visualizarArquivo('Recado Code')" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors">
+                                Visualizar Arquivo
+                            </button>
+                            <button onclick="baixarTemplate('Recado Code')" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors">
+                                Baixar Template
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ações Rápidas -->
+        <div class="mt-12 bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 fade-in">
+            <h3 class="text-xl font-bold text-white mb-6">Ações Rápidas</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button class="bg-indigo-600 hover:bg-indigo-700 p-4 rounded-lg text-white font-medium transition-colors flex items-center space-x-3">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    <span>Criar Novo Layout</span>
+                </button>
+                <button class="bg-purple-600 hover:bg-purple-700 p-4 rounded-lg text-white font-medium transition-colors flex items-center space-x-3">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                    </svg>
+                    <span>Importar Template</span>
+                </button>
+                <button class="bg-green-600 hover:bg-green-700 p-4 rounded-lg text-white font-medium transition-colors flex items-center space-x-3">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span>Exportar Layouts</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black/20 backdrop-blur-md border-t border-white/20 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="text-center">
+                <p class="text-white">&copy; 2024 Equipe Agentes Virtuais. Sistema de Gestão AGV.</p>
+                <p class="mt-2 text-white/60 text-sm">Desenvolvido por Évelim Esquetini</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function voltarMenu() {
+            window.location.href = '../index.html';
+        }
+
+        // Adicionar efeito de fade-in aos elementos quando a página carrega
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach((element, index) => {
+                element.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+
+        // URLs dos arquivos no SharePoint
+        const templateUrls = {
+            'Aspect Bradesco': {
+                view: 'https://bellinatiperez-my.sharepoint.com/:x:/g/personal/06660278974_bellinatiperez_com_br/EUtka-WeT45Oh7z1z-vyii8BEf2WPE0amGW8dxD_rT7zKw?e=MdfCZj',
+                download: 'https://bellinatiperez-my.sharepoint.com/:x:/g/personal/06660278974_bellinatiperez_com_br/EUtka-WeT45Oh7z1z-vyii8BEf2WPE0amGW8dxD_rT7zKw?e=MdfCZj&download=1'
+            },
+            'Localizador': {
+                view: 'https://bellinatiperez-my.sharepoint.com/:x:/g/personal/06660278974_bellinatiperez_com_br/EU_YcuydWMFHiBKYmb51lj8BgXGCRTjphZ1_SchJN0SeOw?e=GmUmIJ',
+                download: 'https://bellinatiperez-my.sharepoint.com/:x:/g/personal/06660278974_bellinatiperez_com_br/EU_YcuydWMFHiBKYmb51lj8BgXGCRTjphZ1_SchJN0SeOw?e=GmUmIJ&download=1'
+            },
+            'Negociador': {
+                view: 'https://bellinatiperez-my.sharepoint.com/:x:/g/personal/06660278974_bellinatiperez_com_br/EcH03k4d4xdPkPUo2_ivUqQB8v0L6uuznEca3R8PGjmuEw?e=QLSWLt',
+                download: 'https://bellinatiperez-my.sharepoint.com/:x:/g/personal/06660278974_bellinatiperez_com_br/EcH03k4d4xdPkPUo2_ivUqQB8v0L6uuznEca3R8PGjmuEw?e=QLSWLt&download=1'
+            },
+            'Preventivo': {
+                view: 'https://bellinatiperez-my.sharepoint.com/:x:/g/personal/06660278974_bellinatiperez_com_br/EczWB9I9gctPhzuvX4h8iygBgYYuPGhRZLXGuxJhgyYmLA?e=J0lkqg',
+                download: 'https://bellinatiperez-my.sharepoint.com/:x:/g/personal/06660278974_bellinatiperez_com_br/EczWB9I9gctPhzuvX4h8iygBgYYuPGhRZLXGuxJhgyYmLA?e=J0lkqg&download=1'
+            },
+            'Recado': {
+                view: 'https://bellinatiperez-my.sharepoint.com/:x:/g/personal/06660278974_bellinatiperez_com_br/EU0Ksri5yrNCu6AleWls89MBjMhSPwFyqRO3-WHexuRf0A?e=LzrVaN',
+                download: 'https://bellinatiperez-my.sharepoint.com/:x:/g/personal/06660278974_bellinatiperez_com_br/EU0Ksri5yrNCu6AleWls89MBjMhSPwFyqRO3-WHexuRf0A?e=LzrVaN&download=1'
+            },
+            'Recado Code': {
+                view: 'https://bellinatiperez-my.sharepoint.com/:x:/g/personal/06660278974_bellinatiperez_com_br/Ee8qqlIkfhpJnkhCrL5XMcUBvUUiyx4KaXCPaC8cpBsJ2g?e=1y2knP',
+                download: 'https://bellinatiperez-my.sharepoint.com/:x:/g/personal/06660278974_bellinatiperez_com_br/Ee8qqlIkfhpJnkhCrL5XMcUBvUUiyx4KaXCPaC8cpBsJ2g?e=1y2knP&download=1'
+            }
+        };
+
+        // Funcionalidade dos filtros
+        document.querySelectorAll('select').forEach(select => {
+            select.addEventListener('change', function() {
+                filterLayouts();
+            });
+        });
+
+        function filterLayouts() {
+            const filterValue = document.querySelector('select').value;
+            const layouts = document.querySelectorAll('[data-layout-type]');
+            
+            layouts.forEach(layout => {
+                if (filterValue === '' || layout.dataset.layoutType === filterValue) {
+                    layout.style.display = 'block';
+                } else {
+                    layout.style.display = 'none';
+                }
+            });
+        }
+
+        // Funcionalidade dos botões
+        function visualizarArquivo(tipo) {
+            const url = templateUrls[tipo];
+            if (url && url.view) {
+                // Abre o arquivo no SharePoint para visualização
+                window.open(url.view, '_blank', 'noopener,noreferrer');
+                
+                // Mostra notificação de sucesso
+                mostrarNotificacao(`Abrindo visualização do template: ${tipo}`, 'success');
+            } else {
+                mostrarNotificacao(`Erro: Template ${tipo} não encontrado`, 'error');
+            }
+        }
+
+        function baixarTemplate(tipo) {
+            const url = templateUrls[tipo];
+            if (url && url.view) {
+                // Mostra loading
+                mostrarNotificacao(`Preparando download do template: ${tipo}...`, 'info');
+                
+                // Para SharePoint, usamos a URL de visualização com parâmetro de download
+                const downloadUrl = url.view + '&action=download';
+                
+                // Tenta fazer download direto
+                try {
+                    const link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.download = `Layout_${tipo.replace(/\s+/g, '_')}.xlsx`;
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    mostrarNotificacao(`Download iniciado! Se não funcionar automaticamente, use o botão "Baixar" na página que abriu.`, 'success');
+                } catch (error) {
+                    // Fallback: abre em nova aba para download manual
+                    window.open(url.view, '_blank', 'noopener,noreferrer');
+                    mostrarNotificacao(`Página aberta! Clique em "Baixar" ou "Download" na nova aba para salvar o arquivo.`, 'info');
+                }
+            } else {
+                mostrarNotificacao(`Erro: Template ${tipo} não encontrado`, 'error');
+            }
+        }
+
+        // Sistema de notificações
+        function mostrarNotificacao(mensagem, tipo = 'info') {
+            // Remove notificação anterior se existir
+            const notificacaoExistente = document.querySelector('.notificacao');
+            if (notificacaoExistente) {
+                notificacaoExistente.remove();
+            }
+
+            // Cria nova notificação
+            const notificacao = document.createElement('div');
+            notificacao.className = `notificacao fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transform transition-all duration-300 translate-x-full`;
+            
+            // Define cores baseadas no tipo
+            const cores = {
+                'success': 'bg-green-500 text-white',
+                'error': 'bg-red-500 text-white',
+                'info': 'bg-blue-500 text-white',
+                'warning': 'bg-yellow-500 text-black'
+            };
+            
+            notificacao.className += ` ${cores[tipo] || cores.info}`;
+            notificacao.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <div class="flex-1">${mensagem}</div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="text-white hover:text-gray-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(notificacao);
+            
+            // Anima entrada
+            setTimeout(() => {
+                notificacao.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Remove automaticamente após 5 segundos
+            setTimeout(() => {
+                if (notificacao.parentElement) {
+                    notificacao.classList.add('translate-x-full');
+                    setTimeout(() => notificacao.remove(), 300);
+                }
+            });
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98de829000a8f1db',t:'MTc2MDM1NTA3OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
