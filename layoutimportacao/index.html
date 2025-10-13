@@ -165,7 +165,7 @@
                     
                     <div class="flex justify-between items-center mt-6 pt-4 border-t border-white/20">
                         <div class="text-white/60 text-sm">
-                            <span>Última atualização: 09/09/2025</span> • 
+                            <span>Última atualização: 09/09/2025</span>
                         </div>
                         <div class="flex space-x-3">
                             <button onclick="visualizarArquivo('Aspect Bradesco')" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors">
@@ -200,8 +200,17 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div>
                             <h4 class="text-white font-semibold mb-3">Características:</h4>
-                            <div class="text-white/80">
-                                <p>Arquivo modelo para atuar em AGV de localização, Com ou sem confirmação de CPF</p>
+                            <div class="text-white/80 space-y-2">
+                                <div class="text-sm">
+                                    <ul class="list-disc list-inside space-y-1 ml-2">
+                                        <li>O cabeçalho deve estar exatamente como o modelo enviado (com espaço onde tem ou sem)</li>
+                                        <li>O CPF do cliente deve estar formatado com os 11 dígitos</li>
+                                        <li>Coluna Empresa deve vir escrito Bellinati</li>
+                                        <li>Coluna Carteira será a identificação do cliente: ex: Bradesco</li>
+                                        <li>Coluna telefone recado deve vir com 0800 da carteira formatado com o 0 na frente (baste colocar aspa simples: '0800...)</li>
+                                        <li>Caso algum campo não tenha deixar em branco (ex: ;;)</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                         <div>
@@ -229,8 +238,7 @@
                     
                     <div class="flex justify-between items-center mt-6 pt-4 border-t border-white/20">
                         <div class="text-white/60 text-sm">
-                            <span>Última atualização: 12/12/2024</span> • 
-                            <span>Versão: 1.9.5</span>
+                            <span>Última atualização: 12/03/2025</span>
                         </div>
                         <div class="flex space-x-3">
                             <button onclick="visualizarArquivo('Localizador')" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors">
@@ -264,8 +272,19 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div>
                             <h4 class="text-white font-semibold mb-3">Características:</h4>
-                            <div class="text-white/80">
-                                <p>Arquivo modelo para atuar em AGV de Negociação, Campos customizáveis para inserir até 10 variáveis distintas</p>
+                            <div class="text-white/80 space-y-2">
+                                <div class="text-sm">
+                                    <ul class="list-disc list-inside space-y-1 ml-2">
+                                        <li>O cabeçalho deve estar exatamente como o modelo enviado (com espaço onde tem ou sem)</li>
+                                        <li>O CPF do cliente deve estar formatado com os 11 dígitos</li>
+                                        <li>Coringa_1 >> 0800</li>
+                                        <li>Coringa_2 >> whats</li>
+                                        <li>Coringa_3 >> linha digitável</li>
+                                        <li>Coringa_4 >> variável</li>
+                                        <li>O número de 0800 da carteira deve vir formatado com o 0 na frente (baste colocar aspa simples: '0800...)</li>
+                                        <li>Campos de valores, não pode conter ponto e sim vírgula ex: 479,55</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                         <div>
@@ -294,8 +313,7 @@
                     
                     <div class="flex justify-between items-center mt-6 pt-4 border-t border-white/20">
                         <div class="text-white/60 text-sm">
-                            <span>Última atualização: 10/12/2024</span> • 
-                            <span>Versão: 2.3.1</span>
+                            <span>Última atualização: 20/03/2025</span>
                         </div>
                         <div class="flex space-x-3">
                             <button onclick="visualizarArquivo('Negociador')" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors">
@@ -329,8 +347,17 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div>
                             <h4 class="text-white font-semibold mb-3">Características:</h4>
-                            <div class="text-white/80">
-                                <p>Arquivo modelo para atuar em AGV de Preventivo, Principais canais de atendimento (Receptivo e Whats), Envio da linha digitável para 2ª via de boleto</p>
+                            <div class="text-white/80 space-y-2">
+                                <div class="text-sm">
+                                    <ul class="list-disc list-inside space-y-1 ml-2">
+                                        <li>O cabeçalho deve estar exatamente como o modelo enviado (com espaço onde tem ou sem)</li>
+                                        <li>O CPF do cliente deve estar formatado com os 11 dígitos</li>
+                                        <li>Coluna Carteira será a identificação do cliente: ex: Bradesco</li>
+                                        <li>Coluna code deverá ser enviado a linha digitável</li>
+                                        <li>Coluna telefone recado deve vir com 0800 da carteira formatado com o 0 na frente (baste colocar aspa simples: '0800...)</li>
+                                        <li>Caso algum campo não tenha deixar em branco (ex: ;;)</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                         <div>
@@ -357,8 +384,7 @@
                     
                     <div class="flex justify-between items-center mt-6 pt-4 border-t border-white/20">
                         <div class="text-white/60 text-sm">
-                            <span>Última atualização: 08/12/2024</span> • 
-                            <span>Versão: 1.7.3</span>
+                            <span>Última atualização: 20/06/2025</span>
                         </div>
                         <div class="flex space-x-3">
                             <button onclick="visualizarArquivo('Preventivo')" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors">
@@ -392,8 +418,16 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div>
                             <h4 class="text-white font-semibold mb-3">Características:</h4>
-                            <div class="text-white/80">
-                                <p>Arquivo modelo para atuar em AGV de recado, Principais canais de atendimento (Receptivo e Whats)</p>
+                            <div class="text-white/80 space-y-2">
+                                <div class="text-sm">
+                                    <ul class="list-disc list-inside space-y-1 ml-2">
+                                        <li>O cabeçalho deve estar exatamente como o modelo enviado (com espaço onde tem ou sem)</li>
+                                        <li>O CPF do cliente deve estar formatado com os 11 dígitos</li>
+                                        <li>Coluna Carteira será a identificação do cliente: ex: Bradesco</li>
+                                        <li>Coluna telefone recado deve vir com 0800 da carteira formatado com o 0 na frente (baste colocar aspa simples: '0800...)</li>
+                                        <li>Caso algum campo não tenha deixar em branco (ex: ;;)</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                         <div>
@@ -421,8 +455,7 @@
                     
                     <div class="flex justify-between items-center mt-6 pt-4 border-t border-white/20">
                         <div class="text-white/60 text-sm">
-                            <span>Última atualização: 05/12/2024</span> • 
-                            <span>Versão: 1.5.2</span>
+                            <span>Última atualização: 21/03/2025</span>
                         </div>
                         <div class="flex space-x-3">
                             <button onclick="visualizarArquivo('Recado')" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors">
@@ -456,8 +489,17 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div>
                             <h4 class="text-white font-semibold mb-3">Características:</h4>
-                            <div class="text-white/80">
-                                <p>Arquivo modelo para atuar em AGV de recado, Principais canais de atendimento (Receptivo e Whats), Personalização de múltiplas frases em um mesmo arquivo na coluna Code</p>
+                            <div class="text-white/80 space-y-2">
+                                <div class="text-sm">
+                                    <ul class="list-disc list-inside space-y-1 ml-2">
+                                        <li>O cabeçalho deve estar exatamente como o modelo enviado (com espaço onde tem ou sem)</li>
+                                        <li>O CPF do cliente deve estar formatado com os 11 dígitos</li>
+                                        <li>Coluna Carteira será a identificação do cliente: ex: Bradesco</li>
+                                        <li>Coluna code deve vir o número referente a frase gravada: (1,2,3 ect)</li>
+                                        <li>Coluna telefone recado deve vir com 0800 da carteira formatado com o 0 na frente (baste colocar aspa simples: '0800...)</li>
+                                        <li>Caso algum campo não tenha deixar em branco (ex: ;;)</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                         <div>
@@ -488,8 +530,7 @@
                     
                     <div class="flex justify-between items-center mt-6 pt-4 border-t border-white/20">
                         <div class="text-white/60 text-sm">
-                            <span>Última atualização: 03/12/2024</span> • 
-                            <span>Versão: 1.4.8</span>
+                            <span>Última atualização: 20/06/2025</span>
                         </div>
                         <div class="flex space-x-3">
                             <button onclick="visualizarArquivo('Recado Code')" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors">
@@ -534,7 +575,7 @@
     <footer class="bg-black/20 backdrop-blur-md border-t border-white/20 mt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="text-center">
-                <p class="text-white">&copy; 2024 Equipe Agentes Virtuais. Sistema de Gestão AGV.</p>
+                <p class="text-white">&copy; 2025 Equipe Agentes Virtuais. Sistema de Gestão AGV.</p>
                 <p class="mt-2 text-white/60 text-sm">Desenvolvido por Évelim Esquetini</p>
             </div>
         </div>
@@ -693,5 +734,5 @@
             });
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98de8c35d4d702df',t:'MTc2MDM1NTQ3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98deaef2375bf1db',t:'MTc2MDM1Njg5Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
