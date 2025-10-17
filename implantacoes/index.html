@@ -284,7 +284,7 @@
    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="text-center">
      <p class="text-white">© 2025 Equipe Agentes Virtuais. Sistema de Gestão AGV.</p>
-     <p class="mt-2 text-white/60 text-sm">Desenvolvido por Évelim Esquetini | Powered by Firebase 🔥</p>
+     <p class="mt-2 text-white/60 text-sm">Desenvolvido por Évelim Esquetini</p>
     </div>
    </div>
   </footer>
@@ -777,14 +777,29 @@
         }
 
         function importarDados() {
+            if (!permissoes.podeIncluir) {
+                mostrarNotificacao('❌ Você não tem permissão para importar dados', 'error');
+                return;
+            }
+
+            // Verificar se Firebase está conectado
+            if (!window.firebase || !firebaseInitialized) {
+                mostrarNotificacao('❌ Firebase não está conectado. Aguarde a conexão.', 'error');
+                return;
+            }
+
             const modal = document.createElement('div');
+            modal.id = 'modalImportacao';
             modal.className = 'modal fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4';
             modal.innerHTML = `
-                <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full">
+                <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
                     <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 rounded-t-xl">
                         <div class="flex justify-between items-center">
-                            <h2 class="text-2xl font-bold text-white">📊 Importar Dados Excel</h2>
-                            <button onclick="fecharModal()" class="text-white hover:text-gray-200 transition-colors">
+                            <div>
+                                <h2 class="text-2xl font-bold text-white">📊 Importar Planilha Excel</h2>
+                                <p class="text-blue-100 mt-1">Importação em massa para Firebase Realtime Database</p>
+                            </div>
+                            <button onclick="fecharModalImportacao()" class="text-white hover:text-gray-200 transition-colors">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                 </svg>
@@ -793,44 +808,67 @@
                     </div>
                     
                     <div class="p-6">
-                        <div class="mb-6">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-3">🔥 Importação para Firebase</h3>
-                            <p class="text-gray-600 mb-4">Os dados serão salvos diretamente no Firebase Realtime Database:</p>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <div class="grid grid-cols-3 gap-2 text-sm font-medium text-gray-700">
-                                    <span>• Status</span>
-                                    <span>• Chamado</span>
-                                    <span>• Data Solicitação</span>
-                                    <span>• Fornecedor</span>
-                                    <span>• Carteira</span>
-                                    <span>• Campanha</span>
-                                    <span>• Tipo AGV</span>
-                                    <span>• Licenças</span>
-                                    <span>• Data Entrega</span>
-                                    <span>• Dias Produção</span>
-                                    <span>• Data Cancelamento</span>
-                                </div>
+                        <!-- Instruções -->
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                            <h3 class="text-lg font-semibold text-blue-800 mb-3">📋 Formato da Planilha</h3>
+                            <p class="text-blue-700 mb-3">Sua planilha Excel deve conter as seguintes colunas (nomes flexíveis):</p>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm text-blue-600">
+                                <span>• Status / Situação</span>
+                                <span>• Chamado / Número</span>
+                                <span>• Campanha / Projeto</span>
+                                <span>• Fornecedor / Empresa</span>
+                                <span>• Carteira / Portfolio</span>
+                                <span>• Tipo AGV / Categoria</span>
+                                <span>• Data Solicitação / Início</span>
+                                <span>• Data Entrega / Fim</span>
+                                <span>• Licenças / Quantidade</span>
+                                <span>• Observações / Comentários</span>
+                                <span>• Base (número)</span>
+                                <span>• Spin (número)</span>
                             </div>
                         </div>
                         
+                        <!-- Upload de arquivo -->
                         <div class="mb-6">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Selecionar Arquivo Excel</label>
-                            <input type="file" id="arquivoExcel" accept=".xlsx,.xls" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">📁 Selecionar Arquivo Excel (.xlsx ou .xls)</label>
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+                                <input type="file" id="arquivoExcel" accept=".xlsx,.xls,.csv" class="hidden">
+                                <button onclick="document.getElementById('arquivoExcel').click()" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg text-white font-medium transition-colors">
+                                    📂 Escolher Arquivo Excel
+                                </button>
+                                <p class="text-gray-500 text-sm mt-2">Ou arraste e solte o arquivo aqui</p>
+                                <div id="nomeArquivo" class="mt-2 text-sm text-green-600 font-medium hidden"></div>
+                            </div>
                         </div>
                         
+                        <!-- Preview dos dados -->
                         <div id="previewDados" class="mb-6 hidden">
-                            <h4 class="text-sm font-semibold text-gray-700 mb-2">Preview dos Dados:</h4>
-                            <div class="bg-gray-50 p-4 rounded-lg max-h-40 overflow-y-auto">
+                            <h4 class="text-sm font-semibold text-gray-700 mb-3">👀 Preview dos Dados (primeiros 5 registros):</h4>
+                            <div class="bg-gray-50 border rounded-lg p-4 max-h-60 overflow-auto">
                                 <div id="dadosPreview"></div>
                             </div>
+                            <div id="estatisticasPreview" class="mt-3 text-sm text-gray-600"></div>
                         </div>
                         
-                        <div class="flex justify-end space-x-4">
-                            <button onclick="fecharModal()" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors">
+                        <!-- Progresso da importação -->
+                        <div id="progressoImportacao" class="mb-6 hidden">
+                            <h4 class="text-sm font-semibold text-gray-700 mb-2">🔄 Progresso da Importação:</h4>
+                            <div class="bg-gray-200 rounded-full h-3 mb-2">
+                                <div id="barraProgresso" class="bg-blue-600 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                            <div id="textoProgresso" class="text-sm text-gray-600">Preparando importação...</div>
+                        </div>
+                        
+                        <!-- Botões -->
+                        <div class="flex justify-end space-x-4 pt-4 border-t border-gray-200">
+                            <button onclick="fecharModalImportacao()" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors">
                                 Cancelar
                             </button>
-                            <button id="btnImportarExcel" onclick="processarImportacao()" disabled class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">
-                                Importar para Firebase
+                            <button id="btnImportarExcel" onclick="processarImportacao()" disabled class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center space-x-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                                </svg>
+                                <span>Importar para Firebase</span>
                             </button>
                         </div>
                     </div>
@@ -839,62 +877,159 @@
             
             document.body.appendChild(modal);
             
-            // Configurar evento de mudança do arquivo
+            // Configurar eventos
             const arquivoInput = document.getElementById('arquivoExcel');
+            
             arquivoInput.addEventListener('change', function(e) {
                 const arquivo = e.target.files[0];
                 if (arquivo) {
+                    document.getElementById('nomeArquivo').textContent = `📄 ${arquivo.name}`;
+                    document.getElementById('nomeArquivo').classList.remove('hidden');
                     lerArquivoExcel(arquivo);
                 }
             });
+
+            // Drag and drop
+            const dropZone = modal.querySelector('.border-dashed');
+            
+            dropZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                dropZone.classList.add('border-blue-400', 'bg-blue-50');
+            });
+            
+            dropZone.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                dropZone.classList.remove('border-blue-400', 'bg-blue-50');
+            });
+            
+            dropZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                dropZone.classList.remove('border-blue-400', 'bg-blue-50');
+                
+                const arquivo = e.dataTransfer.files[0];
+                if (arquivo && (arquivo.name.endsWith('.xlsx') || arquivo.name.endsWith('.xls'))) {
+                    arquivoInput.files = e.dataTransfer.files;
+                    document.getElementById('nomeArquivo').textContent = `📄 ${arquivo.name}`;
+                    document.getElementById('nomeArquivo').classList.remove('hidden');
+                    lerArquivoExcel(arquivo);
+                } else {
+                    mostrarNotificacao('❌ Por favor, selecione um arquivo Excel (.xlsx ou .xls)', 'error');
+                }
+            });
+        }
+
+        function fecharModalImportacao() {
+            const modal = document.getElementById('modalImportacao');
+            if (modal) {
+                modal.remove();
+            }
         }
 
         // Variável global para armazenar dados do Excel
         let dadosExcel = [];
 
         function lerArquivoExcel(arquivo) {
+            // Verificar se SheetJS está carregado
+            if (typeof XLSX === 'undefined') {
+                mostrarNotificacao('❌ Biblioteca SheetJS não carregada. Recarregue a página.', 'error');
+                return;
+            }
+
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
+                    console.log('📊 Iniciando leitura do arquivo Excel...');
+                    
                     const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
+                    const workbook = XLSX.read(data, { 
+                        type: 'array',
+                        cellDates: true,
+                        cellNF: false,
+                        cellText: false
+                    });
+                    
+                    console.log('📋 Planilhas encontradas:', workbook.SheetNames);
                     
                     // Pegar a primeira planilha
                     const firstSheetName = workbook.SheetNames[0];
                     const worksheet = workbook.Sheets[firstSheetName];
                     
-                    // Converter para JSON
-                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    // Converter para JSON com cabeçalhos
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { 
+                        header: 1,
+                        defval: '',
+                        blankrows: false
+                    });
+                    
+                    console.log('📊 Dados brutos do Excel:', jsonData);
                     
                     if (jsonData.length < 2) {
-                        mostrarNotificacao('Arquivo Excel deve ter pelo menos 2 linhas (cabeçalho + dados)', 'error');
+                        mostrarNotificacao('❌ Arquivo Excel deve ter pelo menos 2 linhas (cabeçalho + dados)', 'error');
                         return;
                     }
                     
                     // Processar dados
-                    const headers = jsonData[0];
+                    const headers = jsonData[0].map(h => h ? h.toString().toLowerCase().trim().replace(/\s+/g, '_') : '');
                     const rows = jsonData.slice(1);
                     
-                    dadosExcel = rows.map(row => {
+                    console.log('📋 Cabeçalhos processados:', headers);
+                    
+                    dadosExcel = rows.map((row, index) => {
                         const obj = {};
-                        headers.forEach((header, index) => {
-                            if (header && row[index] !== undefined) {
-                                obj[header.toString().toLowerCase().trim()] = row[index];
+                        headers.forEach((header, colIndex) => {
+                            if (header && row[colIndex] !== undefined && row[colIndex] !== '') {
+                                let valor = row[colIndex];
+                                
+                                // Converter datas do Excel
+                                if (typeof valor === 'number' && valor > 25000 && valor < 50000) {
+                                    // Provavelmente é uma data do Excel
+                                    const excelEpoch = new Date(1900, 0, 1);
+                                    const data = new Date(excelEpoch.getTime() + (valor - 2) * 24 * 60 * 60 * 1000);
+                                    valor = data.toISOString().split('T')[0];
+                                }
+                                
+                                obj[header] = valor;
                             }
                         });
                         return obj;
                     }).filter(obj => Object.keys(obj).length > 0);
                     
+                    console.log('✅ Dados processados:', dadosExcel.length, 'registros');
+                    console.log('📄 Exemplo do primeiro registro:', dadosExcel[0]);
+                    
+                    if (dadosExcel.length === 0) {
+                        mostrarNotificacao('❌ Nenhum dado válido encontrado no arquivo Excel', 'error');
+                        return;
+                    }
+                    
                     // Mostrar preview
                     mostrarPreviewDados();
                     
                     // Habilitar botão de importar
-                    document.getElementById('btnImportarExcel').disabled = false;
+                    const btnImportar = document.getElementById('btnImportarExcel');
+                    if (btnImportar) {
+                        btnImportar.disabled = false;
+                        btnImportar.classList.remove('disabled:bg-gray-400');
+                        btnImportar.classList.add('bg-green-600', 'hover:bg-green-700');
+                        btnImportar.innerHTML = `
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>Importar ${dadosExcel.length} Registros</span>
+                        `;
+                    }
+                    
+                    mostrarNotificacao(`✅ Arquivo lido com sucesso! ${dadosExcel.length} registros encontrados`, 'success');
                     
                 } catch (error) {
-                    console.error('Erro ao ler arquivo Excel:', error);
-                    mostrarNotificacao('Erro ao ler arquivo Excel. Verifique se o arquivo está correto.', 'error');
+                    console.error('❌ Erro ao ler arquivo Excel:', error);
+                    mostrarNotificacao(`❌ Erro ao ler arquivo Excel: ${error.message}`, 'error');
                 }
+            };
+            
+            reader.onerror = function(error) {
+                console.error('❌ Erro no FileReader:', error);
+                mostrarNotificacao('❌ Erro ao ler o arquivo. Tente novamente.', 'error');
             };
             
             reader.readAsArrayBuffer(arquivo);
@@ -903,59 +1038,129 @@
         function mostrarPreviewDados() {
             const previewContainer = document.getElementById('previewDados');
             const dadosPreview = document.getElementById('dadosPreview');
+            const estatisticasPreview = document.getElementById('estatisticasPreview');
             
             if (dadosExcel.length === 0) {
                 previewContainer.classList.add('hidden');
                 return;
             }
             
-            let html = `<p class="text-sm text-gray-600 mb-2">Encontrados ${dadosExcel.length} registros:</p>`;
+            // Mostrar primeiros 5 registros em formato de tabela
+            const exemplos = dadosExcel.slice(0, 5);
             
-            // Mostrar primeiros 3 registros como exemplo
-            const exemplos = dadosExcel.slice(0, 3);
-            exemplos.forEach((item, index) => {
-                html += `<div class="text-xs bg-white p-2 rounded mb-2">
-                    <strong>Registro ${index + 1}:</strong> ${JSON.stringify(item, null, 2).substring(0, 100)}...
-                </div>`;
+            // Pegar todas as chaves únicas dos primeiros registros
+            const todasChaves = new Set();
+            exemplos.forEach(item => {
+                Object.keys(item).forEach(chave => todasChaves.add(chave));
             });
             
+            const chaves = Array.from(todasChaves).slice(0, 8); // Limitar a 8 colunas para não ficar muito largo
+            
+            let html = `
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-xs">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-2 py-1 text-left font-medium text-gray-700">#</th>
+                                ${chaves.map(chave => `<th class="px-2 py-1 text-left font-medium text-gray-700">${chave}</th>`).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            exemplos.forEach((item, index) => {
+                html += `
+                    <tr class="border-t border-gray-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}">
+                        <td class="px-2 py-1 font-medium text-blue-600">${index + 1}</td>
+                        ${chaves.map(chave => {
+                            let valor = item[chave] || '';
+                            if (typeof valor === 'string' && valor.length > 20) {
+                                valor = valor.substring(0, 20) + '...';
+                            }
+                            return `<td class="px-2 py-1 text-gray-700">${valor}</td>`;
+                        }).join('')}
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            if (dadosExcel.length > 5) {
+                html += `<p class="text-xs text-gray-500 mt-2 text-center">... e mais ${dadosExcel.length - 5} registros</p>`;
+            }
+            
             dadosPreview.innerHTML = html;
+            
+            // Estatísticas
+            const campos = new Set();
+            dadosExcel.forEach(item => {
+                Object.keys(item).forEach(chave => campos.add(chave));
+            });
+            
+            estatisticasPreview.innerHTML = `
+                📊 <strong>${dadosExcel.length}</strong> registros encontrados | 
+                📋 <strong>${campos.size}</strong> campos diferentes | 
+                🔥 Pronto para importar para Firebase
+            `;
+            
             previewContainer.classList.remove('hidden');
         }
 
         async function processarImportacao() {
             if (!permissoes.podeIncluir) {
-                mostrarNotificacao('Você não tem permissão para importar dados', 'error');
+                mostrarNotificacao('❌ Você não tem permissão para importar dados', 'error');
                 return;
             }
 
             if (dadosExcel.length === 0) {
-                mostrarNotificacao('Nenhum dado para importar', 'error');
+                mostrarNotificacao('❌ Nenhum dado para importar', 'error');
+                return;
+            }
+
+            // Verificar se Firebase está conectado
+            if (!window.firebase || !firebaseInitialized) {
+                mostrarNotificacao('❌ Firebase não está conectado. Aguarde a conexão.', 'error');
                 return;
             }
 
             const btnImportar = document.getElementById('btnImportarExcel');
-            const textoOriginal = btnImportar.textContent;
+            const progressoContainer = document.getElementById('progressoImportacao');
+            const barraProgresso = document.getElementById('barraProgresso');
+            const textoProgresso = document.getElementById('textoProgresso');
+            
+            // Mostrar progresso
+            progressoContainer.classList.remove('hidden');
             btnImportar.disabled = true;
-            btnImportar.innerHTML = '<div class="loading mr-2"></div>Importando...';
+            btnImportar.innerHTML = '<div class="loading mr-2"></div>Iniciando importação...';
 
             try {
                 let sucessos = 0;
                 let erros = 0;
+                const total = dadosExcel.length;
 
-                for (const item of dadosExcel) {
+                console.log(`🚀 Iniciando importação de ${total} registros para Firebase...`);
+
+                for (let i = 0; i < dadosExcel.length; i++) {
+                    const item = dadosExcel[i];
+                    
                     try {
+                        console.log(`📝 Processando registro ${i + 1}:`, item);
+                        
                         // Mapear campos do Excel para o formato do Firebase
                         const implantacao = {
                             id: `EXCEL-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                             
                             // Campos principais - suporta múltiplos nomes de colunas
-                            status: item.status || item.situacao || item.estado || 'andamento',
-                            chamado: item.chamado || item.numero_chamado || item.ticket || item.numero || '',
-                            campanha: item.campanha || item.nome_campanha || item.projeto || '',
-                            fornecedor: item.fornecedor || item.nome_fornecedor || item.empresa || '',
+                            status: mapearStatus(item.status || item.situacao || item.estado || 'andamento'),
+                            chamado: item.chamado || item.numero_chamado || item.ticket || item.numero || `AUTO-${i + 1}`,
+                            campanha: item.campanha || item.nome_campanha || item.projeto || `Campanha ${i + 1}`,
+                            fornecedor: mapearFornecedor(item.fornecedor || item.nome_fornecedor || item.empresa || ''),
                             carteira: item.carteira || item.nome_carteira || item.portfolio || '',
-                            tipoAgv: item.tipo_agv || item.tipoagv || item.tipo || item.categoria || '',
+                            tipoAgv: mapearTipoAgv(item.tipo_agv || item.tipoagv || item.tipo || item.categoria || ''),
                             
                             // Datas - tentar converter diferentes formatos
                             dataSolicitacao: converterData(item.data_solicitacao || item.datasolicitacao || item.inicio || item.data_inicio),
@@ -963,11 +1168,11 @@
                             dataCancelamento: converterData(item.data_cancelamento || item.datacancelamento || item.cancelado_em),
                             
                             // Números
-                            licencas: parseInt(item.licencas || item.numero_licencas || item.qtd_licencas || 0),
-                            diasProducao: parseInt(item.dias_producao || item.diasproducao || item.duracao || item.duracao_dias || 0),
-                            base: parseInt(item.base || 0),
-                            spin: parseInt(item.spin || 0),
-                            hitRate: parseFloat(item.hit_rate || item.hitrate || item.taxa_sucesso || 0),
+                            licencas: parseInt(item.licencas || item.numero_licencas || item.qtd_licencas || 0) || 0,
+                            diasProducao: parseInt(item.dias_producao || item.diasproducao || item.duracao || item.duracao_dias || 0) || 0,
+                            base: parseInt(item.base || 0) || 0,
+                            spin: parseInt(item.spin || 0) || 0,
+                            hitRate: parseFloat(item.hit_rate || item.hitrate || item.taxa_sucesso || 0) || 0,
                             
                             // Textos
                             observacoes: item.observacoes || item.obs || item.comentarios || item.notas || '',
@@ -977,8 +1182,11 @@
                             criadoPor: `${usuarioAtual.nome} (Importação Excel)`,
                             criadoEm: new Date().toISOString(),
                             atualizadoEm: new Date().toISOString(),
-                            importadoEm: new Date().toISOString()
+                            importadoEm: new Date().toISOString(),
+                            origemImportacao: 'excel'
                         };
+
+                        console.log(`💾 Salvando no Firebase:`, implantacao);
 
                         // Salvar no Firebase
                         const implantacoesRef = window.firebase.ref(window.firebase.database, 'implantacoes');
@@ -986,32 +1194,103 @@
                         await window.firebase.set(novaRef, implantacao);
                         
                         sucessos++;
-                        
-                        // Atualizar progresso
-                        btnImportar.innerHTML = `<div class="loading mr-2"></div>Importando... ${sucessos}/${dadosExcel.length}`;
+                        console.log(`✅ Registro ${i + 1} salvo com sucesso`);
                         
                     } catch (error) {
-                        console.error('Erro ao importar item:', error, item);
+                        console.error(`❌ Erro ao importar registro ${i + 1}:`, error, item);
                         erros++;
+                    }
+
+                    // Atualizar progresso
+                    const progresso = ((i + 1) / total) * 100;
+                    barraProgresso.style.width = `${progresso}%`;
+                    textoProgresso.textContent = `Processando ${i + 1} de ${total} registros... (${sucessos} sucessos, ${erros} erros)`;
+                    btnImportar.innerHTML = `<div class="loading mr-2"></div>Importando ${i + 1}/${total}...`;
+                    
+                    // Pequena pausa para não sobrecarregar o Firebase
+                    if (i % 10 === 0) {
+                        await new Promise(resolve => setTimeout(resolve, 100));
                     }
                 }
 
-                // Mostrar resultado
+                // Resultado final
+                console.log(`🏁 Importação finalizada: ${sucessos} sucessos, ${erros} erros`);
+                
                 if (sucessos > 0) {
-                    mostrarNotificacao(`✅ Importação concluída! ${sucessos} registros salvos no Firebase${erros > 0 ? ` (${erros} erros)` : ''}`, 'success');
+                    mostrarNotificacao(`🔥 Importação concluída! ${sucessos} registros salvos no Firebase${erros > 0 ? ` (${erros} erros)` : ''}`, 'success');
+                    
+                    // Fechar modal após 2 segundos
+                    setTimeout(() => {
+                        fecharModalImportacao();
+                    }, 2000);
                 } else {
                     mostrarNotificacao('❌ Nenhum registro foi importado. Verifique o formato do arquivo.', 'error');
                 }
                 
-                fecharModal();
-                
             } catch (error) {
-                console.error('Erro na importação:', error);
-                mostrarNotificacao('Erro durante a importação: ' + error.message, 'error');
+                console.error('❌ Erro geral na importação:', error);
+                mostrarNotificacao(`❌ Erro durante a importação: ${error.message}`, 'error');
             } finally {
                 btnImportar.disabled = false;
-                btnImportar.innerHTML = textoOriginal;
+                btnImportar.innerHTML = `
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Importação Finalizada</span>
+                `;
             }
+        }
+
+        // Funções auxiliares para mapear valores
+        function mapearStatus(status) {
+            const statusMap = {
+                'concluido': 'concluido',
+                'concluído': 'concluido',
+                'finalizado': 'concluido',
+                'produção': 'concluido',
+                'producao': 'concluido',
+                'andamento': 'andamento',
+                'em andamento': 'andamento',
+                'desenvolvimento': 'andamento',
+                'homologacao': 'homologacao',
+                'homologação': 'homologacao',
+                'teste': 'homologacao',
+                'cancelado': 'cancelado',
+                'cancelada': 'cancelado',
+                'parado': 'cancelado'
+            };
+            
+            return statusMap[status.toLowerCase()] || 'andamento';
+        }
+
+        function mapearFornecedor(fornecedor) {
+            const fornecedorMap = {
+                '2cx': '2cx',
+                'aspect': 'aspect',
+                'paneas': 'paneas',
+                'pontal': 'pontal',
+                'robbu': 'robbu',
+                'sinergytech': 'sinergytech',
+                'techia': 'techia'
+            };
+            
+            return fornecedorMap[fornecedor.toLowerCase()] || fornecedor;
+        }
+
+        function mapearTipoAgv(tipo) {
+            const tipoMap = {
+                'agv': 'agv-ia',
+                'agv com ia': 'agv-ia',
+                'agv-ia': 'agv-ia',
+                'localizador': 'localizador',
+                'localizador smartplay': 'localizador-smartplay',
+                'negociador': 'negociador',
+                'negociador smartplay': 'negociador-smartplay',
+                'recado': 'recado',
+                'preventivo': 'preventivo'
+            };
+            
+            return tipoMap[tipo.toLowerCase()] || tipo;
         }
 
         function converterData(valor) {
@@ -1658,5 +1937,5 @@
             }, 5000);
         }
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9902198f51b3f1f2',t:'MTc2MDcyODI2Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99022307f4d3f1f2',t:'MTc2MDcyODY1NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
