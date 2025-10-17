@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Controle de Implantações - Sistema AGV</title>
-  <script src="https://cdn.tailwindcss.com"></script><!-- Firebase SDK -->
+  <script src="https://cdn.tailwindcss.com"></script><!-- SheetJS para leitura de Excel -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script><!-- Firebase SDK -->
   <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getDatabase, ref, push, set, onValue, update, remove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
@@ -396,7 +397,7 @@
                 atualizarEstatisticas();
             });
 
-            mostrarNotificacao('🔥 Conectado ao Firebase Realtime Database!', 'success');
+            console.log('Firebase Realtime Database conectado');
         }
 
         function mostrarModalLogin() {
@@ -422,14 +423,14 @@
                 await fazerLogin(cpf);
                 localStorage.setItem('cpfUsuario', cpf);
                 ocultarModalLogin();
-                mostrarNotificacao(`Bem-vindo(a), Administrador! 👑 Acesso total ao Firebase`, 'success');
+                console.log('Login realizado como Administrador');
             } else if (cpf.length === 11 && /^\d+$/.test(cpf)) {
                 // Qualquer CPF válido (11 dígitos) tem acesso de visualização
                 usuarioAtual = { nome: 'Usuário', nivel: 'viewer', cpf: cpf };
                 await fazerLogin(cpf);
                 localStorage.setItem('cpfUsuario', cpf);
                 ocultarModalLogin();
-                mostrarNotificacao(`Bem-vindo(a), Usuário! 👁️ Acesso de visualização`, 'success');
+                console.log('Login realizado como Usuário');
             } else {
                 mostrarNotificacao('CPF inválido. Digite um CPF com 11 dígitos', 'error');
                 document.getElementById('cpfInput').value = '';
@@ -540,9 +541,9 @@
         function criarCardImplantacao(impl) {
             const div = document.createElement('div');
             div.className = 'bg-white/10 backdrop-blur-md rounded-xl border border-white/20 card-hover';
-            div.dataset.status = impl.status;
-            div.dataset.fornecedor = impl.fornecedor;
-            div.dataset.data = impl.dataSolicitacao;
+            div.dataset.status = impl.status || 'andamento';
+            div.dataset.fornecedor = impl.fornecedor || '';
+            div.dataset.data = impl.dataSolicitacao || impl.data_solicitacao || '';
 
             const statusConfig = {
                 'concluido': { cor: 'green', icone: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', texto: 'Em Produção' },
@@ -552,6 +553,18 @@
             };
 
             const status = statusConfig[impl.status] || statusConfig['andamento'];
+
+            // Compatibilidade com dados existentes - suporta tanto nomes novos quanto antigos
+            const campanha = impl.campanha || impl.nome_campanha || 'Campanha não informada';
+            const chamado = impl.chamado || impl.numero_chamado || 'Não informado';
+            const fornecedor = impl.fornecedor || impl.nome_fornecedor || 'Não informado';
+            const tipoAgv = impl.tipoAgv || impl.tipo_agv || impl.tipo || 'Não informado';
+            const carteira = impl.carteira || impl.nome_carteira || 'Não informada';
+            const dataSolicitacao = impl.dataSolicitacao || impl.data_solicitacao || impl.data_inicio;
+            const dataEntrega = impl.dataEntrega || impl.data_entrega || impl.data_fim;
+            const licencas = impl.licencas || impl.numero_licencas || impl.qtd_licencas;
+            const diasProducao = impl.diasProducao || impl.dias_producao || impl.duracao_dias;
+            const observacoes = impl.observacoes || impl.obs || impl.comentarios || 'Nenhuma observação registrada';
 
             div.innerHTML = `
                 <div class="p-6">
@@ -563,8 +576,8 @@
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="text-xl font-bold text-white">${impl.campanha || 'Campanha não informada'}</h3>
-                                <p class="text-white/80">Chamado: ${impl.chamado} | Fornecedor: ${impl.fornecedor}</p>
+                                <h3 class="text-xl font-bold text-white">${campanha}</h3>
+                                <p class="text-white/80">Chamado: ${chamado} | Fornecedor: ${fornecedor}</p>
                             </div>
                         </div>
                         <div class="flex items-center space-x-3">
@@ -572,8 +585,8 @@
                                 ● ${status.texto}
                             </span>
                             <div class="text-white/60 text-sm text-right">
-                                <p>Início: ${formatarData(impl.dataSolicitacao)}</p>
-                                ${impl.dataEntrega ? `<p>Entrega: ${formatarData(impl.dataEntrega)}</p>` : ''}
+                                <p>Início: ${formatarData(dataSolicitacao)}</p>
+                                ${dataEntrega ? `<p>Entrega: ${formatarData(dataEntrega)}</p>` : ''}
                             </div>
                         </div>
                     </div>
@@ -582,11 +595,11 @@
                         <div>
                             <h4 class="text-white font-semibold mb-3">Detalhes do Projeto:</h4>
                             <div class="text-white/80 space-y-2 text-sm">
-                                <p><strong>Tipo:</strong> ${impl.tipoAgv || 'Não informado'}</p>
-                                <p><strong>Fornecedor:</strong> ${impl.fornecedor}</p>
-                                <p><strong>Carteira:</strong> ${impl.carteira || 'Não informada'}</p>
-                                ${impl.licencas ? `<p><strong>Licenças:</strong> ${impl.licencas}</p>` : ''}
-                                ${impl.diasProducao ? `<p><strong>Duração:</strong> ${impl.diasProducao} dias</p>` : ''}
+                                <p><strong>Tipo:</strong> ${tipoAgv}</p>
+                                <p><strong>Fornecedor:</strong> ${fornecedor}</p>
+                                <p><strong>Carteira:</strong> ${carteira}</p>
+                                ${licencas ? `<p><strong>Licenças:</strong> ${licencas}</p>` : ''}
+                                ${diasProducao ? `<p><strong>Duração:</strong> ${diasProducao} dias</p>` : ''}
                             </div>
                         </div>
                         <div>
@@ -594,20 +607,21 @@
                             <div class="text-white/80 space-y-2 text-sm">
                                 ${impl.base ? `<p><strong>Base:</strong> ${impl.base.toLocaleString()}</p>` : ''}
                                 ${impl.spin ? `<p><strong>Spin:</strong> ${impl.spin.toLocaleString()}</p>` : ''}
-                                ${impl.hitRate ? `<p><strong>Hit Rate:</strong> ${impl.hitRate}%</p>` : ''}
+                                ${impl.hitRate || impl.hit_rate ? `<p><strong>Hit Rate:</strong> ${impl.hitRate || impl.hit_rate}%</p>` : ''}
                             </div>
                         </div>
                         <div>
                             <h4 class="text-white font-semibold mb-3">Observações:</h4>
                             <div class="text-white/80 space-y-2 text-sm">
-                                <p>${impl.observacoes || 'Nenhuma observação registrada'}</p>
+                                <p>${observacoes}</p>
+                                ${impl.dataCancelamento || impl.data_cancelamento ? `<p class="text-red-400"><strong>Cancelado em:</strong> ${formatarData(impl.dataCancelamento || impl.data_cancelamento)}</p>` : ''}
                             </div>
                         </div>
                     </div>
                     
                     <div class="flex justify-between items-center pt-4 border-t border-white/20">
                         <div class="text-white/60 text-sm">
-                            <span>🔥 Sincronizado: ${formatarData(impl.atualizadoEm || impl.criadoEm)}</span>
+                            <span>🔥 Sincronizado: ${formatarData(impl.atualizadoEm || impl.atualizado_em || impl.criadoEm || impl.criado_em || new Date().toISOString())}</span>
                         </div>
                         <div class="flex space-x-3">
                             <button onclick="verDetalhes('${impl.firebaseKey}')" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors">
@@ -801,14 +815,21 @@
                         
                         <div class="mb-6">
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Selecionar Arquivo Excel</label>
-                            <input type="file" accept=".xlsx,.xls" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <input type="file" id="arquivoExcel" accept=".xlsx,.xls" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        
+                        <div id="previewDados" class="mb-6 hidden">
+                            <h4 class="text-sm font-semibold text-gray-700 mb-2">Preview dos Dados:</h4>
+                            <div class="bg-gray-50 p-4 rounded-lg max-h-40 overflow-y-auto">
+                                <div id="dadosPreview"></div>
+                            </div>
                         </div>
                         
                         <div class="flex justify-end space-x-4">
                             <button onclick="fecharModal()" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors">
                                 Cancelar
                             </button>
-                            <button onclick="processarImportacao()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+                            <button id="btnImportarExcel" onclick="processarImportacao()" disabled class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">
                                 Importar para Firebase
                             </button>
                         </div>
@@ -817,11 +838,210 @@
             `;
             
             document.body.appendChild(modal);
+            
+            // Configurar evento de mudança do arquivo
+            const arquivoInput = document.getElementById('arquivoExcel');
+            arquivoInput.addEventListener('change', function(e) {
+                const arquivo = e.target.files[0];
+                if (arquivo) {
+                    lerArquivoExcel(arquivo);
+                }
+            });
         }
 
-        function processarImportacao() {
-            mostrarNotificacao('🔥 Dados importados para o Firebase! 15 registros sincronizados.', 'success');
-            fecharModal();
+        // Variável global para armazenar dados do Excel
+        let dadosExcel = [];
+
+        function lerArquivoExcel(arquivo) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    // Pegar a primeira planilha
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    
+                    // Converter para JSON
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    
+                    if (jsonData.length < 2) {
+                        mostrarNotificacao('Arquivo Excel deve ter pelo menos 2 linhas (cabeçalho + dados)', 'error');
+                        return;
+                    }
+                    
+                    // Processar dados
+                    const headers = jsonData[0];
+                    const rows = jsonData.slice(1);
+                    
+                    dadosExcel = rows.map(row => {
+                        const obj = {};
+                        headers.forEach((header, index) => {
+                            if (header && row[index] !== undefined) {
+                                obj[header.toString().toLowerCase().trim()] = row[index];
+                            }
+                        });
+                        return obj;
+                    }).filter(obj => Object.keys(obj).length > 0);
+                    
+                    // Mostrar preview
+                    mostrarPreviewDados();
+                    
+                    // Habilitar botão de importar
+                    document.getElementById('btnImportarExcel').disabled = false;
+                    
+                } catch (error) {
+                    console.error('Erro ao ler arquivo Excel:', error);
+                    mostrarNotificacao('Erro ao ler arquivo Excel. Verifique se o arquivo está correto.', 'error');
+                }
+            };
+            
+            reader.readAsArrayBuffer(arquivo);
+        }
+
+        function mostrarPreviewDados() {
+            const previewContainer = document.getElementById('previewDados');
+            const dadosPreview = document.getElementById('dadosPreview');
+            
+            if (dadosExcel.length === 0) {
+                previewContainer.classList.add('hidden');
+                return;
+            }
+            
+            let html = `<p class="text-sm text-gray-600 mb-2">Encontrados ${dadosExcel.length} registros:</p>`;
+            
+            // Mostrar primeiros 3 registros como exemplo
+            const exemplos = dadosExcel.slice(0, 3);
+            exemplos.forEach((item, index) => {
+                html += `<div class="text-xs bg-white p-2 rounded mb-2">
+                    <strong>Registro ${index + 1}:</strong> ${JSON.stringify(item, null, 2).substring(0, 100)}...
+                </div>`;
+            });
+            
+            dadosPreview.innerHTML = html;
+            previewContainer.classList.remove('hidden');
+        }
+
+        async function processarImportacao() {
+            if (!permissoes.podeIncluir) {
+                mostrarNotificacao('Você não tem permissão para importar dados', 'error');
+                return;
+            }
+
+            if (dadosExcel.length === 0) {
+                mostrarNotificacao('Nenhum dado para importar', 'error');
+                return;
+            }
+
+            const btnImportar = document.getElementById('btnImportarExcel');
+            const textoOriginal = btnImportar.textContent;
+            btnImportar.disabled = true;
+            btnImportar.innerHTML = '<div class="loading mr-2"></div>Importando...';
+
+            try {
+                let sucessos = 0;
+                let erros = 0;
+
+                for (const item of dadosExcel) {
+                    try {
+                        // Mapear campos do Excel para o formato do Firebase
+                        const implantacao = {
+                            id: `EXCEL-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                            
+                            // Campos principais - suporta múltiplos nomes de colunas
+                            status: item.status || item.situacao || item.estado || 'andamento',
+                            chamado: item.chamado || item.numero_chamado || item.ticket || item.numero || '',
+                            campanha: item.campanha || item.nome_campanha || item.projeto || '',
+                            fornecedor: item.fornecedor || item.nome_fornecedor || item.empresa || '',
+                            carteira: item.carteira || item.nome_carteira || item.portfolio || '',
+                            tipoAgv: item.tipo_agv || item.tipoagv || item.tipo || item.categoria || '',
+                            
+                            // Datas - tentar converter diferentes formatos
+                            dataSolicitacao: converterData(item.data_solicitacao || item.datasolicitacao || item.inicio || item.data_inicio),
+                            dataEntrega: converterData(item.data_entrega || item.dataentrega || item.fim || item.data_fim),
+                            dataCancelamento: converterData(item.data_cancelamento || item.datacancelamento || item.cancelado_em),
+                            
+                            // Números
+                            licencas: parseInt(item.licencas || item.numero_licencas || item.qtd_licencas || 0),
+                            diasProducao: parseInt(item.dias_producao || item.diasproducao || item.duracao || item.duracao_dias || 0),
+                            base: parseInt(item.base || 0),
+                            spin: parseInt(item.spin || 0),
+                            hitRate: parseFloat(item.hit_rate || item.hitrate || item.taxa_sucesso || 0),
+                            
+                            // Textos
+                            observacoes: item.observacoes || item.obs || item.comentarios || item.notas || '',
+                            proximasEtapas: item.proximas_etapas || item.proximasetapas || item.next_steps || '',
+                            
+                            // Metadados
+                            criadoPor: `${usuarioAtual.nome} (Importação Excel)`,
+                            criadoEm: new Date().toISOString(),
+                            atualizadoEm: new Date().toISOString(),
+                            importadoEm: new Date().toISOString()
+                        };
+
+                        // Salvar no Firebase
+                        const implantacoesRef = window.firebase.ref(window.firebase.database, 'implantacoes');
+                        const novaRef = window.firebase.push(implantacoesRef);
+                        await window.firebase.set(novaRef, implantacao);
+                        
+                        sucessos++;
+                        
+                        // Atualizar progresso
+                        btnImportar.innerHTML = `<div class="loading mr-2"></div>Importando... ${sucessos}/${dadosExcel.length}`;
+                        
+                    } catch (error) {
+                        console.error('Erro ao importar item:', error, item);
+                        erros++;
+                    }
+                }
+
+                // Mostrar resultado
+                if (sucessos > 0) {
+                    mostrarNotificacao(`✅ Importação concluída! ${sucessos} registros salvos no Firebase${erros > 0 ? ` (${erros} erros)` : ''}`, 'success');
+                } else {
+                    mostrarNotificacao('❌ Nenhum registro foi importado. Verifique o formato do arquivo.', 'error');
+                }
+                
+                fecharModal();
+                
+            } catch (error) {
+                console.error('Erro na importação:', error);
+                mostrarNotificacao('Erro durante a importação: ' + error.message, 'error');
+            } finally {
+                btnImportar.disabled = false;
+                btnImportar.innerHTML = textoOriginal;
+            }
+        }
+
+        function converterData(valor) {
+            if (!valor) return '';
+            
+            // Se já é uma data válida
+            if (valor instanceof Date) {
+                return valor.toISOString().split('T')[0];
+            }
+            
+            // Se é string, tentar converter
+            if (typeof valor === 'string') {
+                // Formatos comuns: DD/MM/YYYY, YYYY-MM-DD, DD-MM-YYYY
+                const data = new Date(valor);
+                if (!isNaN(data.getTime())) {
+                    return data.toISOString().split('T')[0];
+                }
+            }
+            
+            // Se é número (Excel às vezes usa números para datas)
+            if (typeof valor === 'number') {
+                // Excel usa 1900-01-01 como base (com ajuste para bug do Excel)
+                const excelEpoch = new Date(1900, 0, 1);
+                const data = new Date(excelEpoch.getTime() + (valor - 2) * 24 * 60 * 60 * 1000);
+                if (!isNaN(data.getTime())) {
+                    return data.toISOString().split('T')[0];
+                }
+            }
+            
+            return '';
         }
 
         function novaImplantacao() {
@@ -1050,13 +1270,26 @@
                 return;
             }
 
+            // Compatibilidade com dados existentes
+            const campanha = implantacao.campanha || implantacao.nome_campanha || 'Campanha não informada';
+            const chamado = implantacao.chamado || implantacao.numero_chamado || 'Não informado';
+            const fornecedor = implantacao.fornecedor || implantacao.nome_fornecedor || 'Não informado';
+            const tipoAgv = implantacao.tipoAgv || implantacao.tipo_agv || implantacao.tipo || 'Não informado';
+            const carteira = implantacao.carteira || implantacao.nome_carteira || 'Não informada';
+            const dataSolicitacao = implantacao.dataSolicitacao || implantacao.data_solicitacao || implantacao.data_inicio;
+            const dataEntrega = implantacao.dataEntrega || implantacao.data_entrega || implantacao.data_fim;
+            const licencas = implantacao.licencas || implantacao.numero_licencas || implantacao.qtd_licencas || 0;
+            const diasProducao = implantacao.diasProducao || implantacao.dias_producao || implantacao.duracao_dias || 0;
+            const observacoes = implantacao.observacoes || implantacao.obs || implantacao.comentarios || 'Nenhuma observação registrada';
+            const criadoPor = implantacao.criadoPor || implantacao.criado_por || 'Sistema';
+
             const modal = document.createElement('div');
             modal.className = 'modal fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-2';
             modal.innerHTML = `
                 <div class="bg-white rounded-xl shadow-2xl max-w-7xl w-full max-h-[95vh] overflow-y-auto">
                     <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 rounded-t-xl">
                         <div class="flex justify-between items-center">
-                            <h2 class="text-2xl font-bold text-white">📋 Detalhes Firebase - ${implantacao.chamado}</h2>
+                            <h2 class="text-2xl font-bold text-white">📋 Detalhes Firebase - ${chamado}</h2>
                             <button onclick="fecharModal()" class="text-white hover:text-gray-200 transition-colors">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -1071,21 +1304,23 @@
                                 <h3 class="font-semibold text-gray-800 mb-3">🔥 Informações Firebase</h3>
                                 <div class="space-y-2 text-sm">
                                     <p><strong>Firebase Key:</strong> ${firebaseKey}</p>
-                                    <p><strong>Chamado:</strong> ${implantacao.chamado}</p>
-                                    <p><strong>Status:</strong> <span class="text-green-600">${implantacao.status}</span></p>
-                                    <p><strong>Fornecedor:</strong> ${implantacao.fornecedor}</p>
-                                    <p><strong>Tipo AGV:</strong> ${implantacao.tipoAgv}</p>
-                                    <p><strong>Carteira:</strong> ${implantacao.carteira}</p>
+                                    <p><strong>Campanha:</strong> ${campanha}</p>
+                                    <p><strong>Chamado:</strong> ${chamado}</p>
+                                    <p><strong>Status:</strong> <span class="text-green-600">${implantacao.status || 'andamento'}</span></p>
+                                    <p><strong>Fornecedor:</strong> ${fornecedor}</p>
+                                    <p><strong>Tipo AGV:</strong> ${tipoAgv}</p>
+                                    <p><strong>Carteira:</strong> ${carteira}</p>
                                 </div>
                             </div>
                             <div class="bg-gray-50 p-4 rounded-lg">
                                 <h3 class="font-semibold text-gray-800 mb-3">📅 Cronograma</h3>
                                 <div class="space-y-2 text-sm">
-                                    <p><strong>Data Solicitação:</strong> ${formatarData(implantacao.dataSolicitacao)}</p>
-                                    <p><strong>Data Entrega:</strong> ${formatarData(implantacao.dataEntrega)}</p>
-                                    <p><strong>Duração:</strong> ${implantacao.diasProducao} dias</p>
-                                    <p><strong>Licenças:</strong> ${implantacao.licencas}</p>
-                                    <p><strong>Criado por:</strong> ${implantacao.criadoPor}</p>
+                                    <p><strong>Data Solicitação:</strong> ${formatarData(dataSolicitacao)}</p>
+                                    <p><strong>Data Entrega:</strong> ${formatarData(dataEntrega)}</p>
+                                    <p><strong>Duração:</strong> ${diasProducao} dias</p>
+                                    <p><strong>Licenças:</strong> ${licencas}</p>
+                                    <p><strong>Criado por:</strong> ${criadoPor}</p>
+                                    ${implantacao.dataCancelamento || implantacao.data_cancelamento ? `<p class="text-red-600"><strong>Cancelado em:</strong> ${formatarData(implantacao.dataCancelamento || implantacao.data_cancelamento)}</p>` : ''}
                                 </div>
                             </div>
                         </div>
@@ -1102,7 +1337,7 @@
                                     <p class="text-sm text-gray-600">Spin</p>
                                 </div>
                                 <div class="text-center">
-                                    <p class="text-2xl font-bold text-purple-600">${implantacao.hitRate || 0}%</p>
+                                    <p class="text-2xl font-bold text-purple-600">${(implantacao.hitRate || implantacao.hit_rate || 0)}%</p>
                                     <p class="text-sm text-gray-600">Hit Rate</p>
                                 </div>
                             </div>
@@ -1110,7 +1345,13 @@
 
                         <div class="bg-gray-50 p-4 rounded-lg mb-6">
                             <h3 class="font-semibold text-gray-800 mb-3">📝 Observações</h3>
-                            <p class="text-gray-700">${implantacao.observacoes || 'Nenhuma observação registrada'}</p>
+                            <p class="text-gray-700">${observacoes}</p>
+                            ${implantacao.proximasEtapas || implantacao.proximas_etapas ? `
+                                <div class="mt-4 pt-4 border-t border-gray-200">
+                                    <h4 class="font-medium text-gray-800 mb-2">🎯 Próximas Etapas:</h4>
+                                    <p class="text-gray-600">${implantacao.proximasEtapas || implantacao.proximas_etapas}</p>
+                                </div>
+                            ` : ''}
                         </div>
                         
                         <div class="flex justify-end">
@@ -1137,13 +1378,23 @@
                 return;
             }
 
+            // Compatibilidade com dados existentes
+            const chamado = implantacao.chamado || implantacao.numero_chamado || '';
+            const fornecedor = implantacao.fornecedor || implantacao.nome_fornecedor || '';
+            const tipoAgv = implantacao.tipoAgv || implantacao.tipo_agv || implantacao.tipo || '';
+            const carteira = implantacao.carteira || implantacao.nome_carteira || '';
+            const dataSolicitacao = implantacao.dataSolicitacao || implantacao.data_solicitacao || implantacao.data_inicio || '';
+            const dataEntrega = implantacao.dataEntrega || implantacao.data_entrega || implantacao.data_fim || '';
+            const licencas = implantacao.licencas || implantacao.numero_licencas || implantacao.qtd_licencas || '';
+            const observacoes = implantacao.observacoes || implantacao.obs || implantacao.comentarios || '';
+
             const modal = document.createElement('div');
             modal.className = 'modal fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-2';
             modal.innerHTML = `
                 <div class="bg-white rounded-xl shadow-2xl max-w-7xl w-full max-h-[95vh] overflow-y-auto">
                     <div class="bg-gradient-to-r from-yellow-600 to-orange-600 p-6 rounded-t-xl">
                         <div class="flex justify-between items-center">
-                            <h2 class="text-2xl font-bold text-white">✏️ Editar Firebase - ${implantacao.chamado}</h2>
+                            <h2 class="text-2xl font-bold text-white">✏️ Editar Firebase - ${chamado}</h2>
                             <button onclick="fecharModal()" class="text-white hover:text-gray-200 transition-colors">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -1153,26 +1404,30 @@
                     </div>
                     
                     <form class="p-6 space-y-6" onsubmit="salvarEdicao(event, '${firebaseKey}')">
+                        <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                            <p class="text-sm text-blue-800">💡 <strong>Compatibilidade:</strong> Este formulário funciona com dados existentes e novos campos serão adicionados apenas nos próximos registros.</p>
+                        </div>
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Status</label>
                                 <select name="status" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
-                                    <option value="concluido" ${implantacao.status === 'concluido' ? 'selected' : ''}>Concluído</option>
-                                    <option value="andamento" ${implantacao.status === 'andamento' ? 'selected' : ''}>Em Andamento</option>
-                                    <option value="homologacao" ${implantacao.status === 'homologacao' ? 'selected' : ''}>Homologação</option>
-                                    <option value="cancelado" ${implantacao.status === 'cancelado' ? 'selected' : ''}>Cancelado</option>
+                                    <option value="concluido" ${(implantacao.status || 'andamento') === 'concluido' ? 'selected' : ''}>Concluído</option>
+                                    <option value="andamento" ${(implantacao.status || 'andamento') === 'andamento' ? 'selected' : ''}>Em Andamento</option>
+                                    <option value="homologacao" ${(implantacao.status || 'andamento') === 'homologacao' ? 'selected' : ''}>Homologação</option>
+                                    <option value="cancelado" ${(implantacao.status || 'andamento') === 'cancelado' ? 'selected' : ''}>Cancelado</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Fornecedor</label>
                                 <select name="fornecedor" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
-                                    <option value="2cx" ${implantacao.fornecedor === '2cx' ? 'selected' : ''}>2CX</option>
-                                    <option value="aspect" ${implantacao.fornecedor === 'aspect' ? 'selected' : ''}>Aspect</option>
-                                    <option value="paneas" ${implantacao.fornecedor === 'paneas' ? 'selected' : ''}>Paneas</option>
-                                    <option value="pontal" ${implantacao.fornecedor === 'pontal' ? 'selected' : ''}>Pontal</option>
-                                    <option value="robbu" ${implantacao.fornecedor === 'robbu' ? 'selected' : ''}>Robbu</option>
-                                    <option value="sinergytech" ${implantacao.fornecedor === 'sinergytech' ? 'selected' : ''}>Sinergytech</option>
-                                    <option value="techia" ${implantacao.fornecedor === 'techia' ? 'selected' : ''}>TechIA</option>
+                                    <option value="2cx" ${fornecedor === '2cx' ? 'selected' : ''}>2CX</option>
+                                    <option value="aspect" ${fornecedor === 'aspect' ? 'selected' : ''}>Aspect</option>
+                                    <option value="paneas" ${fornecedor === 'paneas' ? 'selected' : ''}>Paneas</option>
+                                    <option value="pontal" ${fornecedor === 'pontal' ? 'selected' : ''}>Pontal</option>
+                                    <option value="robbu" ${fornecedor === 'robbu' ? 'selected' : ''}>Robbu</option>
+                                    <option value="sinergytech" ${fornecedor === 'sinergytech' ? 'selected' : ''}>Sinergytech</option>
+                                    <option value="techia" ${fornecedor === 'techia' ? 'selected' : ''}>TechIA</option>
                                 </select>
                             </div>
                         </div>
@@ -1181,39 +1436,39 @@
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Tipo AGV</label>
                                 <select name="tipoAgv" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
-                                    <option value="agv-ia" ${implantacao.tipoAgv === 'agv-ia' ? 'selected' : ''}>AGV com IA</option>
-                                    <option value="localizador" ${implantacao.tipoAgv === 'localizador' ? 'selected' : ''}>Localizador</option>
-                                    <option value="localizador-smartplay" ${implantacao.tipoAgv === 'localizador-smartplay' ? 'selected' : ''}>Localizador SmartPlay</option>
-                                    <option value="negociador" ${implantacao.tipoAgv === 'negociador' ? 'selected' : ''}>Negociador</option>
-                                    <option value="negociador-smartplay" ${implantacao.tipoAgv === 'negociador-smartplay' ? 'selected' : ''}>Negociador SmartPlay</option>
-                                    <option value="recado" ${implantacao.tipoAgv === 'recado' ? 'selected' : ''}>Recado</option>
-                                    <option value="preventivo" ${implantacao.tipoAgv === 'preventivo' ? 'selected' : ''}>Preventivo</option>
+                                    <option value="agv-ia" ${tipoAgv === 'agv-ia' ? 'selected' : ''}>AGV com IA</option>
+                                    <option value="localizador" ${tipoAgv === 'localizador' ? 'selected' : ''}>Localizador</option>
+                                    <option value="localizador-smartplay" ${tipoAgv === 'localizador-smartplay' ? 'selected' : ''}>Localizador SmartPlay</option>
+                                    <option value="negociador" ${tipoAgv === 'negociador' ? 'selected' : ''}>Negociador</option>
+                                    <option value="negociador-smartplay" ${tipoAgv === 'negociador-smartplay' ? 'selected' : ''}>Negociador SmartPlay</option>
+                                    <option value="recado" ${tipoAgv === 'recado' ? 'selected' : ''}>Recado</option>
+                                    <option value="preventivo" ${tipoAgv === 'preventivo' ? 'selected' : ''}>Preventivo</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Carteira</label>
-                                <input type="text" name="carteira" value="${implantacao.carteira || ''}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
+                                <input type="text" name="carteira" value="${carteira}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Data Solicitação</label>
-                                <input type="date" name="dataSolicitacao" value="${implantacao.dataSolicitacao || ''}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
+                                <input type="date" name="dataSolicitacao" value="${dataSolicitacao}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Data Entrega</label>
-                                <input type="date" name="dataEntrega" value="${implantacao.dataEntrega || ''}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
+                                <input type="date" name="dataEntrega" value="${dataEntrega}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Licenças</label>
-                                <input type="number" name="licencas" value="${implantacao.licencas || ''}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
+                                <input type="number" name="licencas" value="${licencas}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Observações</label>
-                            <textarea name="observacoes" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 resize-none">${implantacao.observacoes || ''}</textarea>
+                            <textarea name="observacoes" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 resize-none">${observacoes}</textarea>
                         </div>
                         
                         <div class="flex justify-end space-x-4 pt-4 border-t border-gray-200">
@@ -1403,5 +1658,5 @@
             }, 5000);
         }
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'990213fb20e79a86',t:'MTc2MDcyODAzNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9902198f51b3f1f2',t:'MTc2MDcyODI2Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
