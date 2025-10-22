@@ -2885,206 +2885,78 @@ function forcarSincronizacao() {
     mostrarNotificacao('🔄 Sincronização forçada iniciada', 'success');
 }
 </script>
-<!-- ===== FIM FIRESTORE SYNC ===== -->
+<!-- ===== FIRESTORE SYNC MODE - V01 ===== -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+import { getFirestore, collection, addDoc, setDoc, doc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 
+const firebaseConfig = {
+  apiKey: "AIzaSyAIKzCbt60ni9BKrNUM_uyDOZvYdtN-K9k",
+  authDomain: "controle-agv.firebaseapp.com",
+  projectId: "controle-agv",
+  storageBucket: "controle-agv.firebasestorage.app",
+  messagingSenderId: "220840335975",
+  appId: "1:220840335975:web:242eb4dd3f39b3b0d752c2"
+};
 
-<!-- ===== INTEGRAÇÃO FIRESTORE - V2 (substitui localStorage) ===== -->
-<!-- INSTRUÇÕES: Cole seu objeto firebaseConfig abaixo (remova o comentário) para ativar.
--->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-<script>
-(function(){
-  // --- COLE O firebaseConfig AQUI (remova os comentários) ---
-  *
-    const firebaseConfig = {
-      apiKey: "AIzaSyAIKzCbt60ni9BKrNUM_uyDOZvYdtN-K9k",
-      authDomain: "controle-agv.firebaseapp.com",
-      projectId: "controle-agv",
-      storageBucket: "controle-agv.firebasestorage.app",
-      messagingSenderId: "220840335975",
-      appId: "1:220840335975:web:242eb4dd3f39b3b0d752c2"
-    };
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const colRef = collection(db, "implantacoes");
+let implantacoes = [];
 
-  // Não colocar chaves em chats públicos. Cole apenas no arquivo local.
-  const COLLECTION_NAME = "implantacoes";
-  let firebaseInitialized = false;
-  let auth = null;
-  let db = null;
-  let colRef = null;
-  let unsubscribeSnapshot = null;
-
-  function initFirebase() {
-    if (firebaseInitialized) return;
-    if (typeof firebaseConfig === 'undefined' || !firebaseConfig) {
-      console.warn('Firestore não configurado (firebaseConfig ausente). Cole suas credenciais no arquivo.');
-      return;
-    }
-    try {
-      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-      auth = firebase.auth();
-      db = firebase.firestore();
-      colRef = db.collection(COLLECTION_NAME);
-      firebaseInitialized = true;
-      console.log('✅ Firebase inicializado (V2)');
-      attachAuthListener();
-    } catch(e) {
-      console.error('Erro inicializando Firebase:', e);
-    }
-  }
-
-  function attachAuthListener() {
-    if (!auth) return;
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        console.log('🔐 Auth: usuário autenticado (uid):', user.uid);
-        startRealtimeListener();
-      } else {
-        console.log('🔓 Auth: sem usuário — autenticando anonimamente...');
-        auth.signInAnonymously().catch(err=>console.error('Erro login anônimo:', err));
-      }
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    console.log("✅ Logado anonimamente:", user.uid);
+    onSnapshot(colRef, (snapshot) => {
+      implantacoes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      console.log("📡 Dados sincronizados:", implantacoes.length);
+      if (typeof renderizarImplantacoes === "function") renderizarImplantacoes();
+      if (typeof atualizarEstatisticas === "function") atualizarEstatisticas();
     });
-  }
-
-  function startRealtimeListener() {
-    if (!colRef) return;
-    if (unsubscribeSnapshot) {
-      try { unsubscribeSnapshot(); } catch(e){}
-      unsubscribeSnapshot = null;
-    }
-    unsubscribeSnapshot = colRef.orderBy('criadoEm','desc').onSnapshot(snapshot => {
-      const dados = [];
-      snapshot.forEach(doc => {
-        const item = doc.data();
-        item.id = doc.id;
-        dados.push(item);
-      });
-      // Replace global implantacoes array and re-render
-      try {
-        window.implantacoes = dados;
-        if (typeof renderizarImplantacoes === 'function') renderizarImplantacoes();
-        if (typeof atualizarEstatisticas === 'function') atualizarEstatisticas();
-      } catch(e) { console.error(e); }
-      console.log('🔁 Sincronizado com Firestore — registros:', dados.length);
-    }, err => {
-      console.error('Erro snapshot Firestore:', err);
-    });
-  }
-
-  // Override initialization to use Firebase-only
-  if (typeof window.inicializarSistemaLocal === 'function') {
-    const origInit = window.inicializarSistemaLocal;
-    window.inicializarSistemaLocal = function() {
-      // do not call original local storage initialization
-      initFirebase();
-      // originalInit intentionally not called to avoid localStorage usage
-      console.log('initialization replaced: running Firebase-only mode');
-    };
   } else {
-    window.inicializarSistemaLocal = function() { initFirebase(); };
+    signInAnonymously(auth);
   }
+});
 
-  // Disable local save function if present
-  if (typeof window.salvarDadosLocais === 'function') {
-    window.salvarDadosLocais = function() {
-      console.log('salvarDadosLocais desativado (modo Firestore). Use salvarImplantacaoFirestore/confirmarExclusao.');
-    };
-  }
-
-  // Replace salvar/editar/excluir operations to act on Firestore
-  window.salvarImplantacaoFirestore = async function(implantacao) {
-    if (!firebaseInitialized) { initFirebase(); if (!firebaseInitialized) throw new Error('Firebase não inicializado'); }
-    try {
-      if (!implantacao.id) {
-        const docRef = colRef.doc();
-        implantacao.id = docRef.id;
-        implantacao.criadoEm = new Date().toISOString();
-        implantacao.atualizadoEm = new Date().toISOString();
-        await docRef.set(implantacao);
-      } else {
-        implantacao.atualizadoEm = new Date().toISOString();
-        await colRef.doc(implantacao.id).set(implantacao, { merge: true });
-      }
-      console.log('Registro salvo no Firestore:', implantacao.id);
-      return implantacao;
-    } catch(e) {
-      console.error('Erro salvarImplantacaoFirestore:', e);
-      throw e;
-    }
-  };
-
-  // Map existing UI functions to Firestore functions where appropriate
-  // If your code calls novaImplantacao()/editarImplantacao()/confirmarExclusao(index), we'll provide minimal adapters.
-  window.confirmarExclusao = async function(indexOrId) {
-    try {
-      let id = indexOrId;
-      if (typeof indexOrId === 'number') {
-        const item = window.implantacoes && window.implantacoes[indexOrId];
-        if (!item) return;
-        id = item.id;
-      }
-      if (!id) return;
-      if (!firebaseInitialized) initFirebase();
-      await colRef.doc(id).delete();
-      console.log('Documento excluído:', id);
-    } catch(e) {
-      console.error('Erro ao excluir documento:', e);
-      throw e;
-    }
-  };
-
-  // Adapt processarImportacao to write window.dadosExcel into Firestore
-  window.processarImportacao = async function() {
-    try {
-      if (!window.dadosExcel || !Array.isArray(window.dadosExcel) || window.dadosExcel.length === 0) {
-        alert('Nenhum dado para importar.');
-        return;
-      }
-      if (!firebaseInitialized) initFirebase();
-      const promises = [];
-      for (let i=0;i<window.dadosExcel.length;i++) {
-        const row = window.dadosExcel[i];
-        const docRef = colRef.doc();
-        const impl = Object.assign({}, row);
-        impl.id = docRef.id;
-        impl.criadoEm = new Date().toISOString();
-        impl.atualizadoEm = new Date().toISOString();
-        impl.origemImportacao = 'excel';
-        promises.push(docRef.set(impl));
-      }
-      await Promise.all(promises);
-      alert('Importação concluída. Registros enviados ao Firestore.');
-      // trigger immediate refresh via snapshot listener
-    } catch(e) {
-      console.error('Erro processarImportacao:', e);
-      alert('Erro ao importar. Veja console.');
-    }
-  };
-
-  // When original code calls salvarDadosLocais after editing, override edit/save flows by providing a helper function that editors should call.
-  // If your UI calls a specific function to persist forms, you can update it to call salvarImplantacaoFirestore instead.
-  // But we also provide a gentle global hook: if code calls salvarDadosLocais(), it's now a no-op; editors should call salvarImplantacaoFirestore(document).
-  window.salvarImplantacao = async function(implantacao) {
-    return await window.salvarImplantacaoFirestore(implantacao);
-  };
-
-  // Prevent any localStorage reads/writes by monkey-patching localStorage methods to no-op (keep names to avoid errors)
+window.salvarImplantacaoFirestore = async function(implantacao) {
   try {
-    const _ls = window.localStorage;
-    if (_ls) {
-      _ls.setItem = function(){ console.warn('localStorage.setItem blocked in Firestore-only mode'); };
-      _ls.getItem = function(){ console.warn('localStorage.getItem blocked in Firestore-only mode'); return null; };
-      _ls.removeItem = function(){ console.warn('localStorage.removeItem blocked in Firestore-only mode'); };
+    if (!implantacao.id) {
+      await addDoc(colRef, { ...implantacao, criadoEm: new Date().toISOString() });
+    } else {
+      await setDoc(doc(db, "implantacoes", implantacao.id), { ...implantacao, atualizadoEm: new Date().toISOString() });
     }
-  } catch(e){}
+  } catch (e) {
+    console.error("Erro ao salvar:", e);
+  }
+};
 
-  // Auto-init on DOMContentLoaded
-  document.addEventListener('DOMContentLoaded', function(){ initFirebase(); });
+window.confirmarExclusao = async function(id) {
+  if (!id) return;
+  try {
+    await deleteDoc(doc(db, "implantacoes", id));
+  } catch (e) {
+    console.error("Erro ao excluir:", e);
+  }
+};
 
-})(); // IIFE
+window.processarImportacao = async function() {
+  if (!window.dadosExcel || !window.dadosExcel.length) {
+    alert("Nenhum dado para importar.");
+    return;
+  }
+  try {
+    for (const item of window.dadosExcel) {
+      await addDoc(colRef, { ...item, criadoEm: new Date().toISOString(), origemImportacao: "excel" });
+    }
+    alert("✅ Importação concluída com sucesso!");
+  } catch (e) {
+    console.error("Erro na importação:", e);
+  }
+};
 </script>
-<!-- ===== FIM FIRESTORE INTEGRAÇÃO ===== -->
+<!-- ===== FIM FIRESTORE SYNC MODE ===== -->
 
 </body>
 </html>
