@@ -347,12 +347,7 @@
         });
 
         function inicializarSistemaLocal() {
-            if (!dadosSalvos) {
-    console.log('🌐 Nenhum dado local — tentando carregar do Firestore...');
-    carregarImplantacoesDoFirestore();
-    return;
-}
-         console.log('💾 Inicializando sistema local...');
+            console.log('💾 Inicializando sistema local...');
             
             try {
                 // Carregar dados do localStorage
@@ -2736,6 +2731,161 @@ inicializarSistemaLocal = function() {
     renderizarImplantacoesPaginado();
 };
 </script>
+<!-- ===== FIRESTORE SYNC (V111) ===== -->
+<!-- IMPORTANTE: Cole suas credenciais firebaseConfig no bloco mais abaixo (remova os valores comentados) -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script>
+// === CONFIGURAÇÃO DO FIREBASE ===
+// --- ATENÇÃO: cole suas credenciais AQUI, substituindo os valores comentados ---
+// NÃO cole essas credenciais em chat público — cole apenas no seu arquivo local.
+// Exemplo de objeto para colar (substitua os textos "COLE_AQUI..." pelos seus valores):
+/*
+const firebaseConfig = {
+  apiKey: "AIzaSyAIKzCbt60ni9BKrNUM_uyDOZvYdtN-K9k",
+  authDomain: "controle-agv.firebaseapp.com",
+  projectId: "controle-agv",
+  storageBucket: "controle-agv.firebasestorage.app",
+  messagingSenderId: "220840335975",
+  appId: "1:220840335975:web:242eb4dd3f39b3b0d752c2"
+};
+*/
+ 
+// NÃO COLOQUE AS CHAVES AQUI NO CHAT. Cole-as diretamente no arquivo V111 após o download.
+
+let firebaseInitialized = false;
+let firestoreCollectionRef = null;
+let isSyncingWithFirestore = false;
+const COLLECTION_NAME = "implantacoes"; // coleção usada no Firestore
+
+function inicializarFirestoreSeConfigurado() {
+    try {
+        if (typeof firebaseConfig !== 'undefined' && firebaseConfig) {
+            if (!firebaseInitialized) {
+                // inicializa compat SDK
+                firebase.initializeApp(firebaseConfig);
+                const db = firebase.firestore();
+                firestoreCollectionRef = db.collection(COLLECTION_NAME);
+                firebaseInitialized = true;
+                console.log('✅ Firebase inicializado (compat).');
+
+                // Ouvir alterações em tempo real
+                firestoreCollectionRef.onSnapshot(snapshot => {
+                    if (isSyncingWithFirestore) return;
+                    const dados = [];
+                    snapshot.forEach(doc => {
+                        const item = doc.data();
+                        item.id = item.id || doc.id;
+                        dados.push(item);
+                    });
+                    console.log('🔔 Atualização recebida do Firestore:', dados.length, 'registros');
+                    implantacoes = dados;
+                    // Atualiza localStorage (usa cópia original se existir)
+                    if (typeof salvarDadosLocaisOriginal === 'function') {
+                        salvarDadosLocaisOriginal();
+                    } else {
+                        try { localStorage.setItem('implantacoes_agv', JSON.stringify(implantacoes)); } catch(e){}
+                    }
+                    renderizarImplantacoes();
+                    atualizarEstatisticas();
+                }, err => {
+                    console.error('❌ Erro ao ouvir Firestore:', err);
+                });
+            }
+        } else {
+            console.log('⚠️ Firebase não configurado: cole firebaseConfig no arquivo V111 para ativar sincronização.');
+        }
+    } catch (e) {
+        console.error('❌ Erro inicializando Firestore:', e);
+    }
+}
+
+// Envia todo o conjunto local para Firestore (batch)
+async function sincronizarComFirestore() {
+    if (!firebaseInitialized || !firestoreCollectionRef) return;
+    try {
+        isSyncingWithFirestore = true;
+        const db = firebase.firestore();
+        const batch = db.batch();
+        implantacoes.forEach(item => {
+            // usa item.id se existir, caso contrário permite Firestore gerar id
+            const docRef = item.id ? firestoreCollectionRef.doc(item.id) : firestoreCollectionRef.doc();
+            // garante que o item terá id (para manter consistência local <-> remoto)
+            if (!item.id) item.id = docRef.id;
+            batch.set(docRef, item, { merge: true });
+        });
+        await batch.commit();
+        console.log('✅ Sincronização com Firestore concluída:', implantacoes.length, 'registros');
+    } catch (err) {
+        console.error('❌ Erro ao sincronizar com Firestore:', err);
+    } finally {
+        // pequeno delay para evitar loop com o onSnapshot
+        setTimeout(()=>{ isSyncingWithFirestore = false; }, 500);
+    }
+}
+
+// Inicializar automaticamente quando a página carrega
+document.addEventListener('DOMContentLoaded', function() {
+    inicializarFirestoreSeConfigurado();
+});
+
+// Integrar com salvarDadosLocais original (preservando comportamento)
+if (typeof salvarDadosLocais === 'function') {
+    const originalSalvar = salvarDadosLocais;
+    // Expor original para o listener de snapshot usar sem regravar novamente
+    window.salvarDadosLocaisOriginal = originalSalvar;
+    salvarDadosLocais = function() {
+        // chama original (salva no localStorage)
+        originalSalvar();
+        // tenta inicializar Firebase (caso as credenciais tenham sido adicionadas)
+        try { inicializarFirestoreSeConfigurado(); } catch(e){}
+        // sincroniza em background
+        sincronizarComFirestore();
+    };
+} else {
+    console.warn('⚠️ salvarDadosLocais não encontrado. Importações ainda serão locais até integrar manualmente.');
+}
+
+// Forçar carregar do Firestore ao inicializar sistema local se disponível
+if (typeof inicializarSistemaLocal === 'function') {
+    const originalInit = inicializarSistemaLocal;
+    window.inicializarSistemaLocalOriginal = originalInit;
+    inicializarSistemaLocal = function() {
+        originalInit();
+        try { inicializarFirestoreSeConfigurado(); } catch(e){}
+        if (firebaseInitialized && firestoreCollectionRef) {
+            firestoreCollectionRef.get().then(snapshot => {
+                const dados = [];
+                snapshot.forEach(doc => {
+                    const item = doc.data();
+                    item.id = item.id || doc.id;
+                    dados.push(item);
+                });
+                if (dados.length > 0) {
+                    implantacoes = dados;
+                    if (typeof salvarDadosLocaisOriginal === 'function') {
+                        salvarDadosLocaisOriginal();
+                    } else {
+                        try { localStorage.setItem('implantacoes_agv', JSON.stringify(implantacoes)); } catch(e){}
+                    }
+                    renderizarImplantacoes();
+                    atualizarEstatisticas();
+                }
+            }).catch(err => console.error('❌ Erro ao buscar dados iniciais do Firestore:', err));
+        }
+    };
+} else {
+    console.warn('⚠️ inicializarSistemaLocal não encontrado.');
+}
+
+// Utilitário para forçar sincronização manualmente (útil para admin/debug)
+function forcarSincronizacao() {
+    try { inicializarFirestoreSeConfigurado(); } catch(e){}
+    sincronizarComFirestore();
+    mostrarNotificacao('🔄 Sincronização forçada iniciada', 'success');
+}
+</script>
+<!-- ===== FIM FIRESTORE SYNC ===== -->
 
 </body>
 </html>
