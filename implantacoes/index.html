@@ -347,7 +347,12 @@
         });
 
         function inicializarSistemaLocal() {
-            console.log('💾 Inicializando sistema local...');
+            if (!dadosSalvos) {
+    console.log('🌐 Nenhum dado local — tentando carregar do Firestore...');
+    carregarImplantacoesDoFirestore();
+    return;
+}
+         console.log('💾 Inicializando sistema local...');
             
             try {
                 // Carregar dados do localStorage
