@@ -221,7 +221,7 @@ if (cpfSalvo) {
    <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 mb-8 fade-in">
     <div class="flex flex-wrap gap-4 items-center justify-between">
      <div class="flex flex-wrap gap-4 items-center">
-      <h3 class="text-lg font-semibold text-white">Filtros:</h3><select id="filtroStatus" class="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"> <option value="" class="bg-gray-800 text-white">Todos os Status</option> <option value="concluido" class="bg-gray-800 text-white">Concluído</option> <option value="andamento" class="bg-gray-800 text-white">Em Andamento</option> <option value="homologacao" class="bg-gray-800 text-white">Homologação</option> <option value="cancelado" class="bg-gray-800 text-white">Cancelado</option> </select> <select id="filtroFornecedor" class="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"> <option value="" class="bg-gray-800 text-white">Todos os Fornecedores</option> <option value="2cx" class="bg-gray-800 text-white">2CX</option> <option value="aspect" class="bg-gray-800 text-white">Aspect</option> <option value="paneas" class="bg-gray-800 text-white">Paneas</option> <option value="pontal" class="bg-gray-800 text-white">Pontal</option> <option value="robbu" class="bg-gray-800 text-white">Robbu</option> <option value="sinergytech" class="bg-gray-800 text-white">Sinergytech</option> <option value="techia" class="bg-gray-800 text-white">TechIA</option> </select> <select id="ordenarPor" class="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"> <option value="" class="bg-gray-800 text-white">Ordenar por</option> <option value="fornecedor-az" class="bg-gray-800 text-white">Fornecedor A-Z</option> <option value="data-antiga" class="bg-gray-800 text-white">Data mais antiga</option> <option value="data-recente" class="bg-gray-800 text-white">Data mais recente</option> <option value="status" class="bg-gray-800 text-white">Status</option> </select>
+      <h3 class="text-lg font-semibold text-white">Filtros:</h3><select id="filtroStatus" class="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"> <option value="" class="bg-gray-800 text-white">Todos os Status</option> <option value="concluido" class="bg-gray-800 text-white">Concluído</option> <option value="andamento" class="bg-gray-800 text-white">Em Andamento</option> <option value="homologacao" class="bg-gray-800 text-white">Homologação</option> <option value="cancelado" class="bg-gray-800 text-white">Cancelado</option> </select> <select id="filtroFornecedor" class="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"> <option value="" class="bg-gray-800 text-white">Todos os Fornecedores</option> <option value="2cx" class="bg-gray-800 text-white">2CX</option> <option value="aspect" class="bg-gray-800 text-white">Aspect</option> <option value="dyna.ai" class="bg-gray-800 text-white">Dyna.AI</option> <option value="paneas" class="bg-gray-800 text-white">Paneas</option> <option value="pontal" class="bg-gray-800 text-white">Pontal</option> <option value="robbu" class="bg-gray-800 text-white">Robbu</option> <option value="sinergytech" class="bg-gray-800 text-white">Sinergytech</option> <option value="techia" class="bg-gray-800 text-white">TechIA</option> <option value="Wiz" class="bg-gray-800 text-white">Wiz</option> </select> <select id="ordenarPor" class="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"> <option value="" class="bg-gray-800 text-white">Ordenar por</option> <option value="fornecedor-az" class="bg-gray-800 text-white">Fornecedor A-Z</option> <option value="data-antiga" class="bg-gray-800 text-white">Data mais antiga</option> <option value="data-recente" class="bg-gray-800 text-white">Data mais recente</option> <option value="status" class="bg-gray-800 text-white">Status</option> </select>
      </div>
      <div class="flex items-center space-x-4">
       <div class="relative"><input type="text" id="busca" placeholder="Buscar implantações..." class="bg-white/10 border border-white/20 rounded-lg px-4 py-2 pl-10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -1333,11 +1333,13 @@ async function processarImportacao() {
             const fornecedorMap = {
                 '2cx': '2cx',
                 'aspect': 'aspect',
+				'dyna.ai': 'dyna.ai',
                 'paneas': 'paneas',
                 'pontal': 'pontal',
                 'robbu': 'robbu',
                 'sinergytech': 'sinergytech',
-                'techia': 'techia'
+                'techia': 'techia',
+				'wiz': 'wiz'
             };
             
             return fornecedorMap[fornecedor.toLowerCase()] || fornecedor;
@@ -1469,11 +1471,13 @@ async function processarImportacao() {
                                     <option value="">Selecione o fornecedor</option>
                                     <option value="2cx">2CX</option>
                                     <option value="aspect">Aspect</option>
+									<option value="dyna.ai">Dyna.AI</option>
                                     <option value="paneas">Paneas</option>
                                     <option value="pontal">Pontal</option>
                                     <option value="robbu">Robbu</option>
                                     <option value="sinergytech">Sinergytech</option>
                                     <option value="techia">TechIA</option>
+									<option value="wiz">Wiz</option>
                                 </select>
                             </div>
                         </div>
@@ -1856,11 +1860,13 @@ function editarImplantacao(implantacaoId) { // Recebe ID, não index
                                 <select name="fornecedor" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
                                     <option value="2cx" ${fornecedor === '2cx' ? 'selected' : ''}>2CX</option>
                                     <option value="aspect" ${fornecedor === 'aspect' ? 'selected' : ''}>Aspect</option>
+									<option value="dyna.ai" ${fornecedor === 'dyna.ai' ? 'selected' : ''}>Dyna.AI</option>
                                     <option value="paneas" ${fornecedor === 'paneas' ? 'selected' : ''}>Paneas</option>
                                     <option value="pontal" ${fornecedor === 'pontal' ? 'selected' : ''}>Pontal</option>
                                     <option value="robbu" ${fornecedor === 'robbu' ? 'selected' : ''}>Robbu</option>
                                     <option value="sinergytech" ${fornecedor === 'sinergytech' ? 'selected' : ''}>Sinergytech</option>
                                     <option value="techia" ${fornecedor === 'techia' ? 'selected' : ''}>TechIA</option>
+									<option value="wiz" ${fornecedor === 'wiz' ? 'selected' : ''}>Wiz</option>
                                 </select>
                             </div>
                         </div>
