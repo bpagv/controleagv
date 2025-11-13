@@ -1708,6 +1708,7 @@ async function criarImplantacao() {
             const fornecedor = implantacao.fornecedor || implantacao.nome_fornecedor || 'Não informado';
             const tipoAgv = implantacao.tipoAgv || implantacao.tipo_agv || implantacao.tipo || 'Não informado';
             const carteira = implantacao.carteira || implantacao.nome_carteira || 'Não informada';
+			const campanha = implantacao.campanha || implantacao.nome_campanha || 'Não informada';
             const dataSolicitacao = implantacao.dataSolicitacao || implantacao.data_solicitacao || implantacao.data_inicio;
             const dataEntrega = implantacao.dataEntrega || implantacao.data_entrega || implantacao.data_fim;
             const licencas = implantacao.licencas || implantacao.numero_licencas || implantacao.qtd_licencas || 0;
@@ -1815,6 +1816,7 @@ function editarImplantacao(implantacaoId) { // Recebe ID, não index
             const fornecedor = implantacao.fornecedor || implantacao.nome_fornecedor || '';
             const tipoAgv = implantacao.tipoAgv || implantacao.tipo_agv || implantacao.tipo || '';
             const carteira = implantacao.carteira || implantacao.nome_carteira || '';
+		    const campanha = implantacao.campanha || implantacao.nome_campanha || '';
             const dataSolicitacao = implantacao.dataSolicitacao || implantacao.data_solicitacao || implantacao.data_inicio || '';
             const dataEntrega = implantacao.dataEntrega || implantacao.data_entrega || implantacao.data_fim || '';
             const licencas = implantacao.licencas || implantacao.numero_licencas || implantacao.qtd_licencas || '';
